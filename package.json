@@ -1,0 +1,29 @@
+{
+	"name": "tampermonkey-webpack-template",
+	"version": "1.0.0",
+	"description": "tampermonkey-webpack-template",
+	"main": "index.js",
+	"scripts": {
+		"build": "webpack --mode=production --progress --config webpack.config.ts",
+		"start:dev": "webpack serve --mode=development --config webpack.config.ts"
+	},
+	"keywords": [
+		"tampermonkey",
+		"webpack"
+	],
+	"author": "lisonge",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^14.14.34",
+		"@types/webpack": "^4.41.26",
+		"@types/webpack-dev-server": "^3.11.2",
+		"clean-webpack-plugin": "^3.0.0",
+		"tampermonkey-webpack-plugin": "^0.1.7",
+		"ts-loader": "^8.0.18",
+		"ts-node": "^9.1.1",
+		"typescript": "^4.2.3",
+		"webpack": "^5.25.0",
+		"webpack-cli": "^4.5.0",
+		"webpack-dev-server": "^3.11.2"
+	}
+}
