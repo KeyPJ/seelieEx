@@ -1,28 +1,4 @@
-// const genshindb = require('genshin-db');
-// import {Character} from "./@type/genshin-db";
-//
-// genshindb.setOptions({
-//     matchAliases: true, // Allows the matching of aliases.
-//     matchCategories: false, // Allows the matching of categories. If true, then returns an array if it matches.
-//     verboseCategories: false, // Used if a category is matched. If true, then replaces each string name in the array with the data object instead.
-//     queryLanguages: ["ChineseSimplified"], // Array of languages that your query will be searched in.
-//     resultLanguage: "English" // Output language that you want your results to be in.
-// })
-//
-// export function getCharacterName(nameCHS: string) {
-//     if (nameCHS=="旅行者"){
-//         return "traveler"
-//     }
-//     const character: Character = genshindb.characters(nameCHS);
-//     if (!character){
-//         console.error(nameCHS)
-//         return ""
-//     }
-//     const {name} = character;
-//     return name.toLowerCase();
-// }
-
-const nameList=[
+const nameList = [
     {
         "nameEn": "traveler",
         "name": "旅行者"
@@ -170,18 +146,6 @@ export function getCharacterName(queryName: string) {
         const {name, nameEn} = e
         if (queryName == name) {
             return nameEn;
-        }
-    }
-    console.error(`${queryName}查询失败`)
-    return ""
-}
-
-export function getCharacterNameCN(queryName: string) {
-
-    for (let e of nameList) {
-        const {name, nameEn} = e
-        if (queryName == nameEn) {
-            return name;
         }
     }
     console.error(`${queryName}查询失败`)

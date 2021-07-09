@@ -4,7 +4,6 @@ import Role = mohoyo.Role;
 import Data = mohoyo.Data;
 import Character = mohoyo.Character;
 import CharacterData = mohoyo.CharacterData;
-import {Config} from "./@type";
 import {getCharacterName} from "./query";
 import CharacterDataEx = mohoyo.CharacterDataEx;
 import {addCharacter} from "./seelie";
@@ -111,7 +110,7 @@ const getDetailList = async () => {
         console.log(accountList)
         const {game_uid: aUid, region: aRegion} = accountList[accountIdx];
         game_uid = aUid;
-        region = aRegion=="cn_gf01"?"cn_gf01":"cn_qd01";
+        region = aRegion == "cn_gf01" ? "cn_gf01" : "cn_qd01";
     }
 
     const characters = await getCharacters(game_uid, region);
@@ -123,14 +122,14 @@ const getDetailList = async () => {
     return detailList;
 }
 
+
 getDetailList().then(
     res => {
+        console.log(res);
         res.forEach(
             v => {
                 addCharacter(v)
             }
         )
-        // addCharacter(res[10])
     }
 )
-

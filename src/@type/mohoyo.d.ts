@@ -26,7 +26,7 @@ export namespace mohoyo {
         nameEn: string;
     }
 
-    export interface SkillList {
+    export interface Skill {
         id: number;
         group_id: number;
         name: string;
@@ -60,9 +60,9 @@ export namespace mohoyo {
     }
 
     export interface CharacterData {
-        skill_list?: SkillList[];
+        skill_list: Skill[];
         weapon?: Weapon;
-        reliquary_list?: ReliquaryList[];
+        reliquary_list: ReliquaryList[];
     }
 
     export interface CharacterDataEx extends CharacterData {

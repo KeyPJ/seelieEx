@@ -2,6 +2,8 @@ import Goal = seelie.Goal;
 import {mohoyo} from "./@type/mohoyo";
 import CharacterDataEx = mohoyo.CharacterDataEx;
 import CharacterStatus = seelie.CharacterStatus;
+import CharacterGoal = seelie.CharacterGoal;
+import TalentGoal = seelie.TalentGoal;
 
 
 const getTotalGoal = () => {
@@ -12,46 +14,132 @@ const getTotalGoal = () => {
 
 export function addCharacter(characterDataEx: CharacterDataEx) {
 
-    const {character} = characterDataEx;
-    const {name,nameEn} = character;
+    const {character, skill_list} = characterDataEx;
+    const {name, nameEn} = character;
 
     let totalGoal: Goal[] = getTotalGoal();
     const length = totalGoal.length;
     const findIndex = totalGoal.findIndex(g => g.type == "character" && g.character == nameEn);
 
     const {level_current} = character;
-    const characterStatus: CharacterStatus = initCharacterStatus(level_current,name);
+    const characterStatus: CharacterStatus = initCharacterStatus(level_current, name);
+
+    const {level_current: normalCurrent} = skill_list[0];
+    const {level_current: skillCurrent} = skill_list[1];
+    const {level_current: burstCurrent} = skill_list[2];
 
     if (findIndex < 0) {
         //{"type":"character","character":"traveler","current":{"level":70,"asc":4,"text":"70"},"goal":{"level":70,"asc":4,"text":"70"},"id":1},
         //{"type":"talent","character":"traveler_geo","c3":false,"c5":false,"normal":{"current":1,"goal":6},"skill":{"current":1,"goal":6},"burst":{"current":1,"goal":6},"id":2}
         //初始化两条数据
         // initByCharacter(character,length)
-        const characterGoal: Goal = {
+        const characterGoal: CharacterGoal = {
             type: "character",
             character: nameEn,
             current: characterStatus,
             goal: characterStatus,
             id: length
         }
+        const talentGoal: TalentGoal = {
+            type: "talent",
+            character: nameEn,
+            c3: false,
+            c5: false,
+            normal: {
+                current: normalCurrent,
+                goal: normalCurrent
+            },
+            skill: {
+                current: skillCurrent,
+                goal: skillCurrent
+            },
+            burst: {
+                current: burstCurrent,
+                goal: burstCurrent
+            },
+            id: length + 1
+        }
+
         // @ts-ignore
         vue.addGoal(characterGoal)
+        if (nameEn != "traveler") {
+            // @ts-ignore
+            vue.addGoal(talentGoal)
+        } else {
+            console.log("无法判断旅行者元素类型,请自行设置天赋")
+        }
     } else {
         const seelieGoal: Goal = totalGoal[findIndex];
         const {goal} = seelieGoal;
         const {level, asc} = goal;
         const {level: levelCurrent, asc: ascCurrent} = characterStatus;
 
-        const characterGoal: Goal = {
+        const characterGoal: CharacterGoal = {
             type: "character",
             character: nameEn,
             current: characterStatus,
-            goal: levelCurrent >=level && ascCurrent >= asc ? characterStatus : goal,
+            goal: levelCurrent >= level && ascCurrent >= asc ? characterStatus : goal,
             id: length
         }
         // @ts-ignore
         vue.addGoal(characterGoal)
     }
+
+    const findIndex2 = totalGoal.findIndex(g => g.type == "talent" && g.character == nameEn);
+
+    let talentGoal: TalentGoal;
+    if (findIndex2 < 0) {
+        //{"type":"character","character":"traveler","current":{"level":70,"asc":4,"text":"70"},"goal":{"level":70,"asc":4,"text":"70"},"id":1},
+        //{"type":"talent","character":"traveler_geo","c3":false,"c5":false,"normal":{"current":1,"goal":6},"skill":{"current":1,"goal":6},"burst":{"current":1,"goal":6},"id":2}
+        talentGoal = {
+            type: "talent",
+            character: nameEn,
+            c3: false,
+            c5: false,
+            normal: {
+                current: normalCurrent,
+                goal: normalCurrent
+            },
+            skill: {
+                current: skillCurrent,
+                goal: skillCurrent
+            },
+            burst: {
+                current: burstCurrent,
+                goal: burstCurrent
+            },
+            id: length
+        }
+
+
+    } else {
+        const seelieGoal: TalentGoal = totalGoal[findIndex2];
+        const {normal, skill, burst} = seelieGoal;
+        const {goal: normalGoal} = normal;
+        const {goal: skillGoal} = skill;
+        const {goal: burstGoal} = burst;
+        talentGoal = {
+            ...seelieGoal,
+            normal: {
+                current: normalCurrent,
+                goal: normalCurrent > normalGoal ? normalCurrent : normalGoal
+            }, skill: {
+                current: skillCurrent,
+                goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
+            }, burst: {
+                current: burstCurrent,
+                goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
+            }
+        }
+    }
+    if (nameEn != "traveler") {
+        // @ts-ignore
+        vue.addGoal(talentGoal)
+    } else {
+        console.log("无法判断旅行者元素类型,请自行设置天赋")
+    }
+
+
 }
 
 const characterStatusList: CharacterStatus[] = [
@@ -82,7 +170,7 @@ function initCharacterStatus(level_current: number, name: string) {
             continue
         }
         if (initLevel == level) {
-            // console.log(`米游社数据无法判断是否突破,请自行比较${name}是否已突破`)
+            console.log(`米游社数据无法判断是否突破,请自行比较${name}是否已突破`)
             return characterStatus
         } else {
             return initCharacterStatus;
