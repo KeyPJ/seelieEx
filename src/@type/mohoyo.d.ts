@@ -22,6 +22,10 @@ export namespace mohoyo {
         level_current: number;
     }
 
+    export interface CharacterEx extends Character{
+        nameEn: string;
+    }
+
     export interface SkillList {
         id: number;
         group_id: number;
@@ -59,6 +63,10 @@ export namespace mohoyo {
         skill_list?: SkillList[];
         weapon?: Weapon;
         reliquary_list?: ReliquaryList[];
+    }
+
+    export interface CharacterDataEx extends CharacterData {
+        character: CharacterEx
     }
 
     export interface Res<T> {

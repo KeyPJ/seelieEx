@@ -3,11 +3,14 @@ import Res = mohoyo.Res;
 import Role = mohoyo.Role;
 import Data = mohoyo.Data;
 import Character = mohoyo.Character;
+import CharacterData = mohoyo.CharacterData;
+import {Config} from "./@type";
+import {getCharacterName} from "./query";
+import CharacterDataEx = mohoyo.CharacterDataEx;
+import {addCharacter} from "./seelie";
+import {config} from "./config";
 
-let game_uid = "501725172"
-let region = "cn_qd01";//cn_qd01||cn_gf01
-const accountIdx = 0;
-
+let {game_uid, region, accountIdx} = config
 
 const BBS_URL = 'https://bbs.mihoyo.com/ys/'
 const ROLE_URL = 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn'
@@ -75,7 +78,6 @@ function makePostRequest(uid: string, region: string) {
 const getAccount = async () => {
     try {
         const {list: accountList} = await makeGetRequest(ROLE_URL) as Data<Role>;
-        console.log(accountList);
         return accountList;
     } catch (err) {
         console.error(err)
@@ -94,7 +96,13 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
     const {id} = character;
     const params = `?avatar_id=${id}&uid=${uid}&region=${region}`
     let characterData = await makeGetRequest(CHARACTERS_DETAIL_URL + params) as CharacterData;
-    return {character, ...characterData};
+    const {name} = character;
+    let nameEnglish = getCharacterName(name);
+    const characterEx = {
+        ...character,
+        nameEn: nameEnglish
+    }
+    return {character: characterEx, ...characterData} as CharacterDataEx;
 };
 
 const getDetailList = async () => {
@@ -103,7 +111,7 @@ const getDetailList = async () => {
         console.log(accountList)
         const {game_uid: aUid, region: aRegion} = accountList[accountIdx];
         game_uid = aUid;
-        region = aRegion;
+        region = aRegion=="cn_gf01"?"cn_gf01":"cn_qd01";
     }
 
     const characters = await getCharacters(game_uid, region);
@@ -112,7 +120,17 @@ const getDetailList = async () => {
     for await (let d of details) {
         detailList.push(d);
     }
-    console.log(detailList);
+    return detailList;
 }
-getDetailList()
+
+getDetailList().then(
+    res => {
+        res.forEach(
+            v => {
+                addCharacter(v)
+            }
+        )
+        // addCharacter(res[10])
+    }
+)
 
