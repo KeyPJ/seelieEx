@@ -1,0 +1,38 @@
+### 此接口可以获取命座信息,但需要DS等参数,懒得折腾了
+GET https://api-takumi.mihoyo.com/game_record/genshin/api/index?role_id=501725172&server=cn_qd01
+Accept: application/json, text/plain, */*
+DS: 1625880454,e01348,d568b92bf892b74e518e7e35149c2fca
+x-rpc-app_version: 2.9.0
+x-rpc-client_type: 5
+Cookie: account_id=; cookie_token=;
+
+###
+GET https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn
+Cookie: account_id=; cookie_token=;
+Content-Type: application/json;charset=UTF-8
+
+###
+
+POST https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list
+Cookie: account_id=; cookie_token=;
+Content-Type: application/json;charset=UTF-8
+
+{
+  "element_attr_ids": [],
+  "weapon_cat_ids": [],
+  "page": 1,
+  "size": 20,
+  "uid": "501725172",
+  "region": "cn_qd01"
+}
+
+###
+
+GET https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail?avatar_id=10000021&uid=501725172&region=cn_qd01
+Cookie: account_id=; cookie_token=;
+Content-Type: application/json;charset=UTF-8
+
+###
+
+
+
