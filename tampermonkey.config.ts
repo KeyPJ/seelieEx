@@ -14,7 +14,7 @@ export default {
     description: ['description', ['zh', '描述']],
     namespace: 'https://github.com/KeyPJ/seelieEx',
     icon: 'https://www.google.com/s2/favicons?domain=inmagi.com',
-    version: '1.0.0',
+    version: '1.0.1',
     include: ['https://seelie.inmagi.com/*'],
     grant: ['unsafeWindow', 'GM_setValue', 'GM_download', 'GM_xmlhttpRequest','GM_openInTab'],
     externals: [['tag', 'value']],
