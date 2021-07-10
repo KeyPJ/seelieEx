@@ -107,7 +107,14 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
 const getDetailList = async () => {
     if (!game_uid || !region) {
         const accountList: mohoyo.Role[] = await getAccount();
-        console.log(accountList)
+
+        if (accountList.length === 0) {
+            throw new Error("账户绑定角色信息获取失败!")
+        }
+
+        if (accountIdx >= accountList.length) {
+            accountIdx = accountList.length - 1;
+        }
         const {game_uid: aUid, region: aRegion} = accountList[accountIdx];
         game_uid = aUid;
         region = aRegion == "cn_gf01" ? "cn_gf01" : "cn_qd01";
