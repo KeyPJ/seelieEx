@@ -19,6 +19,7 @@ export default {
     grant: ['unsafeWindow', 'GM_setValue', 'GM_download', 'GM_xmlhttpRequest','GM_openInTab'],
     externals: [['tag', 'value']],
     require: ['https://cdn.jsdelivr.net/npm/core-js-bundle@3.9.1/index.js'],
+    connect: 'api-takumi.mihoyo.com'
   },
   devServer: {
     proxyUserJsFileName: 'dev-server-proxy.user.js',

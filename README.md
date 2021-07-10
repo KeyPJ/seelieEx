@@ -19,28 +19,24 @@
 
 该脚本安装完毕后,直接刷新页面,就会自动执行(人懒,懒得在页面加按钮写样式)
 
-该脚本默认获取绑定第一个角色的相关信息,若需要同步其他角色信息,请修改脚本里的参数
+该脚本默认获取绑定第一个角色的相关信息,若需要同步其他角色信息,请通过修改localStorage来修改脚本里的参数
 
 | 参数       | 说明 |    值范围  |
 | ---------- | ---- | ---- |
 | game_uid   |   游戏角色9位uid   | 默认:"" |
 | region     |   区服| 官服:"cn_gf01",渠道(B服):"cn_qd01" |
 | accountIdx |   账号索引| 默认0,当game_uid为空时,该值生效,获取第accountIdx+1个账户信息 |
-
+ 
+如需修改game_uid及region
+在浏览器console执行
 ```
-let { game_uid: t, region: o, accountIdx: r } = { game_uid: "", region: "cn_qd01", accountIdx: 0 };
-```
-
-请填写 game_uid及region
-
-例如修改为
-```
-let { game_uid: t, region: o, accountIdx: r } = { game_uid: "501725172", region: "cn_qd01", accountIdx: 0 };
+localStorage.setItem("mihoyoAccount", JSON.stringify({game_uid:'501725172', region:'cn_qd01', accountIdx:0}))
 ```
 
-或者 请填写 accountIdx,数组越界时获取最后一个角色信息
+或者 需要修改 accountIdx(数组越界时获取最后一个角色信息
+在浏览器console执行
 ```
-let { game_uid: t, region: o, accountIdx: r } = { game_uid: "", region: "cn_qd01", accountIdx: 1 };
+localStorage.setItem("mihoyoAccount", JSON.stringify({game_uid:'', region:'cn_gf01', accountIdx:1}))
 ```
 
-主要信息会在console输出,请自行查看
+其他的主要信息也会在console输出,请自行查看

@@ -8,8 +8,16 @@ import {getCharacterName} from "./query";
 import CharacterDataEx = mohoyo.CharacterDataEx;
 import {addCharacter} from "./seelie";
 import {config} from "./config";
+import {Config} from "./@type";
 
-let {game_uid, region, accountIdx} = config
+const mihoyoAccountStr = localStorage.getItem("mihoyoAccount");
+let mihoyoAccount;
+if (mihoyoAccountStr) {
+    mihoyoAccount = JSON.parse(mihoyoAccountStr) as Config
+}
+let {game_uid, region, accountIdx} = mihoyoAccount || config
+console.log("mihoyoAccount");
+console.log({game_uid, region, accountIdx});
 
 const BBS_URL = 'https://bbs.mihoyo.com/ys/'
 const ROLE_URL = 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn'
@@ -107,17 +115,16 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
 const getDetailList = async () => {
     if (!game_uid || !region) {
         const accountList: mohoyo.Role[] = await getAccount();
-
         if (accountList.length === 0) {
             throw new Error("账户绑定角色信息获取失败!")
         }
-
         if (accountIdx >= accountList.length) {
             accountIdx = accountList.length - 1;
         }
         const {game_uid: aUid, region: aRegion} = accountList[accountIdx];
         game_uid = aUid;
         region = aRegion == "cn_gf01" ? "cn_gf01" : "cn_qd01";
+        localStorage.setItem("mihoyoAccount", JSON.stringify({game_uid, region, accountIdx}))
     }
 
     const characters = await getCharacters(game_uid, region);
