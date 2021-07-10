@@ -4,6 +4,7 @@ import CharacterDataEx = mohoyo.CharacterDataEx;
 import CharacterStatus = seelie.CharacterStatus;
 import CharacterGoal = seelie.CharacterGoal;
 import TalentGoal = seelie.TalentGoal;
+import {getElementAttrName} from "./query";
 
 
 const getTotalGoal = () => {
@@ -15,85 +16,58 @@ const getTotalGoal = () => {
 export function addCharacter(characterDataEx: CharacterDataEx) {
 
     const {character, skill_list} = characterDataEx;
-    const {name, nameEn} = character;
+    const {name, nameEn, element_attr_id} = character;
+
+    //{"type":"character","character":"traveler","current":{"level":70,"asc":4,"text":"70"},"goal":{"level":70,"asc":4,"text":"70"},"id":1},
+    //{"type":"talent","character":"traveler_geo","c3":false,"c5":false,"normal":{"current":1,"goal":6},"skill":{"current":1,"goal":6},"burst":{"current":1,"goal":6},"id":2}
+
 
     let totalGoal: Goal[] = getTotalGoal();
     const length = totalGoal.length;
-    const findIndex = totalGoal.findIndex(g => g.type == "character" && g.character == nameEn);
-
+    const characterIdx = totalGoal.findIndex(g => g.type == "character" && g.character == nameEn);
     const {level_current} = character;
     const characterStatus: CharacterStatus = initCharacterStatus(level_current, name);
 
-    const {level_current: normalCurrent} = skill_list[0];
-    const {level_current: skillCurrent} = skill_list[1];
-    const {level_current: burstCurrent} = skill_list[2];
-
-    if (findIndex < 0) {
-        //{"type":"character","character":"traveler","current":{"level":70,"asc":4,"text":"70"},"goal":{"level":70,"asc":4,"text":"70"},"id":1},
-        //{"type":"talent","character":"traveler_geo","c3":false,"c5":false,"normal":{"current":1,"goal":6},"skill":{"current":1,"goal":6},"burst":{"current":1,"goal":6},"id":2}
-        //初始化两条数据
-        // initByCharacter(character,length)
-        const characterGoal: CharacterGoal = {
+    let characterGoal: CharacterGoal
+    if (characterIdx < 0) {
+        characterGoal = {
             type: "character",
             character: nameEn,
             current: characterStatus,
             goal: characterStatus,
             id: length
         }
-        const talentGoal: TalentGoal = {
-            type: "talent",
-            character: nameEn,
-            c3: false,
-            c5: false,
-            normal: {
-                current: normalCurrent,
-                goal: normalCurrent
-            },
-            skill: {
-                current: skillCurrent,
-                goal: skillCurrent
-            },
-            burst: {
-                current: burstCurrent,
-                goal: burstCurrent
-            },
-            id: length + 1
-        }
-
-        // @ts-ignore
-        vue.addGoal(characterGoal)
-        if (nameEn != "traveler") {
-            // @ts-ignore
-            vue.addGoal(talentGoal)
-        } else {
-            console.log("无法判断旅行者元素类型,请自行设置天赋")
-        }
     } else {
-        const seelieGoal: Goal = totalGoal[findIndex];
+        const seelieGoal: Goal = totalGoal[characterIdx];
         const {goal} = seelieGoal;
         const {level, asc} = goal;
         const {level: levelCurrent, asc: ascCurrent} = characterStatus;
 
-        const characterGoal: CharacterGoal = {
-            type: "character",
-            character: nameEn,
+        characterGoal = {
+            ...seelieGoal,
             current: characterStatus,
             goal: levelCurrent >= level && ascCurrent >= asc ? characterStatus : goal,
-            id: length
         }
-        // @ts-ignore
-        vue.addGoal(characterGoal)
+    }
+    // @ts-ignore
+    vue.addGoal(characterGoal)
+
+    let talentCharacter = nameEn;
+    if (nameEn == "traveler") {
+        const elementAttrName = getElementAttrName(element_attr_id);
+        talentCharacter = `traveler_${elementAttrName}`;
     }
 
-    const findIndex2 = totalGoal.findIndex(g => g.type == "talent" && g.character == nameEn);
+    const talentIdx = totalGoal.findIndex(g => g.type == "talent" && g.character == talentCharacter);
+    const {level_current: normalCurrent} = skill_list[0];
+    const {level_current: skillCurrent} = skill_list[1];
+    const {level_current: burstCurrent} = skill_list[2];
 
     let talentGoal: TalentGoal;
-    if (findIndex2 < 0) {
-        //{"type":"character","character":"traveler","current":{"level":70,"asc":4,"text":"70"},"goal":{"level":70,"asc":4,"text":"70"},"id":1},
-        //{"type":"talent","character":"traveler_geo","c3":false,"c5":false,"normal":{"current":1,"goal":6},"skill":{"current":1,"goal":6},"burst":{"current":1,"goal":6},"id":2}
+    if (talentIdx < 0) {
         talentGoal = {
             type: "talent",
-            character: nameEn,
+            character: talentCharacter,
             c3: false,
             c5: false,
             normal: {
@@ -110,10 +84,8 @@ export function addCharacter(characterDataEx: CharacterDataEx) {
             },
             id: length
         }
-
-
     } else {
-        const seelieGoal: TalentGoal = totalGoal[findIndex2];
+        const seelieGoal: TalentGoal = totalGoal[talentIdx];
         const {normal, skill, burst} = seelieGoal;
         const {goal: normalGoal} = normal;
         const {goal: skillGoal} = skill;
@@ -132,12 +104,8 @@ export function addCharacter(characterDataEx: CharacterDataEx) {
             }
         }
     }
-    if (nameEn != "traveler") {
-        // @ts-ignore
-        vue.addGoal(talentGoal)
-    } else {
-        console.log("无法判断旅行者元素类型,请自行设置天赋")
-    }
+    // @ts-ignore
+    vue.addGoal(talentGoal)
 
 
 }
