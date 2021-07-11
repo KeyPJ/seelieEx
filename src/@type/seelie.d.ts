@@ -11,21 +11,35 @@ declare module seelie {
         goal: number;
     }
 
-    export interface Goal extends CharacterGoal,TalentGoal{
+    export interface Goal {
+        type: "character" | "talent" | "weapon";
+        id: number;
+        character?: string;
+        weapon?: string;
+        current?: CharacterStatus;
+        goal?: CharacterStatus;
+        normal?: SkillStatus;
+        skill?: SkillStatus;
+        burst?: SkillStatus;
+        c3?: boolean;
+        c5?: boolean;
     }
 
-    export interface CharacterGoal {
-        type: "character"|"talent";
+    export interface CharacterGoal extends Goal {
         character: string;
         current: CharacterStatus;
         goal: CharacterStatus;
-        id: number;
     }
 
-    export interface TalentGoal {
-        type: "character"|"talent";
+    export interface WeaponGoal extends Goal {
         character: string;
-        id: number;
+        weapon: string;
+        current: CharacterStatus;
+        goal: CharacterStatus;
+    }
+
+    export interface TalentGoal extends Goal {
+        character: string;
         normal: SkillStatus;
         skill: SkillStatus;
         burst: SkillStatus;

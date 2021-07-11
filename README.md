@@ -42,3 +42,26 @@ localStorage.setItem("mihoyoAccount", JSON.stringify({game_uid:'', region:'cn_gf
 ```
 
 其他的主要信息也会在console输出,请自行查看
+
+
+# data数据
+### weapon.json
+在[仙灵 - 原神规划助手](https://seelie.inmagi.com/) -武器,点击添加
+```javascript
+[].slice.call(document.querySelectorAll(".items-start>.relative")).map(a=>{ 
+        const scr=a.firstElementChild.firstElementChild.src;
+        const id=scr.match(/(\/([\w-]*)\.png)/)[2]
+        const name=a.innerText.replace("SOON","").replaceAll("\n","")
+        return {id,name}
+})
+```
+### character.json
+在[仙灵 - 原神规划助手](https://seelie.inmagi.com/) -角色,点击添加
+```javascript
+[].slice.call(document.querySelectorAll(".items-center>.relative")).map(a=>{ 
+        const scr=a.firstElementChild.firstElementChild.src;
+        const id=scr.match(/(\/([\w-]*)\.png)/)[2]
+        const name=a.innerText.replace("SOON","").replaceAll("\n","")
+        return {id,name}
+})
+```

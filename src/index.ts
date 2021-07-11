@@ -4,11 +4,10 @@ import Role = mohoyo.Role;
 import Data = mohoyo.Data;
 import Character = mohoyo.Character;
 import CharacterData = mohoyo.CharacterData;
-import {getCharacterName} from "./query";
 import CharacterDataEx = mohoyo.CharacterDataEx;
-import {addCharacter} from "./seelie";
 import {config} from "./config";
 import {Config} from "./@type";
+import {addCharacter} from "./seelie";
 
 const mihoyoAccountStr = localStorage.getItem("mihoyoAccount");
 let mihoyoAccount;
@@ -103,13 +102,7 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
     const {id} = character;
     const params = `?avatar_id=${id}&uid=${uid}&region=${region}`
     let characterData = await makeGetRequest(CHARACTERS_DETAIL_URL + params) as CharacterData;
-    const {name} = character;
-    let nameEnglish = getCharacterName(name);
-    const characterEx = {
-        ...character,
-        nameEn: nameEnglish
-    }
-    return {character: characterEx, ...characterData} as CharacterDataEx;
+    return {character, ...characterData} as CharacterDataEx;
 };
 
 const getDetailList = async () => {

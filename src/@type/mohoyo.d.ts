@@ -21,11 +21,7 @@ export namespace mohoyo {
         max_level: number;
         level_current: number;
     }
-
-    export interface CharacterEx extends Character{
-        nameEn: string;
-    }
-
+    
     export interface Skill {
         id: number;
         group_id: number;
@@ -66,7 +62,7 @@ export namespace mohoyo {
     }
 
     export interface CharacterDataEx extends CharacterData {
-        character: CharacterEx
+        character: Character
     }
 
     export interface Res<T> {

@@ -14,12 +14,17 @@ export default {
     description: ['description', ['zh', '描述']],
     namespace: 'https://github.com/KeyPJ/seelieEx',
     icon: 'https://www.google.com/s2/favicons?domain=inmagi.com',
-    version: '1.0.1',
+    version: '1.0.2',
     include: ['https://seelie.inmagi.com/*'],
-    grant: ['unsafeWindow', 'GM_setValue', 'GM_download', 'GM_xmlhttpRequest','GM_openInTab'],
+    grant: ['unsafeWindow', 'GM_setValue', 'GM_download', 'GM_xmlhttpRequest','GM_openInTab','GM_getResourceText'],
     externals: [['tag', 'value']],
     require: ['https://cdn.jsdelivr.net/npm/core-js-bundle@3.9.1/index.js'],
-    connect: 'api-takumi.mihoyo.com'
+    connect: 'api-takumi.mihoyo.com',
+    resource: [
+        {name:"character",url:"https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx/src/data/character.json"},
+        {name:"weapon",url:"https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx/src/data/weapon.json"}
+    ],
+    "run-at": "document-end",
   },
   devServer: {
     proxyUserJsFileName: 'dev-server-proxy.user.js',
