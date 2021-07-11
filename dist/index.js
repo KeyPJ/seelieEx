@@ -1,25 +1,29 @@
 // ==UserScript==
-// @name              genshinSeelieEx
-// @name:zh           原神规划助手扩展
-// @description       description
-// @description:zh    描述
-// @include           https://seelie.inmagi.com/*
-// @require           https://cdn.jsdelivr.net/npm/core-js-bundle@3.9.1/index.js
-// @grant             unsafeWindow
-// @grant             GM_setValue
-// @grant             GM_download
-// @grant             GM_xmlhttpRequest
-// @grant             GM_openInTab
-// @grant             GM_getResourceText
-// @resource          character    https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx/src/data/character.json
-// @resource          weapon    https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx/src/data/weapon.json
-// @author            KeyPJ
-// @namespace         https://github.com/KeyPJ/seelieEx
-// @icon              https://www.google.com/s2/favicons?domain=inmagi.com
-// @version           1.0.2
-// @connect           api-takumi.mihoyo.com
-// @run-at            document-end
-// @tag               value
+// @name               genshinSeelieEx
+// @name:zh            原神规划助手扩展
+// @description        description
+// @description:zh     个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
+// @include            https://seelie.inmagi.com/*
+// @require            https://cdn.jsdelivr.net/npm/core-js-bundle@3.9.1/index.js
+// @grant              unsafeWindow
+// @grant              GM_setValue
+// @grant              GM_download
+// @grant              GM_xmlhttpRequest
+// @grant              GM_openInTab
+// @grant              GM_getResourceText
+// @resource           character    https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx/src/data/character.json
+// @resource           weapon    https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx/src/data/weapon.json
+// @author             KeyPJ
+// @namespace          https://github.com/KeyPJ/seelieEx
+// @icon               https://seelie.inmagi.com/img/icons/favicon-32x32.png
+// @version            1.0.3
+// @connect            api-takumi.mihoyo.com
+// @run-at             document-end
+// @homepage           https://github.com/KeyPJ
+// @homepageURL        https://github.com/KeyPJ/seelieEx
+// @copyright          2021, KeyPJ https://github.com/KeyPJ
+// @license            MIT
+// @contributionURL    https://github.com/KeyPJ/seelieEx
 // ==/UserScript==
 
 (()=>{"use strict";const e=JSON.parse(GM_getResourceText("character")),t=JSON.parse(GM_getResourceText("weapon")),n=[{element_attr_id:1,name:"pyro"},{element_attr_id:2,name:"anemo"},{element_attr_id:3,name:"geo"},{element_attr_id:4,name:"electro"},{element_attr_id:5,name:"hydro"},{element_attr_id:6,name:"cryo"},{element_attr_id:7,name:"dendro"}],r=()=>vue.goals,o=(e,t,n,o)=>{let l=r();const c=l.map((e=>e.id)),i=Math.max(...c)+1||1,s=l.findIndex("character"==o?e=>e.type==o&&e.character==t:e=>e.type==o&&e.weapon==t),u=function(e,t){let n=a[0],r=1;for(let o of a){const{level:a}=o;if(!(e>=a))return r==a?(console.log(`米游社数据无法判断是否突破,请自行比较${t}是否已突破`),o):n;r=a,n=o}return n}(e,n);let d;if(s<0)d="character"==o?{type:o,character:t,current:u,goal:u,id:i}:{type:o,character:"",weapon:t,current:u,goal:u,id:i};else{const e=l[s],{goal:t}=e,{level:n,asc:r}=t,{level:o,asc:a}=u;d=Object.assign(Object.assign({},e),{current:u,goal:o>=n&&a>=r?u:t})}vue.addGoal(d)};const a=[{level:1,asc:0,text:"1"},{level:20,asc:0,text:"20"},{level:20,asc:1,text:"20 A"},{level:40,asc:1,text:"40"},{level:40,asc:2,text:"40 A"},{level:50,asc:2,text:"50"},{level:50,asc:3,text:"50 A"},{level:60,asc:3,text:"60"},{level:60,asc:4,text:"60 A"},{level:70,asc:4,text:"70"},{level:70,asc:5,text:"70 A"},{level:80,asc:5,text:"80"},{level:80,asc:6,text:"80 A"},{level:90,asc:6,text:"90"}];var l=function(e,t,n,r){return new(n||(n=Promise))((function(o,a){function l(e){try{i(r.next(e))}catch(e){a(e)}}function c(e){try{i(r.throw(e))}catch(e){a(e)}}function i(e){var t;e.done?o(e.value):(t=e.value,t instanceof n?t:new n((function(e){e(t)}))).then(l,c)}i((r=r.apply(e,t||[])).next())}))};const c=localStorage.getItem("mihoyoAccount");let i;c&&(i=JSON.parse(c));let{game_uid:s,region:u,accountIdx:d}=i||{game_uid:"",region:"cn_qd01",accountIdx:0};function m(e){return new Promise(((t,n)=>{GM_xmlhttpRequest({method:"GET",url:e,onload:e=>{if(200==e.status){const r=JSON.parse(e.responseText),{retcode:o,message:a,data:l}=r;0===o?t(l):n(a)}else n(e.responseText)},onerror:e=>{n(e)}})}))}console.log("mihoyoAccount"),console.log({game_uid:s,region:u,accountIdx:d});l(void 0,void 0,void 0,(function*(){var e,t;if(!s||!u){const e=yield l(void 0,void 0,void 0,(function*(){try{const{list:e}=yield m("https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn");return e}catch(e){return console.error(e),alert("请确认已登录米哈游论坛且绑定原神账户!"),GM_openInTab("https://bbs.mihoyo.com/ys/"),[]}}));if(0===e.length)throw new Error("账户绑定角色信息获取失败!");d>=e.length&&(d=e.length-1);const{game_uid:t,region:n}=e[d];s=t,u="cn_gf01"==n?"cn_gf01":"cn_qd01",localStorage.setItem("mihoyoAccount",JSON.stringify({game_uid:s,region:u,accountIdx:d}))}const n=(yield((e,t)=>l(void 0,void 0,void 0,(function*(){const{list:n}=yield function(e,t){return new Promise(((n,r)=>{GM_xmlhttpRequest({method:"POST",url:"https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list",data:JSON.stringify({element_attr_ids:[],weapon_cat_ids:[],page:1,size:50,uid:e,region:t}),onload:e=>{if(200==e.status){const t=JSON.parse(e.responseText),{retcode:o,message:a,data:l}=t;0===o?n(l):r(a)}else r(e.responseText)},onerror:e=>{r(e)}})}))}(e,t);return n})))(s,u)).map((e=>((e,t,n)=>l(void 0,void 0,void 0,(function*(){const{id:r}=e,o=`?avatar_id=${r}&uid=${t}&region=${n}`;let a=yield m("https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail"+o);return Object.assign({character:e},a)})))(e,s,u))),r=[];try{for(var o,a=function(e){if(!Symbol.asyncIterator)throw new TypeError("Symbol.asyncIterator is not defined.");var t,n=e[Symbol.asyncIterator];return n?n.call(e):(e="function"==typeof __values?__values(e):e[Symbol.iterator](),t={},r("next"),r("throw"),r("return"),t[Symbol.asyncIterator]=function(){return this},t);function r(n){t[n]=e[n]&&function(t){return new Promise((function(r,o){!function(e,t,n,r){Promise.resolve(r).then((function(t){e({value:t,done:n})}),t)}(r,o,(t=e[n](t)).done,t.value)}))}}}(n);!(o=yield a.next()).done;){let e=o.value;r.push(e)}}catch(t){e={error:t}}finally{try{o&&!o.done&&(t=a.return)&&(yield t.call(a))}finally{if(e)throw e.error}}return r})).then((a=>{console.log(a),a.forEach((a=>{!function(a){const{character:l,skill_list:c,weapon:i}=a,{name:s,element_attr_id:u}=l;if(i){const{name:e,level_current:n}=i,r=(e=>{for(let n of t){const{id:t,name:r}=n;if(e==r)return t}return console.error(`getWeaponrId ${e} 查询失败`),""})(e);console.log(r,e),r&&o(n,r,e,"weapon")}const{level_current:d}=l,m=(t=>{for(let n of e){const{id:e,name:r}=n;if(t==r)return e}return console.error(`getCharacterId ${t} 查询失败`),""})(s);if(!m)return;o(d,m,s,"character");let v=m;"traveler"==m&&(v=`traveler_${(e=>{for(let t of n){const{element_attr_id:n,name:r}=t;if(e==n)return r}return console.error(`getElementAttrName: ${e} 查询失败`),""})(u)}`),((e,t)=>{const n=r(),o=n.map((e=>e.id)),a=Math.max(...o)+1||1,l=n.findIndex((t=>"talent"==t.type&&t.character==e)),{level_current:c}=t[0],{level_current:i}=t[1],{level_current:s}=t[2];let u;if(l<0)u={type:"talent",character:e,c3:!1,c5:!1,normal:{current:c,goal:c},skill:{current:i,goal:i},burst:{current:s,goal:s},id:a};else{const e=n[l],{normal:t,skill:r,burst:o}=e,{goal:a}=t,{goal:d}=r,{goal:m}=o;u=Object.assign(Object.assign({},e),{normal:{current:c,goal:c>a?c:a},skill:{current:i,goal:i>d?i:d},burst:{current:s,goal:s>m?s:m}})}vue.addGoal(u)})(v,c)}(a)}))}))})();
