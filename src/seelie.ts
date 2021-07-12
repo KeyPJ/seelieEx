@@ -19,10 +19,8 @@ const addTalentGoal = (talentCharacter: string, skill_list: mohoyo.Skill[]) => {
     const ids = totalGoal.map(g=>g.id);
     const id = Math.max(...ids) + 1 || 1;
     const talentIdx = totalGoal.findIndex(g => g.type == "talent" && g.character == talentCharacter);
-    const {level_current: normalCurrent} = skill_list[0];
-    const {level_current: skillCurrent} = skill_list[1];
-    const {level_current: burstCurrent} = skill_list[2];
-
+    const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter(a => a.max_level == 10).sort().map(a => a.level_current)
+    console.log(talentCharacter,[normalCurrent, skillCurrent, burstCurrent])
     let talentGoal: TalentGoal;
     if (talentIdx < 0) {
         talentGoal = {
