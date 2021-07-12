@@ -16,11 +16,11 @@ export const getTotalGoal = () => {
 
 const addTalentGoal = (talentCharacter: string, skill_list: mohoyo.Skill[]) => {
     const totalGoal: Goal[] = getTotalGoal();
-    const ids = totalGoal.map(g=>g.id);
+    const ids = totalGoal.map(g => g.id);
     const id = Math.max(...ids) + 1 || 1;
     const talentIdx = totalGoal.findIndex(g => g.type == "talent" && g.character == talentCharacter);
     const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter(a => a.max_level == 10).sort().map(a => a.level_current)
-    console.log(talentCharacter,[normalCurrent, skillCurrent, burstCurrent])
+    console.log(talentCharacter, [normalCurrent, skillCurrent, burstCurrent])
     let talentGoal: TalentGoal;
     if (talentIdx < 0) {
         talentGoal = {
@@ -68,7 +68,7 @@ const addTalentGoal = (talentCharacter: string, skill_list: mohoyo.Skill[]) => {
 
 export const addCharacterGoal = (level_current: number, nameEn: String, name: string, type: string) => {
     let totalGoal: Goal[] = getTotalGoal();
-    const ids = totalGoal.map(g=>g.id);
+    const ids = totalGoal.map(g => g.id);
     const id = Math.max(...ids) + 1 || 1;
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     let weaponPredicate = (g: Goal) => g.type == type && g.weapon == nameEn;
@@ -90,7 +90,7 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
     function initWeaponGoal() {
         return {
             type,
-            character:"",
+            character: "",
             weapon: nameEn,
             current: characterStatus,
             goal: characterStatus,
@@ -102,18 +102,19 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
         characterGoal = type == "character" ? initCharacterGoal() : initWeaponGoal();
     } else {
         const seelieGoal = type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as WeaponGoal
-        const {goal} = seelieGoal;
-        const {level, asc} = goal;
-        const {level: levelCurrent, asc: ascCurrent} = characterStatus;
+        const {goal, current} = seelieGoal;
+        const {level: levelCurrent, asc: ascCurrent} = current;
+        const {level: levelGoal, asc: ascGoal} = goal;
+        const {level, asc} = characterStatus;
 
         characterGoal = {
             ...seelieGoal,
-            current: characterStatus,
-            goal: levelCurrent >= level && ascCurrent >= asc ? characterStatus : goal,
+            current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
+            goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
         }
     }
     // @ts-ignore
-    type == "character" ?vue.addGoal(characterGoal as CharacterGoal):vue.addGoal(characterGoal as WeaponGoal)
+    type == "character" ? vue.addGoal(characterGoal as CharacterGoal) : vue.addGoal(characterGoal as WeaponGoal)
 };
 
 export function addCharacter(characterDataEx: CharacterDataEx) {
@@ -128,14 +129,14 @@ export function addCharacter(characterDataEx: CharacterDataEx) {
     if (weapon) {
         const {name, level_current: weaponLeveL} = weapon;
         const weaponId = getWeaponId(name);
-        console.log(weaponId,name);
+        console.log(weaponId, name);
         if (weaponId) {
             addCharacterGoal(weaponLeveL, weaponId, name, "weapon");
         }
     }
     const {level_current: characterLevel} = character;
     const characterId = getCharacterId(name);
-    if (!characterId){
+    if (!characterId) {
         return
     }
     addCharacterGoal(characterLevel, characterId, name, "character");
@@ -152,38 +153,36 @@ export function addCharacter(characterDataEx: CharacterDataEx) {
 const characterStatusList: CharacterStatus[] = [
     {level: 1, asc: 0, text: "1"},
     {level: 20, asc: 0, text: "20"},
-    {level: 20, asc: 1, text: "20 A"},
     {level: 40, asc: 1, text: "40"},
-    {level: 40, asc: 2, text: "40 A"},
     {level: 50, asc: 2, text: "50"},
-    {level: 50, asc: 3, text: "50 A"},
     {level: 60, asc: 3, text: "60"},
-    {level: 60, asc: 4, text: "60 A"},
     {level: 70, asc: 4, text: "70"},
-    {level: 70, asc: 5, text: "70 A"},
     {level: 80, asc: 5, text: "80"},
-    {level: 80, asc: 6, text: "80 A"},
     {level: 90, asc: 6, text: "90"},
 ]
 
-function initCharacterStatus(level_current: number, name: string) {
+const initCharacterStatus = (level_current: number, name: string) => {
     let initCharacterStatus = characterStatusList[0];
-    let initLevel = 1;
+    if (level_current < 20) {
+        return initCharacterStatus;
+    }
     for (let characterStatus of characterStatusList) {
         const {level} = characterStatus;
-        if (level_current >= level) {
-            initLevel = level
+        if (level_current < level) {
+            const {asc, text} = initCharacterStatus
+            return {
+                ...initCharacterStatus,
+                asc: asc + 1,
+                text: `${text} A`
+            }
+        } else if (level_current == level) {
+            if (level_current != 90) {
+                console.log(`米游社数据无法判断是否突破,请自行比较${name}是否已突破`)
+            }
+            return characterStatus;
+        } else if (level_current >= level) {
             initCharacterStatus = characterStatus
-            continue
-        }
-        if (initLevel == level) {
-            console.log(`米游社数据无法判断是否突破,请自行比较${name}是否已突破`)
-            return characterStatus
-        } else {
-            return initCharacterStatus;
         }
     }
     return initCharacterStatus;
-}
-
-
+};
