@@ -38,7 +38,7 @@ export default {
   },
   externals: {},
   output: {
-    filename: 'index.js',
+    filename: 'index.user.js',
     path: resolve(__dirname, 'dist'),
     publicPath: `http://${host}:${port}/`,
   },
@@ -49,7 +49,7 @@ export default {
   devServer: {
     host,
     port,
-    filename: 'index.js',
+    filename: 'index.user.js',
     disableHostCheck: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
