@@ -132,7 +132,24 @@ const getDetailList = async () => {
 
 getDetailList().then(
     res => {
-        console.log(res);
+        console.group('返回数据');
+        console.groupCollapsed('角色');
+        console.table(res.map(a=>a.character))
+        console.groupEnd();
+        console.groupCollapsed('武器');
+        console.table(res.map(a=>a.weapon))
+        console.groupEnd();
+        console.groupCollapsed('角色天赋');
+        res.forEach(
+            c=>{
+                const name = c.character.name;
+                console.groupCollapsed(name);
+                console.table(c.skill_list)
+                console.groupEnd();
+            }
+        )
+        console.groupEnd();
+        console.groupEnd();
         res.forEach(
             v => {
                 addCharacter(v)
