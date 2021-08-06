@@ -11,12 +11,12 @@
 // @grant              GM_xmlhttpRequest
 // @grant              GM_openInTab
 // @grant              GM_getResourceText
-// @resource           character    https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx/src/data/character.json
-// @resource           weapon    https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx/src/data/weapon.json
+// @resource           character    https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json
+// @resource           weapon    https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json
 // @author             KeyPJ
 // @namespace          https://github.com/KeyPJ/seelieEx
 // @icon               https://seelie.inmagi.com/img/icons/favicon-32x32.png
-// @version            1.0.5
+// @version            1.0.6
 // @connect            api-takumi.mihoyo.com
 // @run-at             document-end
 // @homepage           https://github.com/KeyPJ
