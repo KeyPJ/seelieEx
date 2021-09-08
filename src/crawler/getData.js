@@ -24,7 +24,7 @@ async function getPageData(page, url, selector) {
         relative => {
             const scr = relative.firstElementChild.firstElementChild.src
             const id = scr.match(/(\/([\w-]*)\.png)/)[2]
-            const name = relative.innerText.replace("SOON", "").replaceAll("\n", "")
+            const name = relative.innerText.replace("NEW", "").replace("SOON", "").replaceAll("\n", "")
             return {id, name}
         }
     ))
