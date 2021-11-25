@@ -13,18 +13,18 @@ async function getPageData(page, url, selector) {
     //设置中文
     await page.evaluate(() => {
         [].slice.call(document.querySelector('.underline').parentNode.children).forEach(a => {
-            if (a.innerText == '中文') a.click()
+            if (a.innerText === '中文') a.click()
         })
     })
 
-    //获取数据
-    const button = await page.$('button.w-full')
-    await button.click()
+    await page.click('#main button.w-full')
+
     const list = await page.$$eval(selector, relativeList => relativeList.map(
         relative => {
             const scr = relative.firstElementChild.firstElementChild.src
-            const id = scr.match(/(\/([\w-]*)\.png)/)[2]
-            const name = relative.innerText.replace("NEW", "").replace("SOON", "").replaceAll("\n", "")
+            const match = scr.match(/(\/([\w-]*)\.png)/)
+            const id = match&&match[2]
+            const name = relative.innerText.replace("NEW", "").replace("SOON", "").replace("即将上线", "").replaceAll("\n", "")
             return {id, name}
         }
     ))
@@ -45,13 +45,12 @@ const scrape = async () => {
         })
     })
     const charactersUrl = 'https://seelie.inmagi.com/characters'
-    const charactersSelector = '.items-center>.relative'
-    const characters = await getPageData(page, charactersUrl, charactersSelector)
+    const selector = '.items-start>.relative'
+    const characters = await getPageData(page, charactersUrl, selector)
     console.log(characters)
 
     const weaponsUrl = 'https://seelie.inmagi.com/weapons'
-    const weaponsSelector = '.items-start>.relative'
-    const weapons = await getPageData(page, weaponsUrl, weaponsSelector)
+    const weapons = await getPageData(page, weaponsUrl, selector)
     console.log(weapons)
 
     await browser.close()
