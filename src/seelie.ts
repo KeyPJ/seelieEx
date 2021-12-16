@@ -8,11 +8,21 @@ import {getCharacterId, getElementAttrName, getWeaponId} from "./query";
 import WeaponGoal = seelie.WeaponGoal;
 
 
-export const getTotalGoal = () => {
+const getTotalGoal = () => {
     // @ts-ignore
     const goals: Goal[] = vue.goals;
     return goals;
 };
+
+const getGoalInactive: () => string[] = () => {
+    // @ts-ignore
+    return Object.keys(vue.inactive) || [];
+};
+
+const addGoal = (goal: any) => {
+    // @ts-ignore
+    vue.addGoal(goal)
+}
 
 const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
     const totalGoal: Goal[] = getTotalGoal();
@@ -62,8 +72,7 @@ const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
             }
         }
     }
-    // @ts-ignore
-    vue.addGoal(talentGoal)
+    addGoal(talentGoal)
 };
 
 export const addCharacterGoal = (level_current: number, nameEn: String, name: string, type: string) => {
@@ -113,8 +122,7 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
         }
     }
-    // @ts-ignore
-    type == "character" ? vue.addGoal(characterGoal as CharacterGoal) : vue.addGoal(characterGoal as WeaponGoal)
+    addGoal(characterGoal)
 };
 
 export function addCharacter(characterDataEx: CharacterDataEx) {
@@ -150,14 +158,20 @@ export function addCharacter(characterDataEx: CharacterDataEx) {
 
 }
 
-const characterStatusList: CharacterStatus[] = [
+export const characterStatusList: CharacterStatus[] = [
     {level: 1, asc: 0, text: "1"},
     {level: 20, asc: 0, text: "20"},
+    {level: 20, asc: 1, text: "20 A"},
     {level: 40, asc: 1, text: "40"},
+    {level: 40, asc: 2, text: "40 A"},
     {level: 50, asc: 2, text: "50"},
+    {level: 50, asc: 3, text: "50 A"},
     {level: 60, asc: 3, text: "60"},
+    {level: 60, asc: 4, text: "60 A"},
     {level: 70, asc: 4, text: "70"},
+    {level: 70, asc: 5, text: "70 A"},
     {level: 80, asc: 5, text: "80"},
+    {level: 80, asc: 6, text: "80 A"},
     {level: 90, asc: 6, text: "90"},
 ]
 
@@ -186,3 +200,50 @@ const initCharacterStatus = (level_current: number, name: string) => {
     }
     return initCharacterStatus;
 };
+
+const updateTalent = (talent: TalentGoal, normalGoal = 9, skillGoal = 9, burstGoal = 9) => {
+    const {normal: {current: normalCurrent}, skill: {current: skillCurrent}, burst: {current: burstCurrent}} = talent;
+    const talentNew = {
+        ...talent,
+        normal: {
+            current: normalCurrent,
+            goal: normalCurrent > normalGoal ? normalCurrent : normalGoal
+        }, skill: {
+            current: skillCurrent,
+            goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
+        }, burst: {
+            current: burstCurrent,
+            goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
+        }
+    }
+    addGoal(talentNew)
+}
+
+export const batchUpdateTalent = (all:boolean, normal: number, skill: number, burst: number) => {
+    console.log(getTotalGoal().filter(a => a.type == 'talent'));
+    getTotalGoal().filter(a => a.type == 'talent').filter(a => all || !getGoalInactive().includes(a.character as string))
+        .map(a => updateTalent(a as TalentGoal, normal, skill, burst))
+}
+
+
+const updateCharacter = (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
+    const {goal, current} = character;
+    const {level: levelCurrent, asc: ascCurrent} = current;
+    const {level, asc} = characterStatusGoal;
+
+    const characterGoalNew = {
+        ...character,
+        goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current,
+    }
+    addGoal(characterGoalNew)
+}
+
+export const batchUpdateCharacter = (all: boolean, characterStatusGoal: CharacterStatus,) => {
+    getTotalGoal().filter(a => a.type == "character").filter(a => all || !getGoalInactive().includes(a.character as string))
+        .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
+}
+
+export const batchUpdateWeapon = (all: boolean, characterStatusGoal: CharacterStatus,) => {
+    getTotalGoal().filter(a => a.type == "weapon").filter(a => all || !getGoalInactive().includes(a.weapon as string))
+        .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
+}

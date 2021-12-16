@@ -5,20 +5,8 @@ import Data = mihoyo.Data;
 import Character = mihoyo.Character;
 import CharacterData = mihoyo.CharacterData;
 import CharacterDataEx = mihoyo.CharacterDataEx;
-import {config} from "./config";
-import {Config} from "./@type";
-import {addCharacter} from "./seelie";
 
-const mihoyoAccountStr = localStorage.getItem("mihoyoAccount");
-let mihoyoAccount;
-if (mihoyoAccountStr) {
-    mihoyoAccount = JSON.parse(mihoyoAccountStr) as Config
-}
-let {game_uid, region, accountIdx} = mihoyoAccount || config
-console.log("mihoyoAccount");
-console.log({game_uid, region, accountIdx});
-
-const BBS_URL = 'https://bbs.mihoyo.com/ys/'
+const BBS_URL = 'https://webstatic.mihoyo.com/ys/event/e20210122-slime/index.html'
 const ROLE_URL = 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn'
 const CHARACTERS_URL = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list'
 const CHARACTERS_DETAIL_URL = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail'
@@ -81,13 +69,13 @@ function makePostRequest(uid: string, region: string) {
     });
 }
 
-const getAccount = async () => {
+export const getAccount = async () => {
     try {
         const {list: accountList} = await makeGetRequest(ROLE_URL) as Data<Role>;
         return accountList;
     } catch (err) {
         console.error(err)
-        alert("请确认已登录米哈游论坛且绑定原神账户!")
+        alert("请确认已登录活动页面且绑定原神账户!")
         GM_openInTab(BBS_URL)
         return []
     }
@@ -105,20 +93,7 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
     return {character, ...characterData} as CharacterDataEx;
 };
 
-const getDetailList = async () => {
-    if (!game_uid || !region) {
-        const accountList: mihoyo.Role[] = await getAccount();
-        if (accountList.length === 0) {
-            throw new Error("账户绑定角色信息获取失败!")
-        }
-        if (accountIdx >= accountList.length) {
-            accountIdx = accountList.length - 1;
-        }
-        const {game_uid: aUid, region: aRegion} = accountList[accountIdx];
-        game_uid = aUid;
-        region = aRegion == "cn_gf01" ? "cn_gf01" : "cn_qd01";
-        localStorage.setItem("mihoyoAccount", JSON.stringify({game_uid, region, accountIdx}))
-    }
+export const getDetailList = async (game_uid: string, region: string) => {
 
     const characters = await getCharacters(game_uid, region);
     const details = characters.map(c => getCharacterDetail(c, game_uid, region));
@@ -130,30 +105,4 @@ const getDetailList = async () => {
 }
 
 
-getDetailList().then(
-    res => {
-        console.group('返回数据');
-        console.groupCollapsed('角色');
-        console.table(res.map(a=>a.character))
-        console.groupEnd();
-        console.groupCollapsed('武器');
-        console.table(res.map(a=>a.weapon))
-        console.groupEnd();
-        console.groupCollapsed('角色天赋');
-        res.forEach(
-            c=>{
-                const name = c.character.name;
-                console.groupCollapsed(name);
-                console.table(c.skill_list)
-                console.groupEnd();
-            }
-        )
-        console.groupEnd();
-        console.groupEnd();
-        res.forEach(
-            v => {
-                addCharacter(v)
-            }
-        )
-    }
-)
+

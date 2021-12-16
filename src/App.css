@@ -1,0 +1,29 @@
+
+.float-btn {
+    position: fixed;
+    bottom: 30%;
+    left: 15px;
+    width: 60px;
+    height: 60px;
+    background: black;
+    opacity: 0.75;
+    color: white;
+    text-align: center;
+    line-height: 60px;
+    cursor: pointer;
+    z-index:1201
+}
+
+.ex-dialog{
+    position: fixed;
+    top: 100px;
+    left: 30%;
+    width: 600px;
+    height: 600px;
+    background: rgba(30,41,59);
+    opacity: 0.75;
+    color: white;
+    text-align: center;
+    line-height: 60px;
+    z-index:1200
+}

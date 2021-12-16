@@ -15,12 +15,12 @@ import tampermonkeyOptions from './tampermonkey.config';
 const host = '127.0.0.1';
 const port = 8080;
 export default {
-  entry: './src/index.ts',
+  entry: './src/index.tsx',
   devtool: 'inline-source-map',
   module: {
     rules: [
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         use: [
           {
             loader: 'ts-loader',
@@ -31,10 +31,11 @@ export default {
         ],
         exclude: /node_modules/,
       },
+      {test:/\.css$/,use:['style-loader','css-loader']},
     ],
   },
   resolve: {
-    extensions: ['.js', '.ts'],
+    extensions: ['.js', '.ts', '.tsx'],
   },
   externals: {},
   output: {
