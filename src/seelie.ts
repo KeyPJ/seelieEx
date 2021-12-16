@@ -1,6 +1,6 @@
 import Goal = seelie.Goal;
-import {mohoyo} from "./@type/mohoyo";
-import CharacterDataEx = mohoyo.CharacterDataEx;
+import {mihoyo} from "./@type/mihoyo";
+import CharacterDataEx = mihoyo.CharacterDataEx;
 import CharacterStatus = seelie.CharacterStatus;
 import CharacterGoal = seelie.CharacterGoal;
 import TalentGoal = seelie.TalentGoal;
@@ -14,7 +14,7 @@ export const getTotalGoal = () => {
     return goals;
 };
 
-const addTalentGoal = (talentCharacter: string, skill_list: mohoyo.Skill[]) => {
+const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
     const totalGoal: Goal[] = getTotalGoal();
     const ids = totalGoal.map(g => g.id);
     const id = Math.max(...ids) + 1 || 1;

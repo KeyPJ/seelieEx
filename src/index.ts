@@ -1,10 +1,10 @@
-import {mohoyo} from "./@type/mohoyo";
-import Res = mohoyo.Res;
-import Role = mohoyo.Role;
-import Data = mohoyo.Data;
-import Character = mohoyo.Character;
-import CharacterData = mohoyo.CharacterData;
-import CharacterDataEx = mohoyo.CharacterDataEx;
+import {mihoyo} from "./@type/mihoyo";
+import Res = mihoyo.Res;
+import Role = mihoyo.Role;
+import Data = mihoyo.Data;
+import Character = mihoyo.Character;
+import CharacterData = mihoyo.CharacterData;
+import CharacterDataEx = mihoyo.CharacterDataEx;
 import {config} from "./config";
 import {Config} from "./@type";
 import {addCharacter} from "./seelie";
@@ -107,7 +107,7 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
 
 const getDetailList = async () => {
     if (!game_uid || !region) {
-        const accountList: mohoyo.Role[] = await getAccount();
+        const accountList: mihoyo.Role[] = await getAccount();
         if (accountList.length === 0) {
             throw new Error("账户绑定角色信息获取失败!")
         }

@@ -1,4 +1,4 @@
-export namespace mohoyo {
+export namespace mihoyo {
 
     export interface Role {
         game_biz: string;
@@ -21,7 +21,7 @@ export namespace mohoyo {
         max_level: number;
         level_current: number;
     }
-    
+
     export interface Skill {
         id: number;
         group_id: number;
