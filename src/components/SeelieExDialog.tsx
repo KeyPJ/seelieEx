@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {mihoyo} from "../@type/mihoyo";
 import Role = mihoyo.Role;
 
-import {Button, Col, Form, Row, Tab, Tabs} from 'react-bootstrap';
+import {Button, ButtonGroup, Col, Form, Row, Tab, Tabs, ToggleButton} from 'react-bootstrap';
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import WeaponGoalTab from "./tabs/WeaponGoalTab";
@@ -11,6 +11,18 @@ import {getAccount, getDetailList} from "../utils";
 import {addCharacter} from "../seelie";
 
 function ExDialog() {
+
+    const radios = [
+        { name: '国服(含渠道', value: 'hk4e_cn' },
+        { name: '国际服', value: 'hk4e_global' },
+    ];
+
+    const [gameBiz, setGameBiz] = useState<string>("hk4e_cn");
+
+    const onChangeGameBiz = (e: any) => {
+        setGameBiz(e.currentTarget.value)
+        localStorage.setItem("gameBiz", e.currentTarget.value)
+    };
 
     const [accountList, setAccountList] = useState<Role[]>([]);
 
@@ -80,12 +92,33 @@ function ExDialog() {
         <div className="ex-dialog">
             这里是SeelieEX操作界面
             <Row>
+                <Col>区服选择:</Col>
+                <Col>
+                    <ButtonGroup>
+                        {radios.map((radio, idx) => {
+                            return (
+                                <ToggleButton
+                                    key={idx}
+                                    id={`radio-${idx}`}
+                                    type="radio"
+                                    variant={idx % 2 ? 'outline-success' : 'outline-danger'}
+                                    name="radio"
+                                    value={radio.value}
+                                    checked={gameBiz === radio.value}
+                                    onChange={onChangeGameBiz}
+                                >
+                                    {radio.name}
+                                </ToggleButton>
+                            );
+                        })}
+                    </ButtonGroup>
+                </Col>
                 <Col><Button onClick={getAccountList}>获取账户信息</Button></Col>
             </Row>
             <Row>
                 <Col>账户选择:</Col>
                 <Col>
-                    <Form.Select onSelect={handleRoleSelectChange} className="role-select">
+                    <Form.Select onChange={handleRoleSelectChange} className="role-select">
                         {accountList.map((account, index) => (
                             <option value={index} key={index}>{account.game_uid}({account.region})</option>))}
                     </Form.Select>
