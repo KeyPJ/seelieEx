@@ -37,7 +37,12 @@ export default {
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
   },
-  externals: {},
+  externals: {
+    "react": "React",
+    "react-dom": "ReactDOM",
+    'react-bootstrap':'ReactBootstrap',
+    'react-draggable':'ReactDraggable',
+  },
   output: {
     filename: 'index.user.js',
     path: resolve(__dirname, 'dist'),

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import ReactDOM from 'react-dom';
-import {batchUpdateCharacter, batchUpdateWeapon, characterStatusList} from "../../seelie";
+import {batchUpdateWeapon, characterStatusList} from "../../seelie";
 import CharacterStatus = seelie.CharacterStatus;
 
 import {Button, Col, Form, Row, ToggleButton} from 'react-bootstrap';

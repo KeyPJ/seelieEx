@@ -24,10 +24,11 @@ export default {
     ],
     require: [
       'https://cdn.jsdelivr.net/npm/core-js-bundle@3.9.1/index.js',
-      'https://cdn.jsdelivr.net/npm/react/umd/react.production.min.js',
-      'https://cdn.jsdelivr.net/npm/react-dom/umd/react-dom.production.min.js',
-      'https://cdn.jsdelivr.net/npm/react-bootstrap@next/dist/react-bootstrap.min.js',
+      'https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.production.min.js',
+      'https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.production.min.js',
+      'https://cdn.jsdelivr.net/npm/react-bootstrap@2.0.3/dist/react-bootstrap.min.js',
       'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.js',
+      'https://cdn.jsdelivr.net/npm/react-draggable@4.4.4/build/web/react-draggable.min.js',
     ],
     connect: 'api-takumi.mihoyo.com',
     resource: [
