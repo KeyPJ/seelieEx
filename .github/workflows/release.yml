@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Update Data
+name: Build
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-  schedule:
-    - cron: '0 16 * * *'
+  release:
+    types: [published]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,11 +25,11 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Build
-        run: npm install && npm run getdata
+        run: npm install && npm run build
 
       - name: Update Data
         uses: EndBug/add-and-commit@v7
         with:
-          add : 'src/data/*.json'
+          add : 'dist/index.user.js --force'
           default_author: github_actions
-          message: 'update data'
+          message: 'release'
