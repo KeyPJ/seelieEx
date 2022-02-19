@@ -13,7 +13,7 @@ export default {
         name: ['genshinSeelieEx', ['zh', '原神规划助手扩展']],
         description: ['description', ['zh', '个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie']],
         namespace: 'https://github.com/KeyPJ/seelieEx',
-        version: '2.1.0',
+        version: '2.2.0',
         include: ['https://seelie.inmagi.com/*', "https://seelie.me/*"],
         grant: ['unsafeWindow', 'GM_setValue', 'GM_download', 'GM_xmlhttpRequest', 'GM_openInTab', 'GM_getResourceText', 'GM_addStyle'],
         externals: [
@@ -38,7 +38,7 @@ export default {
         "run-at": "document-end",
         homepage: "https://github.com/KeyPJ",
         homepageURL: "https://github.com/KeyPJ/seelieEx",
-        updateURL: "https://openuserjs.org/meta/KeyPJ/genshinSeelieEx.meta.js"
+        updateURL: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/dist/index.user.js"
     },
     devServer: {
         proxyUserJsFileName: 'dev-server-proxy.user.js',
