@@ -30,7 +30,6 @@ const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
     const id = Math.max(...ids) + 1 || 1;
     const talentIdx = totalGoal.findIndex(g => g.type == "talent" && g.character == talentCharacter);
     const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter(a => a.max_level == 10).sort().map(a => a.level_current)
-    console.log(talentCharacter, [normalCurrent, skillCurrent, burstCurrent])
     let talentGoal: TalentGoal;
     if (talentIdx < 0) {
         talentGoal = {
@@ -82,7 +81,7 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     let weaponPredicate = (g: Goal) => g.type == type && g.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
-    const characterStatus: CharacterStatus = initCharacterStatus(level_current, name);
+    const characterStatus: CharacterStatus = initCharacterStatus(level_current);
 
     let characterGoal: Goal
 
@@ -137,7 +136,6 @@ export function addCharacter(characterDataEx: CharacterDataEx) {
     if (weapon) {
         const {name, level_current: weaponLeveL} = weapon;
         const weaponId = getWeaponId(name);
-        console.log(weaponId, name);
         if (weaponId) {
             addCharacterGoal(weaponLeveL, weaponId, name, "weapon");
         }
@@ -175,7 +173,7 @@ export const characterStatusList: CharacterStatus[] = [
     {level: 90, asc: 6, text: "90"},
 ]
 
-const initCharacterStatus = (level_current: number, name: string) => {
+const initCharacterStatus = (level_current: number) => {
     let initCharacterStatus = characterStatusList[0];
     if (level_current < 20) {
         return initCharacterStatus;
@@ -183,18 +181,10 @@ const initCharacterStatus = (level_current: number, name: string) => {
     for (let characterStatus of characterStatusList) {
         const {level} = characterStatus;
         if (level_current < level) {
-            const {asc, text} = initCharacterStatus
-            return {
-                ...initCharacterStatus,
-                asc: asc + 1,
-                text: `${text} A`
-            }
+            return initCharacterStatus;
         } else if (level_current == level) {
-            if (level_current != 90) {
-                console.log(`米游社数据无法判断是否突破,请自行比较${name}是否已突破`)
-            }
             return characterStatus;
-        } else if (level_current >= level) {
+        } else if (level_current > level) {
             initCharacterStatus = characterStatus
         }
     }
@@ -220,14 +210,13 @@ const updateTalent = (talent: TalentGoal, normalGoal = 9, skillGoal = 9, burstGo
 }
 
 export const batchUpdateTalent = (all:boolean, normal: number, skill: number, burst: number) => {
-    console.log(getTotalGoal().filter(a => a.type == 'talent'));
     getTotalGoal().filter(a => a.type == 'talent').filter(a => all || !getGoalInactive().includes(a.character as string))
         .map(a => updateTalent(a as TalentGoal, normal, skill, burst))
 }
 
 
 const updateCharacter = (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
-    const {goal, current} = character;
+    const {current} = character;
     const {level: levelCurrent, asc: ascCurrent} = current;
     const {level, asc} = characterStatusGoal;
 

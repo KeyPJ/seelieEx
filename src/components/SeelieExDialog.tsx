@@ -81,6 +81,8 @@ function ExDialog() {
                         addCharacter(v)
                     }
                 )
+                console.log(`米游社数据无法判断是否突破,请自行比较整数等级是否已突破`)
+                console.log(`角色信息同步完毕`)
                 alert("角色信息同步完毕")
             }
         )
