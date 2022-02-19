@@ -21,7 +21,10 @@ import adapter from "axios-userscript-adapter/dist/esm";
 import {charactersNum} from "./query";
 
 axios.defaults.adapter = adapter;
-axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true;
+
+(<any>window).GM.xmlHttpRequest = GM_xmlhttpRequest;
+
 
 const to = (promise: Promise<any>) => promise.then(data => {
     return [null, data];
@@ -47,7 +50,7 @@ export const getAccount = async () => {
         }
     }
     alert("请确认已登录活动页面且绑定原神账户!")
-    GM_openInTab(isGlobal()?BBS_URL_GLOBAL:BBS_URL)
+    GM_openInTab(isGlobal() ? BBS_URL_GLOBAL : BBS_URL)
     throw err ? err : new Error("账户信息获取失败");
 };
 
@@ -75,7 +78,7 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
         }
     }
     alert("请确认已登录活动页面且绑定原神账户!")
-    GM_openInTab(isGlobal()?BBS_URL_GLOBAL:BBS_URL)
+    GM_openInTab(isGlobal() ? BBS_URL_GLOBAL : BBS_URL)
     throw err ? err : new Error("角色列表获取失败");
 };
 
