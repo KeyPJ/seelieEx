@@ -7,7 +7,7 @@ import {Button, ButtonGroup, Col, Form, Row, Tab, Tabs, ToggleButton} from 'reac
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import WeaponGoalTab from "./tabs/WeaponGoalTab";
-import {getAccount, getDetailList} from "../utils";
+import {getAccount, getDetailList} from "../hoyo";
 import {addCharacter} from "../seelie";
 
 function ExDialog() {
@@ -35,7 +35,7 @@ function ExDialog() {
     const getAccountList = () => {
         getAccount().then(
             res => {
-                const roles: mihoyo.Role[] = res;
+                const roles : mihoyo.Role[] = res;
                 setAccountList(roles)
                 roles.length > 0 && setCurrentAccount(roles[0])
             }
