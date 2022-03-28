@@ -30,7 +30,7 @@ const to = (promise: Promise<any>) => promise.then(data => {
     return [null, data];
 }).catch(err => [err]);
 
-const isGlobal = () => {
+export const isGlobal = () => {
     return "hk4e_global" == localStorage.getItem("gameBiz")
 }
 

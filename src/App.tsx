@@ -1,10 +1,7 @@
 import React, {useState} from 'react';
-import ReactDOM from 'react-dom';
-import Draggable from 'react-draggable';
+import Draggable, {ControlPosition, DraggableData, DraggableEvent} from 'react-draggable';
 import './App.css';
 import ExDialog from "./components/SeelieExDialog";
-// import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 function App() {
 
@@ -12,11 +9,32 @@ function App() {
 
     const nodeRef = React.useRef(null)
 
+    const [position, setPosition] = useState<ControlPosition>(() => {
+        const itemString = localStorage.getItem("seelieExPosition");
+        if (typeof itemString == 'string' && itemString.length > 0) {
+            return JSON.parse(itemString) as ControlPosition
+        }
+        return {x: 30, y: 500};
+    });
+
+    const handleDragStop = (e: DraggableEvent, data: DraggableData) => {
+        const {x, y} = data;
+        localStorage.setItem("seelieExPosition", JSON.stringify({x, y}));
+        setPosition({x, y})
+    }
+
     return (
         <div className="App">
-            <Draggable nodeRef={nodeRef}>
-                <div ref={nodeRef} className="float-btn" onClick={() => setShowExDialog(!showExDialog)}>
-                    SeelieEX
+            <Draggable nodeRef={nodeRef} defaultPosition={position} onStop={handleDragStop}>
+                <div ref={nodeRef}
+                     className="fixed inset-0 max-w-max max-h-max flex items-center justify-center z-[1201]">
+                    <button
+                        type="button"
+                        onClick={() => setShowExDialog(!showExDialog)}
+                        className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+                    >
+                        SeelieEX
+                    </button>
                 </div>
             </Draggable>
             <div style={{display: showExDialog ? "" : "none"}}>

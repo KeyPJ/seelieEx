@@ -1,22 +1,22 @@
 import React, {useState} from "react";
-import ReactDOM from 'react-dom';
 import {batchUpdateTalent} from "../../seelie";
 
-import {Button, Col, Form, Row, ToggleButton} from 'react-bootstrap';
+import ToggleSwitch from "../switch/ToggleSwitch";
+import ListboxSelect from "../select/ListboxSelect";
 
 function TalentGoalTab() {
 
-    const [selectAllRoles, setSelectAllRoles] = useState<boolean>(()=>true);
+    const [selectAllRoles, setSelectAllRoles] = useState<boolean>(() => true);
 
-    const [talentGoalLevel, setTalentGoalLevel] = useState( {
+    const [talentGoalLevel, setTalentGoalLevel] = useState({
         normal: 1,
-        skill: 1,
-        burst: 1
+        skill: 6,
+        burst: 6
     });
 
     const talentLevels: number[] = [
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-    ]
+    ].reverse();
 
     const batchSetCharacterTalentLevel = () => {
         console.log("批量设置角色目标天赋")
@@ -28,54 +28,60 @@ function TalentGoalTab() {
     }
 
     return <div>
-        <Row>
-            <Col>批量设置角色目标天赋
-                <ToggleButton
-                    className="mb-2"
-                    id="toggle-check-talent"
-                    type="checkbox"
-                    variant="outline-primary"
-                    checked={selectAllRoles}
-                    value="0"
-                    onChange={(e) => setSelectAllRoles(e.currentTarget.checked)}
-                >
-                    仅激活角色
-                </ToggleButton>
-            </Col>
-        </Row>
-        <Row>
-            <Col>普通攻击目标等级:
-                <Form.Select onChange={event => setTalentGoalLevel({
-                    ...talentGoalLevel,
-                    normal: +event.target.value
-                })}
-                             className="character-level-goal-select">
-                    {talentLevels.map((level) => (
-                        <option value={level} key={level}>{level}</option>))}
-                </Form.Select>
-            </Col>
-            <Col>元素战技目标等级:
-                <Form.Select onChange={event => setTalentGoalLevel({
-                    ...talentGoalLevel,
-                    skill: +event.target.value
-                })}
-                             className="character-level-goal-select">
-                    {talentLevels.map((level) => (
-                        <option value={level} key={level}>{level}</option>))}
-                </Form.Select>
-            </Col>
-            <Col>元素爆发目标等级:
-                <Form.Select onChange={event => setTalentGoalLevel({
-                    ...talentGoalLevel,
-                    burst: +event.target.value
-                })}
-                             className="character-level-goal-select">
-                    {talentLevels.map((level) => (
-                        <option value={level} key={level}>{level}</option>))}
-                </Form.Select>
-            </Col>
-            <Col><Button onClick={batchSetCharacterTalentLevel}>批量设置角色目标天赋</Button></Col>
-        </Row>
+        <div className="flex pt-4">
+            <ToggleSwitch
+                className='w-full'
+                checked={selectAllRoles}
+                onChange={setSelectAllRoles}
+                labelLeft={'全部角色'}
+                labelRight={'仅激活角色'}
+            />
+        </div>
+        <div className="grid grid-rows-2 grid-flow-col gap-2">
+            <div className='mt-10'>普通攻击</div>
+            <div>
+                <ListboxSelect
+                    selected={talentGoalLevel.normal}
+                    setSelected={num => setTalentGoalLevel({
+                        ...talentGoalLevel,
+                        normal: num
+                    })}
+                    optionList={talentLevels}
+                    show={num => `${num}`}
+                />
+            </div>
+            <div className='mt-10'>元素战技</div>
+            <div>
+                <ListboxSelect
+                    selected={talentGoalLevel.skill}
+                    setSelected={num => setTalentGoalLevel({
+                        ...talentGoalLevel,
+                        skill: num
+                    })}
+                    optionList={talentLevels}
+                    show={num => `${num}`}
+                />
+            </div>
+            <div className='mt-10'>元素爆发</div>
+            <div>
+                <ListboxSelect
+                    selected={talentGoalLevel.burst}
+                    setSelected={num => setTalentGoalLevel({
+                        ...talentGoalLevel,
+                        burst: num
+                    })}
+                    optionList={talentLevels}
+                    show={num => `${num}`}
+                />
+            </div>
+        </div>
+        <div className="flex pt-2">
+            <div className="w-full">
+                <button className="text-white bg-blue-500 px-4 py-2"
+                        onClick={batchSetCharacterTalentLevel}>批量设置角色目标天赋
+                </button>
+            </div>
+        </div>
     </div>
 }
 
