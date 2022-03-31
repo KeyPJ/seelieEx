@@ -20,7 +20,7 @@ export default defineConfig({
                 namespace: 'https://github.com/KeyPJ/seelieEx',
                 version: '2.6.0',
                 include: ['https://seelie.inmagi.com/*', "https://seelie.me/*"],
-                grant: ['unsafeWindow', 'GM_setValue', 'GM_download', 'GM_xmlhttpRequest', 'GM_openInTab', 'GM_getResourceText', 'GM_addStyle'],
+                grant: ['unsafeWindow', 'GM_xmlhttpRequest', 'GM_openInTab', 'GM_getResourceText'],
                 extra: [
                     ['copyright', '2021, KeyPJ https://github.com/KeyPJ'],
                 ],
