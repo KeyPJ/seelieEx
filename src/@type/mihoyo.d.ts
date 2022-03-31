@@ -1,4 +1,4 @@
-export namespace mihoyo {
+declare namespace mihoyo {
 
     export interface Role {
         game_biz: string;

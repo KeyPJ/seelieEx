@@ -1,4 +1,3 @@
-import {mihoyo} from "./@type/mihoyo";
 import Role = mihoyo.Role;
 import Data = mihoyo.Data;
 import Character = mihoyo.Character;
@@ -14,16 +13,15 @@ const BBS_URL_GLOBAL = 'https://webstatic-sea.mihoyo.com/ys/event/e20210928revie
 const ROLE_URL_GLOBAL = 'https://api-os-takumi.mihoyo.com/binding/api/getUserGameRolesByLtoken?game_biz=hk4e_global'
 const CHARACTERS_URL_GLOBAL = 'https://sg-public-api.mihoyo.com/event/calculateos/sync/avatar/list'
 const CHARACTERS_DETAIL_URL_GLOBAL = 'https://sg-public-api.mihoyo.com/event/calculateos/sync/avatar/detail'
-
-
-const axios = require("axios");
 import adapter from "axios-userscript-adapter/dist/esm";
 import {charactersNum} from "./query";
 
-axios.defaults.adapter = adapter;
+import axios, {AxiosAdapter} from "axios";
+
+axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
 
-(<any>window).GM.xmlHttpRequest = GM_xmlhttpRequest;
+// (<any>window).GM.xmlHttpRequest = GM_xmlhttpRequest;
 
 
 const to = (promise: Promise<any>) => promise.then(data => {

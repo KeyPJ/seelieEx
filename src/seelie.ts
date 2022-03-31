@@ -1,5 +1,4 @@
 import Goal = seelie.Goal;
-import {mihoyo} from "./@type/mihoyo";
 import CharacterDataEx = mihoyo.CharacterDataEx;
 import CharacterStatus = seelie.CharacterStatus;
 import CharacterGoal = seelie.CharacterGoal;

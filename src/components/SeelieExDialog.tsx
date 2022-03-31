@@ -1,14 +1,13 @@
 import React, {Fragment, useState} from "react";
-import {mihoyo} from "../@type/mihoyo";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {addCharacter, batchUpdateCharacter, batchUpdateWeapon} from "../seelie";
 import {getAccount, getDetailList, isGlobal} from "../hoyo";
-import Role = mihoyo.Role;
 import {Disclosure, Tab} from "@headlessui/react";
 import {ChevronUpIcon} from '@heroicons/react/solid'
 import ToggleSwitch from "./switch/ToggleSwitch";
 import ListboxSelect from "./select/ListboxSelect";
+import Role = mihoyo.Role;
 
 
 function ExDialog() {
