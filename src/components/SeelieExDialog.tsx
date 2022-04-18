@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from "react";
+import React, {useState} from "react";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {addCharacter, batchUpdateCharacter, batchUpdateWeapon} from "../seelie";
@@ -93,8 +93,6 @@ function ExDialog() {
         )
     }
 
-    const [key, setKey] = useState('character');
-
     function classNames(...classes: string[]) {
         return classes.filter(Boolean).join(' ')
     }
@@ -104,6 +102,9 @@ function ExDialog() {
             <h1 className="text-3xl font-bold underline pt-4">
                 SeelieEX
             </h1>
+            <h2 className="text-xl font-bold underline pt-4">
+                本脚本与原网页样式冲突,不使用时可以临时禁用脚本
+            </h2>
             <div className="w-full p-4">
                 <div className="w-full max-w-md p-2 mx-auto bg-purple rounded-2xl">
                     <Disclosure>

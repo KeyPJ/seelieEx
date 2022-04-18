@@ -15,7 +15,7 @@ export default defineConfig({
                     ':zh': '原神规划助手扩展',
                 },
                 description: {
-                    ':zh':'个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie'
+                    ':zh': '个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie'
                 },
                 namespace: 'https://github.com/KeyPJ/seelieEx',
                 version: '2.6.0',
@@ -24,7 +24,7 @@ export default defineConfig({
                 extra: [
                     ['copyright', '2021, KeyPJ https://github.com/KeyPJ'],
                 ],
-                license:'MIT',
+                license: 'MIT',
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
                 connect: ['api-takumi.mihoyo.com', 'api-os-takumi.mihoyo.com', 'sg-public-api.mihoyo.com'],
                 resource: {
@@ -48,6 +48,11 @@ export default defineConfig({
                         'ReactDOM',
                         (version) =>
                             `https://cdn.jsdelivr.net/npm/react-dom@${version}/umd/react-dom.production.min.js`,
+                    ],
+                    'react-draggable': [
+                        'ReactDraggable',
+                        (version) =>
+                            `https://cdn.jsdelivr.net/npm/react-draggable@${version}/build/web/react-draggable.min.js`,
                     ],
                 },
             },
