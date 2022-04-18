@@ -4,12 +4,9 @@ name: Build
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  release:
-    types: [published]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -23,13 +20,43 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      # Get commit message
+      - name: Get commit message
+        run: |
+          COMMIT_MESSAGE=$(git log --format=%s -n 1)
+          echo "commitmsg=${COMMIT_MESSAGE}" >> $GITHUB_ENV
+      - name: Show commit message
+        run : echo "$commitmsg"
+
+      # Get & check npm publish dist-tag when event is push
+      - name: Get dist tag
+        if: startsWith( env.commitmsg , 'build:' )
+        run: |
+          DIST_TAG=`echo $commitmsg | grep -Po '(\d(\.\d)+)'`
+          echo "disttag=v${DIST_TAG}" >> $GITHUB_ENV
+          echo "$disttag"
+
       # Runs a single command using the runners shell
       - name: Build
         run: npm install && npm run build
 
-      - name: Update Data
+      # Commit
+      - name: commit dist
         uses: EndBug/add-and-commit@v7
+        if: env.disttag
         with:
-          add : 'dist/index.user.js --force'
+          add: 'dist/index.user.js --force'
           default_author: github_actions
-          message: 'release'
+          message: 'commit ${{ env.disttag }} release asset'
+          branch: main
+
+      # Release
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        if: env.disttag
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ env.disttag }}
+          prerelease: false
+          files: |
+            dist/index.user.js
