@@ -1,31 +1,31 @@
 // ==UserScript==
 // @name             genshinSeelieEx
+// @name:zh          原神规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          2.6.0
+// @version          2.7.0
 // @author           KeyPJ
+// @description:zh   个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
 // @homepage         https://github.com/KeyPJ
 // @homepageURL      https://github.com/KeyPJ/seelieEx
-// @updateURL        https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/dist/index.user.js
+// @updateURL        https://greasyfork.org/scripts/443664-genshinseelieex/code/genshinSeelieEx.user.js
 // @include          https://seelie.inmagi.com/*
 // @include          https://seelie.me/*
-// @require          https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.production.min.js
-// @require          https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.production.min.js
-// @require          https://cdn.jsdelivr.net/npm/react-draggable@4.4.4/build/web/react-draggable.min.js
+// @require          https://unpkg.zhimg.com/react@17.0.2/umd/react.production.min.js
+// @require          https://unpkg.zhimg.com/react-dom@17.0.2/umd/react-dom.production.min.js
+// @require          https://unpkg.com/react-draggable@4.4.5/build/web/react-draggable.min.js
 // @connect          api-takumi.mihoyo.com
 // @connect          api-os-takumi.mihoyo.com
 // @connect          sg-public-api.mihoyo.com
-// @resource         character https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json
-// @resource         weapon https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/weapon.json
+// @resource         character https://seelie-ex.vercel.app/character.json
+// @resource         weapon https://seelie-ex.vercel.app/weapon.json
+// @grant            unsafeWindow
+// @grant            GM_xmlhttpRequest
 // @grant            GM_openInTab
 // @grant            GM_getResourceText
 // @grant            GM.xmlHttpRequest
 // @run-at           document-end
 // @contributionURL  https://github.com/KeyPJ/seelieEx
-// @name:zh          原神规划助手扩展
-// @description:zh   个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
-// @grant            unsafeWindow
-// @grant            GM_xmlhttpRequest
 // @copyright        2021, KeyPJ https://github.com/KeyPJ
 // ==/UserScript==
 
@@ -74,42 +74,42 @@ var __objRest = (source, exclude) => {
   return target;
 };
 (function(React2, ReactDOM2, Draggable) {
-  var _a;
+  var _a, _b;
   "use strict";
-  function _interopDefaultLegacy(e) {
-    return e && typeof e === "object" && "default" in e ? e : { "default": e };
+  function _interopDefaultLegacy(e2) {
+    return e2 && typeof e2 === "object" && "default" in e2 ? e2 : { "default": e2 };
   }
-  function _interopNamespace(e) {
-    if (e && e.__esModule)
-      return e;
+  function _interopNamespace(e2) {
+    if (e2 && e2.__esModule)
+      return e2;
     var n2 = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
-    if (e) {
-      Object.keys(e).forEach(function(k2) {
+    if (e2) {
+      Object.keys(e2).forEach(function(k2) {
         if (k2 !== "default") {
-          var d = Object.getOwnPropertyDescriptor(e, k2);
-          Object.defineProperty(n2, k2, d.get ? d : {
+          var d2 = Object.getOwnPropertyDescriptor(e2, k2);
+          Object.defineProperty(n2, k2, d2.get ? d2 : {
             enumerable: true,
             get: function() {
-              return e[k2];
+              return e2[k2];
             }
           });
         }
       });
     }
-    n2["default"] = e;
+    n2["default"] = e2;
     return Object.freeze(n2);
   }
   var React__default = /* @__PURE__ */ _interopDefaultLegacy(React2);
   var React__namespace = /* @__PURE__ */ _interopNamespace(React2);
   var ReactDOM__default = /* @__PURE__ */ _interopDefaultLegacy(ReactDOM2);
   var Draggable__default = /* @__PURE__ */ _interopDefaultLegacy(Draggable);
-  var App$1 = "";
+  var App$1 = /* @__PURE__ */ (() => '/*\n! tailwindcss v3.0.24 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: \'\';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user\'s configured `sans` font-family by default.\n*/\n\nhtml {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 4 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user\'s configured `mono` font family by default.\n2. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  line-height: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\n[type=\'button\'],\n[type=\'reset\'],\n[type=\'submit\'] {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type=\'search\'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user\'s configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput:-ms-input-placeholder, textarea:-ms-input-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role="button"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don\'t get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/*\nEnsure the default browser behavior of the `hidden` attribute.\n*/\n\n[hidden] {\n  display: none;\n}\n\n*, ::before, ::after {\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\n.pointer-events-none {\n  pointer-events: none;\n}\n.fixed {\n  position: fixed;\n}\n.absolute {\n  position: absolute;\n}\n.relative {\n  position: relative;\n}\n.inset-0 {\n  top: 0px;\n  right: 0px;\n  bottom: 0px;\n  left: 0px;\n}\n.inset-x-\\[20\\%\\] {\n  left: 20%;\n  right: 20%;\n}\n.inset-y-0 {\n  top: 0px;\n  bottom: 0px;\n}\n.top-10 {\n  top: 2.5rem;\n}\n.right-0 {\n  right: 0px;\n}\n.left-0 {\n  left: 0px;\n}\n.z-\\[1201\\] {\n  z-index: 1201;\n}\n.z-\\[1200\\] {\n  z-index: 1200;\n}\n.mx-auto {\n  margin-left: auto;\n  margin-right: auto;\n}\n.mt-2 {\n  margin-top: 0.5rem;\n}\n.mt-1 {\n  margin-top: 0.25rem;\n}\n.mt-10 {\n  margin-top: 2.5rem;\n}\n.block {\n  display: block;\n}\n.inline-block {\n  display: inline-block;\n}\n.flex {\n  display: flex;\n}\n.inline-flex {\n  display: inline-flex;\n}\n.table {\n  display: table;\n}\n.grid {\n  display: grid;\n}\n.h-5 {\n  height: 1.25rem;\n}\n.h-6 {\n  height: 1.5rem;\n}\n.h-4 {\n  height: 1rem;\n}\n.max-h-max {\n  max-height: -webkit-max-content;\n  max-height: -moz-max-content;\n  max-height: max-content;\n}\n.max-h-60 {\n  max-height: 15rem;\n}\n.min-h-min {\n  min-height: -webkit-min-content;\n  min-height: -moz-min-content;\n  min-height: min-content;\n}\n.w-full {\n  width: 100%;\n}\n.w-5 {\n  width: 1.25rem;\n}\n.w-1\\/2 {\n  width: 50%;\n}\n.w-1\\/4 {\n  width: 25%;\n}\n.w-11 {\n  width: 2.75rem;\n}\n.w-4 {\n  width: 1rem;\n}\n.min-w-\\[50\\%\\] {\n  min-width: 50%;\n}\n.max-w-max {\n  max-width: -webkit-max-content;\n  max-width: -moz-max-content;\n  max-width: max-content;\n}\n.max-w-md {\n  max-width: 28rem;\n}\n.translate-x-6 {\n  --tw-translate-x: 1.5rem;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n.translate-x-1 {\n  --tw-translate-x: 0.25rem;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n.rotate-180 {\n  --tw-rotate: 180deg;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n.cursor-default {\n  cursor: default;\n}\n.select-none {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.grid-flow-col {\n  grid-auto-flow: column;\n}\n.grid-rows-2 {\n  grid-template-rows: repeat(2, minmax(0, 1fr));\n}\n.flex-row {\n  flex-direction: row;\n}\n.items-start {\n  align-items: flex-start;\n}\n.items-center {\n  align-items: center;\n}\n.justify-center {\n  justify-content: center;\n}\n.justify-between {\n  justify-content: space-between;\n}\n.gap-2 {\n  gap: 0.5rem;\n}\n.space-x-1 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-x-reverse: 0;\n  margin-right: calc(0.25rem * var(--tw-space-x-reverse));\n  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));\n}\n.overflow-auto {\n  overflow: auto;\n}\n.truncate {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.rounded-md {\n  border-radius: 0.375rem;\n}\n.rounded-2xl {\n  border-radius: 1rem;\n}\n.rounded-lg {\n  border-radius: 0.5rem;\n}\n.rounded-xl {\n  border-radius: 0.75rem;\n}\n.rounded-full {\n  border-radius: 9999px;\n}\n.bg-black {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 0 0 / var(--tw-bg-opacity));\n}\n.bg-slate-700 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(51 65 85 / var(--tw-bg-opacity));\n}\n.bg-purple-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 232 255 / var(--tw-bg-opacity));\n}\n.bg-blue-500 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(59 130 246 / var(--tw-bg-opacity));\n}\n.bg-blue-900\\/20 {\n  background-color: rgb(30 58 138 / 0.2);\n}\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n}\n.bg-amber-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(254 243 199 / var(--tw-bg-opacity));\n}\n.bg-blue-600 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(37 99 235 / var(--tw-bg-opacity));\n}\n.bg-gray-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\n.bg-opacity-20 {\n  --tw-bg-opacity: 0.2;\n}\n.p-4 {\n  padding: 1rem;\n}\n.p-2 {\n  padding: 0.5rem;\n}\n.p-1 {\n  padding: 0.25rem;\n}\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n.py-2\\.5 {\n  padding-top: 0.625rem;\n  padding-bottom: 0.625rem;\n}\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n.pt-4 {\n  padding-top: 1rem;\n}\n.pb-2 {\n  padding-bottom: 0.5rem;\n}\n.pt-2 {\n  padding-top: 0.5rem;\n}\n.pl-3 {\n  padding-left: 0.75rem;\n}\n.pr-10 {\n  padding-right: 2.5rem;\n}\n.pr-2 {\n  padding-right: 0.5rem;\n}\n.pl-10 {\n  padding-left: 2.5rem;\n}\n.pr-4 {\n  padding-right: 1rem;\n}\n.text-left {\n  text-align: left;\n}\n.text-center {\n  text-align: center;\n}\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\n.text-3xl {\n  font-size: 1.875rem;\n  line-height: 2.25rem;\n}\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n.text-base {\n  font-size: 1rem;\n  line-height: 1.5rem;\n}\n.font-medium {\n  font-weight: 500;\n}\n.font-bold {\n  font-weight: 700;\n}\n.font-normal {\n  font-weight: 400;\n}\n.leading-5 {\n  line-height: 1.25rem;\n}\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity));\n}\n.text-slate-900 {\n  --tw-text-opacity: 1;\n  color: rgb(15 23 42 / var(--tw-text-opacity));\n}\n.text-purple-500 {\n  --tw-text-opacity: 1;\n  color: rgb(168 85 247 / var(--tw-text-opacity));\n}\n.text-blue-700 {\n  --tw-text-opacity: 1;\n  color: rgb(29 78 216 / var(--tw-text-opacity));\n}\n.text-blue-100 {\n  --tw-text-opacity: 1;\n  color: rgb(219 234 254 / var(--tw-text-opacity));\n}\n.text-gray-900 {\n  --tw-text-opacity: 1;\n  color: rgb(17 24 39 / var(--tw-text-opacity));\n}\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity));\n}\n.text-amber-900 {\n  --tw-text-opacity: 1;\n  color: rgb(120 53 15 / var(--tw-text-opacity));\n}\n.text-amber-600 {\n  --tw-text-opacity: 1;\n  color: rgb(217 119 6 / var(--tw-text-opacity));\n}\n.underline {\n  -webkit-text-decoration-line: underline;\n          text-decoration-line: underline;\n}\n.opacity-75 {\n  opacity: 0.75;\n}\n.opacity-100 {\n  opacity: 1;\n}\n.opacity-0 {\n  opacity: 0;\n}\n.shadow {\n  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.shadow-md {\n  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.shadow-lg {\n  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.ring-1 {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n.ring-white {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity));\n}\n.ring-black {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity));\n}\n.ring-opacity-60 {\n  --tw-ring-opacity: 0.6;\n}\n.ring-opacity-5 {\n  --tw-ring-opacity: 0.05;\n}\n.ring-offset-2 {\n  --tw-ring-offset-width: 2px;\n}\n.ring-offset-blue-400 {\n  --tw-ring-offset-color: #60a5fa;\n}\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n.transition {\n  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.duration-100 {\n  transition-duration: 100ms;\n}\n.ease-in {\n  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);\n}\n.hover\\:bg-purple-200:hover {\n  --tw-bg-opacity: 1;\n  background-color: rgb(233 213 255 / var(--tw-bg-opacity));\n}\n.hover\\:bg-white\\/\\[0\\.12\\]:hover {\n  background-color: rgb(255 255 255 / 0.12);\n}\n.hover\\:bg-opacity-30:hover {\n  --tw-bg-opacity: 0.3;\n}\n.hover\\:text-white:hover {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity));\n}\n.focus\\:outline-none:focus {\n  outline: 2px solid transparent;\n  outline-offset: 2px;\n}\n.focus\\:ring-2:focus {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n.focus-visible\\:border-indigo-500:focus-visible {\n  --tw-border-opacity: 1;\n  border-color: rgb(99 102 241 / var(--tw-border-opacity));\n}\n.focus-visible\\:ring-2:focus-visible {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n.focus-visible\\:ring:focus-visible {\n  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);\n  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);\n  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);\n}\n.focus-visible\\:ring-white:focus-visible {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity));\n}\n.focus-visible\\:ring-purple-500:focus-visible {\n  --tw-ring-opacity: 1;\n  --tw-ring-color: rgb(168 85 247 / var(--tw-ring-opacity));\n}\n.focus-visible\\:ring-opacity-75:focus-visible {\n  --tw-ring-opacity: 0.75;\n}\n.focus-visible\\:ring-offset-2:focus-visible {\n  --tw-ring-offset-width: 2px;\n}\n.focus-visible\\:ring-offset-orange-300:focus-visible {\n  --tw-ring-offset-color: #fdba74;\n}\n@media (min-width: 640px) {\n\n  .sm\\:text-sm {\n    font-size: 0.875rem;\n    line-height: 1.25rem;\n  }\n}\n\n')();
   const characters = JSON.parse(GM_getResourceText("character"));
   const weapons = JSON.parse(GM_getResourceText("weapon"));
   const charactersNum = characters.length;
   const getCharacterId = (queryName) => {
-    for (let e of characters) {
-      const { id, name } = e;
+    for (let e2 of characters) {
+      const { id, name } = e2;
       if (queryName == name) {
         return id;
       }
@@ -118,8 +118,8 @@ var __objRest = (source, exclude) => {
     return "";
   };
   const getWeaponId = (queryName) => {
-    for (let e of weapons) {
-      const { id, name } = e;
+    for (let e2 of weapons) {
+      const { id, name } = e2;
       if (queryName == name) {
         return id;
       }
@@ -137,8 +137,8 @@ var __objRest = (source, exclude) => {
     { element_attr_id: 7, name: "dendro" }
   ];
   const getElementAttrName = (queryName) => {
-    for (let e of elementAttrIds) {
-      const { element_attr_id, name } = e;
+    for (let e2 of elementAttrIds) {
+      const { element_attr_id, name } = e2;
       if (queryName == element_attr_id) {
         return name;
       }
@@ -161,7 +161,7 @@ var __objRest = (source, exclude) => {
     const ids = totalGoal.map((g2) => g2.id);
     const id = Math.max(...ids) + 1 || 1;
     const talentIdx = totalGoal.findIndex((g2) => g2.type == "talent" && g2.character == talentCharacter);
-    const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter((a) => a.max_level == 10).sort().map((a) => a.level_current);
+    const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter((a2) => a2.max_level == 10).sort().map((a2) => a2.level_current);
     let talentGoal;
     if (talentIdx < 0) {
       talentGoal = {
@@ -324,7 +324,7 @@ var __objRest = (source, exclude) => {
     addGoal(talentNew);
   };
   const batchUpdateTalent = (all, normal, skill, burst) => {
-    getTotalGoal().filter((a) => a.type == "talent").filter((a) => all || !getGoalInactive().includes(a.character)).map((a) => updateTalent(a, normal, skill, burst));
+    getTotalGoal().filter((a2) => a2.type == "talent").filter((a2) => all || !getGoalInactive().includes(a2.character)).map((a2) => updateTalent(a2, normal, skill, burst));
   };
   const updateCharacter = (character, characterStatusGoal) => {
     const { current } = character;
@@ -336,1748 +336,1114 @@ var __objRest = (source, exclude) => {
     addGoal(characterGoalNew);
   };
   const batchUpdateCharacter = (all, characterStatusGoal) => {
-    getTotalGoal().filter((a) => a.type == "character").filter((a) => all || !getGoalInactive().includes(a.character)).map((a) => updateCharacter(a, characterStatusGoal));
+    getTotalGoal().filter((a2) => a2.type == "character").filter((a2) => all || !getGoalInactive().includes(a2.character)).map((a2) => updateCharacter(a2, characterStatusGoal));
   };
   const batchUpdateWeapon = (all, characterStatusGoal) => {
-    getTotalGoal().filter((a) => a.type == "weapon").filter((a) => all || !getGoalInactive().includes(a.weapon)).map((a) => updateCharacter(a, characterStatusGoal));
+    getTotalGoal().filter((a2) => a2.type == "weapon").filter((a2) => all || !getGoalInactive().includes(a2.weapon)).map((a2) => updateCharacter(a2, characterStatusGoal));
   };
-  function k() {
-    let e = [], t = [], r = { enqueue(o) {
-      t.push(o);
-    }, requestAnimationFrame(...o) {
-      let n2 = requestAnimationFrame(...o);
-      r.add(() => cancelAnimationFrame(n2));
-    }, nextFrame(...o) {
-      r.requestAnimationFrame(() => {
-        r.requestAnimationFrame(...o);
-      });
-    }, setTimeout(...o) {
-      let n2 = setTimeout(...o);
-      r.add(() => clearTimeout(n2));
-    }, add(o) {
-      e.push(o);
+  let t$2 = typeof window != "undefined" ? React2.useLayoutEffect : React2.useEffect;
+  function s$5(e2) {
+    let r2 = React2.useRef(e2);
+    return t$2(() => {
+      r2.current = e2;
+    }, [e2]), r2;
+  }
+  function i$2(e2, o2) {
+    let [u2, t2] = React2.useState(e2), r2 = s$5(e2);
+    return t$2(() => t2(r2.current), [r2, t2, ...o2]), u2;
+  }
+  function o$3() {
+    let a2 = [], i2 = [], n2 = { enqueue(e2) {
+      i2.push(e2);
+    }, addEventListener(e2, t2, r2, s2) {
+      return e2.addEventListener(t2, r2, s2), n2.add(() => e2.removeEventListener(t2, r2, s2));
+    }, requestAnimationFrame(...e2) {
+      let t2 = requestAnimationFrame(...e2);
+      return n2.add(() => cancelAnimationFrame(t2));
+    }, nextFrame(...e2) {
+      return n2.requestAnimationFrame(() => n2.requestAnimationFrame(...e2));
+    }, setTimeout(...e2) {
+      let t2 = setTimeout(...e2);
+      return n2.add(() => clearTimeout(t2));
+    }, add(e2) {
+      return a2.push(e2), () => {
+        let t2 = a2.indexOf(e2);
+        if (t2 >= 0) {
+          let [r2] = a2.splice(t2, 1);
+          r2();
+        }
+      };
     }, dispose() {
-      for (let o of e.splice(0))
-        o();
+      for (let e2 of a2.splice(0))
+        e2();
     }, async workQueue() {
-      for (let o of t.splice(0))
-        await o();
+      for (let e2 of i2.splice(0))
+        await e2();
     } };
-    return r;
+    return n2;
   }
-  function Q() {
-    let [e] = React2.useState(k);
-    return React2.useEffect(() => () => e.dispose(), [e]), e;
+  function p$7() {
+    let [e2] = React2.useState(o$3);
+    return React2.useEffect(() => () => e2.dispose(), [e2]), e2;
   }
-  var x = typeof window != "undefined" ? React2.useLayoutEffect : React2.useEffect;
-  var yt = { serverHandoffComplete: false };
-  function q$1() {
-    let [e, t] = React2.useState(yt.serverHandoffComplete);
+  let o$2 = function(t2) {
+    let e2 = s$5(t2);
+    return React__default["default"].useCallback((...r2) => e2.current(...r2), [e2]);
+  };
+  let r$2 = { serverHandoffComplete: false };
+  function a$2() {
+    let [e2, f2] = React2.useState(r$2.serverHandoffComplete);
     return React2.useEffect(() => {
-      e !== true && t(true);
-    }, [e]), React2.useEffect(() => {
-      yt.serverHandoffComplete === false && (yt.serverHandoffComplete = true);
-    }, []), e;
+      e2 !== true && f2(true);
+    }, [e2]), React2.useEffect(() => {
+      r$2.serverHandoffComplete === false && (r$2.serverHandoffComplete = true);
+    }, []), e2;
   }
-  var or = 0;
-  function to$1() {
-    return ++or;
+  var u$4;
+  let l$1 = 0;
+  function r$1() {
+    return ++l$1;
   }
-  function A() {
-    let e = q$1(), [t, r] = React2.useState(e ? to$1 : null);
-    return x(() => {
-      t === null && r(to$1());
-    }, [t]), t != null ? "" + t : void 0;
+  let I = (u$4 = React__default["default"].useId) != null ? u$4 : function() {
+    let n2 = a$2(), [e2, o2] = React__default["default"].useState(n2 ? r$1 : null);
+    return t$2(() => {
+      e2 === null && o2(r$1());
+    }, [e2]), e2 != null ? "" + e2 : void 0;
+  };
+  function t$1(e2) {
+    typeof queueMicrotask == "function" ? queueMicrotask(e2) : Promise.resolve().then(e2).catch((o2) => setTimeout(() => {
+      throw o2;
+    }));
   }
-  function ke(e) {
-    let t = React2.useRef(e);
-    return React2.useEffect(() => {
-      t.current = e;
-    }, [e]), t;
+  function s$4(e2, r2, n2) {
+    let o2 = s$5(r2);
+    React2.useEffect(() => {
+      function t2(i2) {
+        o2.current(i2);
+      }
+      return window.addEventListener(e2, t2, n2), () => window.removeEventListener(e2, t2, n2);
+    }, [e2, n2]);
   }
-  function ee(e, t) {
-    let [r, o] = React2.useState(e), n2 = ke(e);
-    return x(() => o(n2.current), [n2, o, ...t]), r;
+  var C$3 = ((n2) => (n2[n2.None = 1] = "None", n2[n2.IgnoreScrollbars = 2] = "IgnoreScrollbars", n2))(C$3 || {});
+  function w$3(c2, f2, n2 = 1) {
+    let i2 = React2.useRef(false), l2 = o$2((r2) => {
+      if (i2.current)
+        return;
+      i2.current = true, t$1(() => {
+        i2.current = false;
+      });
+      let a2 = function t2(e2) {
+        return typeof e2 == "function" ? t2(e2()) : Array.isArray(e2) || e2 instanceof Set ? e2 : [e2];
+      }(c2), o2 = r2.target;
+      if (!!o2.ownerDocument.documentElement.contains(o2)) {
+        if ((n2 & 2) === 2) {
+          let t2 = 20, e2 = o2.ownerDocument.documentElement;
+          if (r2.clientX > e2.clientWidth - t2 || r2.clientX < t2 || r2.clientY > e2.clientHeight - t2 || r2.clientY < t2)
+            return;
+        }
+        for (let t2 of a2) {
+          if (t2 === null)
+            continue;
+          let e2 = t2 instanceof HTMLElement ? t2 : t2.current;
+          if (e2 != null && e2.contains(o2))
+            return;
+        }
+        return f2(r2, o2);
+      }
+    });
+    s$4("pointerdown", l2), s$4("mousedown", l2);
   }
-  function I(...e) {
-    let t = React2.useRef(e);
-    return React2.useEffect(() => {
-      t.current = e;
-    }, [e]), React2.useCallback((r) => {
-      for (let o of t.current)
-        o != null && (typeof o == "function" ? o(r) : o.current = r);
-    }, [t]);
+  function i$1(t2) {
+    var n2;
+    if (t2.type)
+      return t2.type;
+    let e2 = (n2 = t2.as) != null ? n2 : "button";
+    if (typeof e2 == "string" && e2.toLowerCase() === "button")
+      return "button";
   }
-  function S(e, t, ...r) {
-    if (e in t) {
-      let n2 = t[e];
-      return typeof n2 == "function" ? n2(...r) : n2;
-    }
-    let o = new Error(`Tried to handle "${e}" but there is no handler defined. Only defined handlers are: ${Object.keys(t).map((n2) => `"${n2}"`).join(", ")}.`);
-    throw Error.captureStackTrace && Error.captureStackTrace(o, S), o;
+  function s$3(t2, e2) {
+    let [n2, u2] = React2.useState(() => i$1(t2));
+    return t$2(() => {
+      u2(i$1(t2));
+    }, [t2.type, t2.as]), t$2(() => {
+      n2 || !e2.current || e2.current instanceof HTMLButtonElement && !e2.current.hasAttribute("type") && u2("button");
+    }, [n2, e2]), n2;
   }
-  function E({ props: e, slot: t, defaultTag: r, features: o, visible: n2 = true, name: i }) {
-    if (n2)
-      return _e(e, t, r, i);
-    let a = o != null ? o : 0;
-    if (a & 2) {
-      let _a2 = e, { static: l = false } = _a2, s = __objRest(_a2, ["static"]);
-      if (l)
-        return _e(s, t, r, i);
-    }
-    if (a & 1) {
-      let _b = e, { unmount: l = true } = _b, s = __objRest(_b, ["unmount"]);
-      return S(l ? 0 : 1, { [0]() {
-        return null;
-      }, [1]() {
-        return _e(__spreadProps(__spreadValues({}, s), { hidden: true, style: { display: "none" } }), t, r, i);
-      } });
-    }
-    return _e(e, t, r, i);
+  let u$3 = Symbol();
+  function T$2(t2, n2 = true) {
+    return Object.assign(t2, { [u$3]: n2 });
   }
-  function _e(e, t = {}, r, o) {
-    let _a2 = gt(e, ["unmount", "static"]), { as: n2 = r, children: i, refName: a = "ref" } = _a2, l = __objRest(_a2, ["as", "children", "refName"]), s = e.ref !== void 0 ? { [a]: e.ref } : {}, u = typeof i == "function" ? i(t) : i;
-    if (l.className && typeof l.className == "function" && (l.className = l.className(t)), n2 === React2.Fragment && Object.keys(l).length > 0) {
-      if (!React2.isValidElement(u) || Array.isArray(u) && u.length > 1)
-        throw new Error(['Passing props on "Fragment"!', "", `The current component <${o} /> is rendering a "Fragment".`, "However we need to passthrough the following props:", Object.keys(l).map((c) => `  - ${c}`).join(`
-`), "", "You can apply a few solutions:", ['Add an `as="..."` prop, to ensure that we render an actual element instead of a "Fragment".', "Render a single element as the child so that we can forward the props onto that element."].map((c) => `  - ${c}`).join(`
-`)].join(`
-`));
-      return React2.cloneElement(u, Object.assign({}, fr(mr(gt(l, ["ref"])), u.props, ["onClick"]), s));
-    }
-    return React2.createElement(n2, Object.assign({}, gt(l, ["ref"]), n2 !== React2.Fragment && s), u);
+  function y$1(...t2) {
+    let n2 = React2.useRef(t2);
+    React2.useEffect(() => {
+      n2.current = t2;
+    }, [t2]);
+    let c2 = o$2((e2) => {
+      for (let o2 of n2.current)
+        o2 != null && (typeof o2 == "function" ? o2(e2) : o2.current = e2);
+    });
+    return t2.every((e2) => e2 == null || (e2 == null ? void 0 : e2[u$3])) ? void 0 : c2;
   }
-  function fr(e, t, r) {
-    let o = Object.assign({}, e);
-    for (let n2 of r)
-      e[n2] !== void 0 && t[n2] !== void 0 && Object.assign(o, { [n2](i) {
-        i.defaultPrevented || e[n2](i), i.defaultPrevented || t[n2](i);
-      } });
-    return o;
+  function t(n2) {
+    return typeof window == "undefined" ? null : n2 instanceof Node ? n2.ownerDocument : n2 != null && n2.hasOwnProperty("current") && n2.current instanceof Node ? n2.current.ownerDocument : document;
   }
-  function D(e) {
-    var t;
-    return Object.assign(React2.forwardRef(e), { displayName: (t = e.displayName) != null ? t : e.name });
+  function f$5(r2) {
+    throw new Error("Unexpected object: " + r2);
   }
-  function mr(e) {
-    let t = Object.assign({}, e);
-    for (let r in t)
-      t[r] === void 0 && delete t[r];
-    return t;
-  }
-  function gt(e, t = []) {
-    let r = Object.assign({}, e);
-    for (let o of t)
-      o in r && delete r[o];
-    return r;
-  }
-  function br(e) {
-    throw new Error("Unexpected object: " + e);
-  }
-  function ae(e, t) {
-    let r = t.resolveItems();
-    if (r.length <= 0)
+  var a$1 = ((e2) => (e2[e2.First = 0] = "First", e2[e2.Previous = 1] = "Previous", e2[e2.Next = 2] = "Next", e2[e2.Last = 3] = "Last", e2[e2.Specific = 4] = "Specific", e2[e2.Nothing = 5] = "Nothing", e2))(a$1 || {});
+  function x$1(r2, n2) {
+    let t2 = n2.resolveItems();
+    if (t2.length <= 0)
       return null;
-    let o = t.resolveActiveIndex(), n2 = o != null ? o : -1, i = (() => {
-      switch (e.focus) {
+    let l2 = n2.resolveActiveIndex(), s2 = l2 != null ? l2 : -1, d2 = (() => {
+      switch (r2.focus) {
         case 0:
-          return r.findIndex((a) => !t.resolveDisabled(a));
+          return t2.findIndex((e2) => !n2.resolveDisabled(e2));
         case 1: {
-          let a = r.slice().reverse().findIndex((l, s, u) => n2 !== -1 && u.length - s - 1 >= n2 ? false : !t.resolveDisabled(l));
-          return a === -1 ? a : r.length - 1 - a;
+          let e2 = t2.slice().reverse().findIndex((i2, c2, u2) => s2 !== -1 && u2.length - c2 - 1 >= s2 ? false : !n2.resolveDisabled(i2));
+          return e2 === -1 ? e2 : t2.length - 1 - e2;
         }
         case 2:
-          return r.findIndex((a, l) => l <= n2 ? false : !t.resolveDisabled(a));
+          return t2.findIndex((e2, i2) => i2 <= s2 ? false : !n2.resolveDisabled(e2));
         case 3: {
-          let a = r.slice().reverse().findIndex((l) => !t.resolveDisabled(l));
-          return a === -1 ? a : r.length - 1 - a;
+          let e2 = t2.slice().reverse().findIndex((i2) => !n2.resolveDisabled(i2));
+          return e2 === -1 ? e2 : t2.length - 1 - e2;
         }
         case 4:
-          return r.findIndex((a) => t.resolveId(a) === e.id);
+          return t2.findIndex((e2) => n2.resolveId(e2) === r2.id);
         case 5:
           return null;
         default:
-          br(e);
+          f$5(r2);
       }
     })();
-    return i === -1 ? o : i;
+    return d2 === -1 ? l2 : d2;
   }
-  function G(e) {
-    let t = e.parentElement, r = null;
-    for (; t && !(t instanceof HTMLFieldSetElement); )
-      t instanceof HTMLLegendElement && (r = t), t = t.parentElement;
-    let o = (t == null ? void 0 : t.getAttribute("disabled")) === "";
-    return o && Tr(r) ? false : o;
+  function u$2(r2, n2, ...a2) {
+    if (r2 in n2) {
+      let e2 = n2[r2];
+      return typeof e2 == "function" ? e2(...a2) : e2;
+    }
+    let t2 = new Error(`Tried to handle "${r2}" but there is no handler defined. Only defined handlers are: ${Object.keys(n2).map((e2) => `"${e2}"`).join(", ")}.`);
+    throw Error.captureStackTrace && Error.captureStackTrace(t2, u$2), t2;
   }
-  function Tr(e) {
-    if (!e)
+  var x = ((n2) => (n2[n2.None = 0] = "None", n2[n2.RenderStrategy = 1] = "RenderStrategy", n2[n2.Static = 2] = "Static", n2))(x || {}), R = ((e2) => (e2[e2.Unmount = 0] = "Unmount", e2[e2.Hidden = 1] = "Hidden", e2))(R || {});
+  function _({ ourProps: r2, theirProps: t2, slot: e2, defaultTag: n2, features: a2, visible: s2 = true, name: l2 }) {
+    let o2 = y(t2, r2);
+    if (s2)
+      return f$4(o2, e2, n2, l2);
+    let d2 = a2 != null ? a2 : 0;
+    if (d2 & 2) {
+      let _a2 = o2, { static: i2 = false } = _a2, u2 = __objRest(_a2, ["static"]);
+      if (i2)
+        return f$4(u2, e2, n2, l2);
+    }
+    if (d2 & 1) {
+      let _b2 = o2, { unmount: i2 = true } = _b2, u2 = __objRest(_b2, ["unmount"]);
+      return u$2(i2 ? 0 : 1, { [0]() {
+        return null;
+      }, [1]() {
+        return f$4(__spreadProps(__spreadValues({}, u2), { hidden: true, style: { display: "none" } }), e2, n2, l2);
+      } });
+    }
+    return f$4(o2, e2, n2, l2);
+  }
+  function f$4(r2, t2 = {}, e2, n2) {
+    let _a2 = m$1(r2, ["unmount", "static"]), { as: a2 = e2, children: s2, refName: l2 = "ref" } = _a2, o2 = __objRest(_a2, ["as", "children", "refName"]), d2 = r2.ref !== void 0 ? { [l2]: r2.ref } : {}, i2 = typeof s2 == "function" ? s2(t2) : s2;
+    o2.className && typeof o2.className == "function" && (o2.className = o2.className(t2));
+    let u2 = {};
+    if (a2 === React2.Fragment && Object.keys(g$2(o2)).length > 0) {
+      if (!React2.isValidElement(i2) || Array.isArray(i2) && i2.length > 1)
+        throw new Error(['Passing props on "Fragment"!', "", `The current component <${n2} /> is rendering a "Fragment".`, "However we need to passthrough the following props:", Object.keys(o2).map((p2) => `  - ${p2}`).join(`
+`), "", "You can apply a few solutions:", ['Add an `as="..."` prop, to ensure that we render an actual element instead of a "Fragment".', "Render a single element as the child so that we can forward the props onto that element."].map((p2) => `  - ${p2}`).join(`
+`)].join(`
+`));
+      return React2.cloneElement(i2, Object.assign({}, y(i2.props, g$2(m$1(o2, ["ref"]))), u2, d2));
+    }
+    return React2.createElement(a2, Object.assign({}, m$1(o2, ["ref"]), a2 !== React2.Fragment && d2, a2 !== React2.Fragment && u2), i2);
+  }
+  function y(...r2) {
+    if (r2.length === 0)
+      return {};
+    if (r2.length === 1)
+      return r2[0];
+    let t2 = {}, e2 = {};
+    for (let a2 of r2)
+      for (let s2 in a2)
+        s2.startsWith("on") && typeof a2[s2] == "function" ? (e2[s2] != null || (e2[s2] = []), e2[s2].push(a2[s2])) : t2[s2] = a2[s2];
+    if (t2.disabled || t2["aria-disabled"])
+      return Object.assign(t2, Object.fromEntries(Object.keys(e2).map((a2) => [a2, void 0])));
+    for (let a2 in e2)
+      Object.assign(t2, { [a2](s2, ...l2) {
+        let o2 = e2[a2];
+        for (let d2 of o2) {
+          if (s2.defaultPrevented)
+            return;
+          d2(s2, ...l2);
+        }
+      } });
+    return t2;
+  }
+  function H$4(r2) {
+    var t2;
+    return Object.assign(React2.forwardRef(r2), { displayName: (t2 = r2.displayName) != null ? t2 : r2.name });
+  }
+  function g$2(r2) {
+    let t2 = Object.assign({}, r2);
+    for (let e2 in t2)
+      t2[e2] === void 0 && delete t2[e2];
+    return t2;
+  }
+  function m$1(r2, t2 = []) {
+    let e2 = Object.assign({}, r2);
+    for (let n2 of t2)
+      n2 in e2 && delete e2[n2];
+    return e2;
+  }
+  function r(n2) {
+    let e2 = n2.parentElement, l2 = null;
+    for (; e2 && !(e2 instanceof HTMLFieldSetElement); )
+      e2 instanceof HTMLLegendElement && (l2 = e2), e2 = e2.parentElement;
+    let t2 = (e2 == null ? void 0 : e2.getAttribute("disabled")) === "";
+    return t2 && i(l2) ? false : t2;
+  }
+  function i(n2) {
+    if (!n2)
       return false;
-    let t = e.previousElementSibling;
-    for (; t !== null; ) {
-      if (t instanceof HTMLLegendElement)
+    let e2 = n2.previousElementSibling;
+    for (; e2 !== null; ) {
+      if (e2 instanceof HTMLLegendElement)
         return false;
-      t = t.previousElementSibling;
+      e2 = e2.previousElementSibling;
     }
     return true;
   }
-  function w(e, t, r) {
-    let o = React2.useRef(t);
-    o.current = t, React2.useEffect(() => {
-      function n2(i) {
-        o.current.call(window, i);
-      }
-      return window.addEventListener(e, n2, r), () => window.removeEventListener(e, n2, r);
-    }, [e, r]);
+  function e(n2 = {}, r2 = null, t2 = []) {
+    for (let [i2, o2] of Object.entries(n2))
+      f$3(t2, s$2(r2, i2), o2);
+    return t2;
   }
-  var Pt = React2.createContext(null);
-  Pt.displayName = "OpenClosedContext";
-  function _() {
-    return React2.useContext(Pt);
+  function s$2(n2, r2) {
+    return n2 ? n2 + "[" + r2 + "]" : r2;
   }
-  function W({ value: e, children: t }) {
-    return React__default["default"].createElement(Pt.Provider, { value: e }, t);
+  function f$3(n2, r2, t2) {
+    if (Array.isArray(t2))
+      for (let [i2, o2] of t2.entries())
+        f$3(n2, s$2(r2, i2.toString()), o2);
+    else
+      t2 instanceof Date ? n2.push([r2, t2.toISOString()]) : typeof t2 == "boolean" ? n2.push([r2, t2 ? "1" : "0"]) : typeof t2 == "string" ? n2.push([r2, t2]) : typeof t2 == "number" ? n2.push([r2, `${t2}`]) : t2 == null ? n2.push([r2, ""]) : e(t2, r2, n2);
   }
-  function ro(e) {
-    var r;
-    if (e.type)
-      return e.type;
-    let t = (r = e.as) != null ? r : "button";
-    if (typeof t == "string" && t.toLowerCase() === "button")
-      return "button";
-  }
-  function U(e, t) {
-    let [r, o] = React2.useState(() => ro(e));
-    return x(() => {
-      o(ro(e));
-    }, [e.type, e.as]), x(() => {
-      r || !t.current || t.current instanceof HTMLButtonElement && !t.current.hasAttribute("type") && o("button");
-    }, [r, t]), r;
-  }
-  function se({ container: e, accept: t, walk: r, enabled: o = true }) {
-    let n2 = React2.useRef(t), i = React2.useRef(r);
-    React2.useEffect(() => {
-      n2.current = t, i.current = r;
-    }, [t, r]), x(() => {
-      if (!e || !o)
-        return;
-      let a = n2.current, l = i.current, s = Object.assign((c) => a(c), { acceptNode: a }), u = document.createTreeWalker(e, NodeFilter.SHOW_ELEMENT, s, false);
-      for (; u.nextNode(); )
-        l(u.currentNode);
-    }, [e, o, n2, i]);
-  }
-  var Ar = { [1](e) {
-    return e.disabled || e.comboboxState === 1 ? e : __spreadProps(__spreadValues({}, e), { activeOptionIndex: null, comboboxState: 1 });
-  }, [0](e) {
-    return e.disabled || e.comboboxState === 0 ? e : __spreadProps(__spreadValues({}, e), { comboboxState: 0 });
-  }, [2](e, t) {
-    return e.disabled === t.disabled ? e : __spreadProps(__spreadValues({}, e), { disabled: t.disabled });
-  }, [3](e, t) {
-    if (e.disabled || e.optionsRef.current && !e.optionsPropsRef.current.static && e.comboboxState === 1)
-      return e;
-    let r = ae(t, { resolveItems: () => e.options, resolveActiveIndex: () => e.activeOptionIndex, resolveId: (o) => o.id, resolveDisabled: (o) => o.dataRef.current.disabled });
-    return e.activeOptionIndex === r ? e : __spreadProps(__spreadValues({}, e), { activeOptionIndex: r });
-  }, [4]: (e, t) => {
-    var i;
-    let r = e.activeOptionIndex !== null ? e.options[e.activeOptionIndex] : null, o = Array.from((i = e.optionsRef.current) == null ? void 0 : i.querySelectorAll('[id^="headlessui-combobox-option-"]')).reduce((a, l, s) => Object.assign(a, { [l.id]: s }), {}), n2 = [...e.options, { id: t.id, dataRef: t.dataRef }].sort((a, l) => o[a.id] - o[l.id]);
-    return __spreadProps(__spreadValues({}, e), { options: n2, activeOptionIndex: (() => r === null ? null : n2.indexOf(r))() });
-  }, [5]: (e, t) => {
-    let r = e.options.slice(), o = e.activeOptionIndex !== null ? r[e.activeOptionIndex] : null, n2 = r.findIndex((i) => i.id === t.id);
-    return n2 !== -1 && r.splice(n2, 1), __spreadProps(__spreadValues({}, e), { options: r, activeOptionIndex: (() => n2 === e.activeOptionIndex || o === null ? null : r.indexOf(o))() });
-  } }, vt = React2.createContext(null);
-  vt.displayName = "ComboboxContext";
-  function pe(e) {
-    let t = React2.useContext(vt);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <Combobox /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, pe), r;
+  function p$6(n2) {
+    var t2;
+    let r2 = (t2 = n2 == null ? void 0 : n2.form) != null ? t2 : n2.closest("form");
+    if (!!r2) {
+      for (let i2 of r2.elements)
+        if (i2.tagName === "INPUT" && i2.type === "submit" || i2.tagName === "BUTTON" && i2.type === "submit" || i2.nodeName === "INPUT" && i2.type === "image") {
+          i2.click();
+          return;
+        }
     }
-    return t;
   }
-  var Rt = React2.createContext(null);
-  Rt.displayName = "ComboboxActions";
-  function Ue() {
-    let e = React2.useContext(Rt);
-    if (e === null) {
-      let t = new Error("ComboboxActions is missing a parent <Combobox /> component.");
-      throw Error.captureStackTrace && Error.captureStackTrace(t, Ue), t;
-    }
-    return e;
+  let f$2 = ["[contentEditable=true]", "[tabindex]", "a[href]", "area[href]", "button:not([disabled])", "iframe", "input:not([disabled])", "select:not([disabled])", "textarea:not([disabled])"].map((e2) => `${e2}:not([tabindex='-1'])`).join(",");
+  var p$5 = ((o2) => (o2[o2.First = 1] = "First", o2[o2.Previous = 2] = "Previous", o2[o2.Next = 4] = "Next", o2[o2.Last = 8] = "Last", o2[o2.WrapAround = 16] = "WrapAround", o2[o2.NoScroll = 32] = "NoScroll", o2))(p$5 || {}), L$1 = ((n2) => (n2[n2.Error = 0] = "Error", n2[n2.Overflow = 1] = "Overflow", n2[n2.Success = 2] = "Success", n2[n2.Underflow = 3] = "Underflow", n2))(L$1 || {}), N$3 = ((t2) => (t2[t2.Previous = -1] = "Previous", t2[t2.Next = 1] = "Next", t2))(N$3 || {});
+  function T$1(e2 = document.body) {
+    return e2 == null ? [] : Array.from(e2.querySelectorAll(f$2));
   }
-  function hr(e, t) {
-    return S(t.type, Ar, e, t);
-  }
-  var Or = React2.Fragment, Ir = D(function(t, r) {
-    let _a2 = t, { value: o, onChange: n2, disabled: i = false } = _a2, a = __objRest(_a2, ["value", "onChange", "disabled"]), l = React2.useRef({ value: o, onChange: n2 }), s = React2.useRef({ static: false, hold: false }), u = React2.useRef({ displayValue: void 0 }), c = React2.useReducer(hr, { comboboxState: 1, comboboxPropsRef: l, optionsPropsRef: s, inputPropsRef: u, labelRef: React2.createRef(), inputRef: React2.createRef(), buttonRef: React2.createRef(), optionsRef: React2.createRef(), disabled: i, options: [], activeOptionIndex: null }), [{ comboboxState: m2, options: b, activeOptionIndex: T, optionsRef: y, inputRef: p2, buttonRef: f2 }, d] = c;
-    x(() => {
-      l.current.value = o;
-    }, [o, l]), x(() => {
-      l.current.onChange = n2;
-    }, [n2, l]), x(() => d({ type: 2, disabled: i }), [i]), w("mousedown", (O) => {
-      var N, K, V;
-      let L = O.target;
-      m2 === 0 && (((N = f2.current) == null ? void 0 : N.contains(L)) || ((K = p2.current) == null ? void 0 : K.contains(L)) || ((V = y.current) == null ? void 0 : V.contains(L)) || d({ type: 1 }));
-    });
-    let P = T === null ? null : b[T].dataRef.current.value, C = React2.useMemo(() => ({ open: m2 === 0, disabled: i, activeIndex: T, activeOption: P }), [m2, i, b, T]), R = React2.useCallback(() => {
-      if (!p2.current || o === void 0)
-        return;
-      let O = u.current.displayValue;
-      typeof O == "function" ? p2.current.value = O(o) : typeof o == "string" && (p2.current.value = o);
-    }, [o, p2, u]), g2 = React2.useCallback((O) => {
-      let L = b.find((K) => K.id === O);
-      if (!L)
-        return;
-      let { dataRef: N } = L;
-      l.current.onChange(N.current.value), R();
-    }, [b, l, p2]), v = React2.useCallback(() => {
-      if (T !== null) {
-        let { dataRef: O } = b[T];
-        l.current.onChange(O.current.value), R();
-      }
-    }, [T, b, l, p2]), h2 = React2.useMemo(() => ({ selectOption: g2, selectActiveOption: v }), [g2, v]);
-    return x(() => {
-      m2 === 1 && R();
-    }, [R, m2]), x(R, [R]), React__default["default"].createElement(Rt.Provider, { value: h2 }, React__default["default"].createElement(vt.Provider, { value: c }, React__default["default"].createElement(W, { value: S(m2, { [0]: 0, [1]: 1 }) }, E({ props: r === null ? a : __spreadProps(__spreadValues({}, a), { ref: r }), slot: C, defaultTag: Or, name: "Combobox" }))));
-  }), Lr = "input", Dr = D(function(t, r) {
-    var R, g2;
-    let _a2 = t, { value: o, onChange: n2, displayValue: i } = _a2, a = __objRest(_a2, ["value", "onChange", "displayValue"]), [l, s] = pe("Combobox.Input"), u = Ue(), c = I(l.inputRef, r), m2 = l.inputPropsRef, b = `headlessui-combobox-input-${A()}`, T = Q(), y = ke(n2);
-    x(() => {
-      m2.current.displayValue = i;
-    }, [i, m2]);
-    let p2 = React2.useCallback((v) => {
-      switch (v.key) {
-        case "Enter":
-          v.preventDefault(), v.stopPropagation(), u.selectActiveOption(), s({ type: 1 });
-          break;
-        case "ArrowDown":
-          return v.preventDefault(), v.stopPropagation(), S(l.comboboxState, { [0]: () => s({ type: 3, focus: 2 }), [1]: () => {
-            s({ type: 0 }), T.nextFrame(() => {
-              l.comboboxPropsRef.current.value || s({ type: 3, focus: 0 });
-            });
-          } });
-        case "ArrowUp":
-          return v.preventDefault(), v.stopPropagation(), S(l.comboboxState, { [0]: () => s({ type: 3, focus: 1 }), [1]: () => {
-            s({ type: 0 }), T.nextFrame(() => {
-              l.comboboxPropsRef.current.value || s({ type: 3, focus: 3 });
-            });
-          } });
-        case "Home":
-        case "PageUp":
-          return v.preventDefault(), v.stopPropagation(), s({ type: 3, focus: 0 });
-        case "End":
-        case "PageDown":
-          return v.preventDefault(), v.stopPropagation(), s({ type: 3, focus: 3 });
-        case "Escape":
-          return v.preventDefault(), l.optionsRef.current && !l.optionsPropsRef.current.static && v.stopPropagation(), s({ type: 1 });
-        case "Tab":
-          u.selectActiveOption(), s({ type: 1 });
-          break;
-      }
-    }, [T, s, l, u]), f2 = React2.useCallback((v) => {
-      var h2;
-      s({ type: 0 }), (h2 = y.current) == null || h2.call(y, v);
-    }, [s, y]), d = ee(() => {
-      if (!!l.labelRef.current)
-        return [l.labelRef.current.id].join(" ");
-    }, [l.labelRef.current]), P = React2.useMemo(() => ({ open: l.comboboxState === 0, disabled: l.disabled }), [l]), C = { ref: c, id: b, role: "combobox", type: "text", "aria-controls": (R = l.optionsRef.current) == null ? void 0 : R.id, "aria-expanded": l.disabled ? void 0 : l.comboboxState === 0, "aria-activedescendant": l.activeOptionIndex === null || (g2 = l.options[l.activeOptionIndex]) == null ? void 0 : g2.id, "aria-labelledby": d, disabled: l.disabled, onKeyDown: p2, onChange: f2 };
-    return E({ props: __spreadValues(__spreadValues({}, a), C), slot: P, defaultTag: Lr, name: "Combobox.Input" });
-  }), Mr = "button", Fr = D(function(t, r) {
-    var p2;
-    let [o, n2] = pe("Combobox.Button"), i = Ue(), a = I(o.buttonRef, r), l = `headlessui-combobox-button-${A()}`, s = Q(), u = React2.useCallback((f2) => {
-      switch (f2.key) {
-        case "ArrowDown":
-          return f2.preventDefault(), f2.stopPropagation(), o.comboboxState === 1 && (n2({ type: 0 }), s.nextFrame(() => {
-            o.comboboxPropsRef.current.value || n2({ type: 3, focus: 0 });
-          })), s.nextFrame(() => {
-            var d;
-            return (d = o.inputRef.current) == null ? void 0 : d.focus({ preventScroll: true });
-          });
-        case "ArrowUp":
-          return f2.preventDefault(), f2.stopPropagation(), o.comboboxState === 1 && (n2({ type: 0 }), s.nextFrame(() => {
-            o.comboboxPropsRef.current.value || n2({ type: 3, focus: 3 });
-          })), s.nextFrame(() => {
-            var d;
-            return (d = o.inputRef.current) == null ? void 0 : d.focus({ preventScroll: true });
-          });
-        case "Escape":
-          return f2.preventDefault(), o.optionsRef.current && !o.optionsPropsRef.current.static && f2.stopPropagation(), n2({ type: 1 }), s.nextFrame(() => {
-            var d;
-            return (d = o.inputRef.current) == null ? void 0 : d.focus({ preventScroll: true });
-          });
-      }
-    }, [s, n2, o, i]), c = React2.useCallback((f2) => {
-      if (G(f2.currentTarget))
-        return f2.preventDefault();
-      o.comboboxState === 0 ? n2({ type: 1 }) : (f2.preventDefault(), n2({ type: 0 })), s.nextFrame(() => {
-        var d;
-        return (d = o.inputRef.current) == null ? void 0 : d.focus({ preventScroll: true });
-      });
-    }, [n2, s, o]), m2 = ee(() => {
-      if (!!o.labelRef.current)
-        return [o.labelRef.current.id, l].join(" ");
-    }, [o.labelRef.current, l]), b = React2.useMemo(() => ({ open: o.comboboxState === 0, disabled: o.disabled }), [o]), T = t, y = { ref: a, id: l, type: U(t, o.buttonRef), tabIndex: -1, "aria-haspopup": true, "aria-controls": (p2 = o.optionsRef.current) == null ? void 0 : p2.id, "aria-expanded": o.disabled ? void 0 : o.comboboxState === 0, "aria-labelledby": m2, disabled: o.disabled, onClick: c, onKeyDown: u };
-    return E({ props: __spreadValues(__spreadValues({}, T), y), slot: b, defaultTag: Mr, name: "Combobox.Button" });
-  }), wr = "label";
-  function kr(e) {
-    let [t] = pe("Combobox.Label"), r = `headlessui-combobox-label-${A()}`, o = React2.useCallback(() => {
-      var a;
-      return (a = t.inputRef.current) == null ? void 0 : a.focus({ preventScroll: true });
-    }, [t.inputRef]), n2 = React2.useMemo(() => ({ open: t.comboboxState === 0, disabled: t.disabled }), [t]), i = { ref: t.labelRef, id: r, onClick: o };
-    return E({ props: __spreadValues(__spreadValues({}, e), i), slot: n2, defaultTag: wr, name: "Combobox.Label" });
-  }
-  var _r = "ul", Gr = 1 | 2, Hr = D(function(t, r) {
-    var y;
-    let _a2 = t, { hold: o = false } = _a2, n2 = __objRest(_a2, ["hold"]), [i] = pe("Combobox.Options"), { optionsPropsRef: a } = i, l = I(i.optionsRef, r), s = `headlessui-combobox-options-${A()}`, u = _(), c = (() => u !== null ? u === 0 : i.comboboxState === 0)();
-    x(() => {
-      var p2;
-      a.current.static = (p2 = t.static) != null ? p2 : false;
-    }, [a, t.static]), x(() => {
-      a.current.hold = o;
-    }, [o, a]), se({ container: i.optionsRef.current, enabled: i.comboboxState === 0, accept(p2) {
-      return p2.getAttribute("role") === "option" ? NodeFilter.FILTER_REJECT : p2.hasAttribute("role") ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT;
-    }, walk(p2) {
-      p2.setAttribute("role", "none");
-    } });
-    let m2 = ee(() => {
-      var p2, f2, d;
-      return (d = (p2 = i.labelRef.current) == null ? void 0 : p2.id) != null ? d : (f2 = i.buttonRef.current) == null ? void 0 : f2.id;
-    }, [i.labelRef.current, i.buttonRef.current]), b = React2.useMemo(() => ({ open: i.comboboxState === 0 }), [i]), T = { "aria-activedescendant": i.activeOptionIndex === null || (y = i.options[i.activeOptionIndex]) == null ? void 0 : y.id, "aria-labelledby": m2, role: "listbox", id: s, ref: l };
-    return E({ props: __spreadValues(__spreadValues({}, n2), T), slot: b, defaultTag: _r, features: Gr, visible: c, name: "Combobox.Options" });
-  }), Ur = "li";
-  function Br(e) {
-    let _a2 = e, { disabled: t = false, value: r } = _a2, o = __objRest(_a2, ["disabled", "value"]), [n2, i] = pe("Combobox.Option"), a = Ue(), l = `headlessui-combobox-option-${A()}`, s = n2.activeOptionIndex !== null ? n2.options[n2.activeOptionIndex].id === l : false, u = n2.comboboxPropsRef.current.value === r, c = React2.useRef({ disabled: t, value: r });
-    x(() => {
-      c.current.disabled = t;
-    }, [c, t]), x(() => {
-      c.current.value = r;
-    }, [c, r]), x(() => {
-      var P, C;
-      c.current.textValue = (C = (P = document.getElementById(l)) == null ? void 0 : P.textContent) == null ? void 0 : C.toLowerCase();
-    }, [c, l]);
-    let m2 = React2.useCallback(() => a.selectOption(l), [a, l]);
-    x(() => (i({ type: 4, id: l, dataRef: c }), () => i({ type: 5, id: l })), [c, l]), x(() => {
-      n2.comboboxState === 0 && (!u || i({ type: 3, focus: 4, id: l }));
-    }, [n2.comboboxState, u, l]), x(() => {
-      if (n2.comboboxState !== 0 || !s)
-        return;
-      let P = k();
-      return P.requestAnimationFrame(() => {
-        var C, R;
-        (R = (C = document.getElementById(l)) == null ? void 0 : C.scrollIntoView) == null || R.call(C, { block: "nearest" });
-      }), P.dispose;
-    }, [l, s, n2.comboboxState, n2.activeOptionIndex]);
-    let b = React2.useCallback((P) => {
-      if (t)
-        return P.preventDefault();
-      m2(), i({ type: 1 }), k().nextFrame(() => {
-        var C;
-        return (C = n2.inputRef.current) == null ? void 0 : C.focus({ preventScroll: true });
-      });
-    }, [i, n2.inputRef, t, m2]), T = React2.useCallback(() => {
-      if (t)
-        return i({ type: 3, focus: 5 });
-      i({ type: 3, focus: 4, id: l });
-    }, [t, l, i]), y = React2.useCallback(() => {
-      t || s || i({ type: 3, focus: 4, id: l });
-    }, [t, s, l, i]), p2 = React2.useCallback(() => {
-      t || !s || n2.optionsPropsRef.current.hold || i({ type: 3, focus: 5 });
-    }, [t, s, i, n2.comboboxState, n2.comboboxPropsRef]), f2 = React2.useMemo(() => ({ active: s, selected: u, disabled: t }), [s, u, t]);
-    return E({ props: __spreadValues(__spreadValues({}, o), { id: l, role: "option", tabIndex: t === true ? void 0 : -1, "aria-disabled": t === true ? true : void 0, "aria-selected": u === true ? true : void 0, disabled: void 0, onClick: b, onFocus: T, onPointerMove: y, onMouseMove: y, onPointerLeave: p2, onMouseLeave: p2 }), slot: f2, defaultTag: Ur, name: "Combobox.Option" });
-  }
-  Object.assign(Ir, { Input: Dr, Button: Fr, Label: kr, Options: Hr, Option: Br });
-  var Et = ["[contentEditable=true]", "[tabindex]", "a[href]", "area[href]", "button:not([disabled])", "iframe", "input:not([disabled])", "select:not([disabled])", "textarea:not([disabled])"].map((e) => `${e}:not([tabindex='-1'])`).join(",");
-  function xe(e = document.body) {
-    return e == null ? [] : Array.from(e.querySelectorAll(Et));
-  }
-  function de(e, t = 0) {
-    return e === document.body ? false : S(t, { [0]() {
-      return e.matches(Et);
+  var b = ((t2) => (t2[t2.Strict = 0] = "Strict", t2[t2.Loose = 1] = "Loose", t2))(b || {});
+  function S$1(e2, r2 = 0) {
+    var t$12;
+    return e2 === ((t$12 = t(e2)) == null ? void 0 : t$12.body) ? false : u$2(r2, { [0]() {
+      return e2.matches(f$2);
     }, [1]() {
-      let r = e;
-      for (; r !== null; ) {
-        if (r.matches(Et))
+      let l2 = e2;
+      for (; l2 !== null; ) {
+        if (l2.matches(f$2))
           return true;
-        r = r.parentElement;
+        l2 = l2.parentElement;
       }
       return false;
     } });
   }
-  function ce(e) {
-    e == null || e.focus({ preventScroll: true });
+  let M$1 = ["textarea", "input"].join(",");
+  function h$5(e2) {
+    var r2, t2;
+    return (t2 = (r2 = e2 == null ? void 0 : e2.matches) == null ? void 0 : r2.call(e2, M$1)) != null ? t2 : false;
   }
-  function M(e, t) {
-    let r = Array.isArray(e) ? e.slice().sort((c, m2) => {
-      let b = c.compareDocumentPosition(m2);
-      return b & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : b & Node.DOCUMENT_POSITION_PRECEDING ? 1 : 0;
-    }) : xe(e), o = document.activeElement, n2 = (() => {
-      if (t & (1 | 4))
+  function v$1(e2, r2 = (t2) => t2) {
+    return e2.slice().sort((t2, l2) => {
+      let n2 = r2(t2), i2 = r2(l2);
+      if (n2 === null || i2 === null)
+        return 0;
+      let o2 = n2.compareDocumentPosition(i2);
+      return o2 & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : o2 & Node.DOCUMENT_POSITION_PRECEDING ? 1 : 0;
+    });
+  }
+  function H$3(e2, r2, t2 = true) {
+    let l2 = Array.isArray(e2) ? e2.length > 0 ? e2[0].ownerDocument : document : e2.ownerDocument, n2 = Array.isArray(e2) ? t2 ? v$1(e2) : e2 : T$1(e2), i2 = l2.activeElement, o2 = (() => {
+      if (r2 & 5)
         return 1;
-      if (t & (2 | 8))
+      if (r2 & 10)
         return -1;
       throw new Error("Missing Focus.First, Focus.Previous, Focus.Next or Focus.Last");
-    })(), i = (() => {
-      if (t & 1)
+    })(), d2 = (() => {
+      if (r2 & 1)
         return 0;
-      if (t & 2)
-        return Math.max(0, r.indexOf(o)) - 1;
-      if (t & 4)
-        return Math.max(0, r.indexOf(o)) + 1;
-      if (t & 8)
-        return r.length - 1;
+      if (r2 & 2)
+        return Math.max(0, n2.indexOf(i2)) - 1;
+      if (r2 & 4)
+        return Math.max(0, n2.indexOf(i2)) + 1;
+      if (r2 & 8)
+        return n2.length - 1;
       throw new Error("Missing Focus.First, Focus.Previous, Focus.Next or Focus.Last");
-    })(), a = t & 32 ? { preventScroll: true } : {}, l = 0, s = r.length, u;
+    })(), m2 = r2 & 32 ? { preventScroll: true } : {}, c2 = 0, s2 = n2.length, u2;
     do {
-      if (l >= s || l + s <= 0)
+      if (c2 >= s2 || c2 + s2 <= 0)
         return 0;
-      let c = i + l;
-      if (t & 16)
-        c = (c + s) % s;
+      let a2 = d2 + c2;
+      if (r2 & 16)
+        a2 = (a2 + s2) % s2;
       else {
-        if (c < 0)
+        if (a2 < 0)
           return 3;
-        if (c >= s)
+        if (a2 >= s2)
           return 1;
       }
-      u = r[c], u == null || u.focus(a), l += n2;
-    } while (u !== document.activeElement);
-    return u.hasAttribute("tabindex") || u.setAttribute("tabindex", "0"), 2;
+      u2 = n2[a2], u2 == null || u2.focus(m2), c2 += o2;
+    } while (u2 !== l2.activeElement);
+    return r2 & 6 && h$5(u2) && u2.select(), u2.hasAttribute("tabindex") || u2.setAttribute("tabindex", "0"), 2;
   }
-  function Be() {
-    let e = React2.useRef(false);
-    return React2.useEffect(() => (e.current = true, () => {
-      e.current = false;
-    }), []), e;
-  }
-  function Ne(e, t = 30, { initialFocus: r, containers: o } = {}) {
-    let n2 = React2.useRef(typeof window != "undefined" ? document.activeElement : null), i = React2.useRef(null), a = Be(), l = Boolean(t & 16), s = Boolean(t & 2);
-    React2.useEffect(() => {
-      !l || (n2.current = document.activeElement);
-    }, [l]), React2.useEffect(() => {
-      if (!!l)
-        return () => {
-          ce(n2.current), n2.current = null;
-        };
-    }, [l]), React2.useEffect(() => {
-      if (!s || !e.current)
-        return;
-      let u = document.activeElement;
-      if (r == null ? void 0 : r.current) {
-        if ((r == null ? void 0 : r.current) === u) {
-          i.current = u;
-          return;
-        }
-      } else if (e.current.contains(u)) {
-        i.current = u;
-        return;
-      }
-      (r == null ? void 0 : r.current) ? ce(r.current) : M(e.current, 1) === 0 && console.warn("There are no focusable elements inside the <FocusTrap />"), i.current = document.activeElement;
-    }, [e, r, s]), w("keydown", (u) => {
-      !(t & 4) || !e.current || u.key === "Tab" && (u.preventDefault(), M(e.current, (u.shiftKey ? 2 : 4) | 16) === 2 && (i.current = document.activeElement));
-    }), w("focus", (u) => {
-      if (!(t & 8))
-        return;
-      let c = new Set(o == null ? void 0 : o.current);
-      if (c.add(e), !c.size)
-        return;
-      let m2 = i.current;
-      if (!m2 || !a.current)
-        return;
-      let b = u.target;
-      b && b instanceof HTMLElement ? Kr(c, b) ? (i.current = b, ce(b)) : (u.preventDefault(), u.stopPropagation(), ce(m2)) : ce(i.current);
-    }, true);
-  }
-  function Kr(e, t) {
-    var r;
-    for (let o of e)
-      if ((r = o.current) == null ? void 0 : r.contains(t))
-        return true;
-    return false;
-  }
-  var fe = /* @__PURE__ */ new Set(), J = /* @__PURE__ */ new Map();
-  function po(e) {
-    e.setAttribute("aria-hidden", "true"), e.inert = true;
-  }
-  function co(e) {
-    let t = J.get(e);
-    !t || (t["aria-hidden"] === null ? e.removeAttribute("aria-hidden") : e.setAttribute("aria-hidden", t["aria-hidden"]), e.inert = t.inert);
-  }
-  function fo(e, t = true) {
-    x(() => {
-      if (!t || !e.current)
-        return;
-      let r = e.current;
-      fe.add(r);
-      for (let o of J.keys())
-        o.contains(r) && (co(o), J.delete(o));
-      return document.querySelectorAll("body > *").forEach((o) => {
-        if (o instanceof HTMLElement) {
-          for (let n2 of fe)
-            if (o.contains(n2))
-              return;
-          fe.size === 1 && (J.set(o, { "aria-hidden": o.getAttribute("aria-hidden"), inert: o.inert }), po(o));
-        }
-      }), () => {
-        if (fe.delete(r), fe.size > 0)
-          document.querySelectorAll("body > *").forEach((o) => {
-            if (o instanceof HTMLElement && !J.has(o)) {
-              for (let n2 of fe)
-                if (o.contains(n2))
-                  return;
-              J.set(o, { "aria-hidden": o.getAttribute("aria-hidden"), inert: o.inert }), po(o);
-            }
-          });
-        else
-          for (let o of J.keys())
-            co(o), J.delete(o);
-      };
-    }, [t]);
-  }
-  var mo = React2.createContext(false);
-  function bo() {
-    return React2.useContext(mo);
-  }
-  function At(e) {
-    return React__default["default"].createElement(mo.Provider, { value: e.force }, e.children);
-  }
-  function Xr() {
-    let e = bo(), t = React2.useContext(Po), [r, o] = React2.useState(() => {
-      if (!e && t !== null || typeof window == "undefined")
-        return null;
-      let n2 = document.getElementById("headlessui-portal-root");
-      if (n2)
-        return n2;
-      let i = document.createElement("div");
-      return i.setAttribute("id", "headlessui-portal-root"), document.body.appendChild(i);
-    });
-    return React2.useEffect(() => {
-      r !== null && (document.body.contains(r) || document.body.appendChild(r));
-    }, [r]), React2.useEffect(() => {
-      e || t !== null && o(t.current);
-    }, [t, o, e]), r;
-  }
-  var Jr = React2.Fragment;
-  function We(e) {
-    let t = e, r = Xr(), [o] = React2.useState(() => typeof window == "undefined" ? null : document.createElement("div")), n2 = q$1();
-    return x(() => {
-      if (!!r && !!o)
-        return r.appendChild(o), () => {
-          var i;
-          !r || !o || (r.removeChild(o), r.childNodes.length <= 0 && ((i = r.parentElement) == null || i.removeChild(r)));
-        };
-    }, [r, o]), n2 ? !r || !o ? null : ReactDOM2.createPortal(E({ props: t, defaultTag: Jr, name: "Portal" }), o) : null;
-  }
-  var Zr = React2.Fragment, Po = React2.createContext(null);
-  function en(e) {
-    let _a2 = e, { target: t } = _a2, r = __objRest(_a2, ["target"]);
-    return React__default["default"].createElement(Po.Provider, { value: t }, E({ props: r, defaultTag: Zr, name: "Popover.Group" }));
-  }
-  We.Group = en;
-  var vo = React2.createContext(null);
-  function Ro() {
-    let e = React2.useContext(vo);
-    if (e === null) {
-      let t = new Error("You used a <Description /> component, but it is not inside a relevant parent.");
-      throw Error.captureStackTrace && Error.captureStackTrace(t, Ro), t;
-    }
-    return e;
-  }
-  function re() {
-    let [e, t] = React2.useState([]);
-    return [e.length > 0 ? e.join(" ") : void 0, React2.useMemo(() => function(o) {
-      let n2 = React2.useCallback((a) => (t((l) => [...l, a]), () => t((l) => {
-        let s = l.slice(), u = s.indexOf(a);
-        return u !== -1 && s.splice(u, 1), s;
-      })), []), i = React2.useMemo(() => ({ register: n2, slot: o.slot, name: o.name, props: o.props }), [n2, o.slot, o.name, o.props]);
-      return React__default["default"].createElement(vo.Provider, { value: i }, o.children);
-    }, [t])];
-  }
-  var an = "p";
-  function me(e) {
-    let t = Ro(), r = `headlessui-description-${A()}`;
-    x(() => t.register(r), [r, t.register]);
-    let o = e, n2 = __spreadProps(__spreadValues({}, t.props), { id: r });
-    return E({ props: __spreadValues(__spreadValues({}, o), n2), slot: t.slot || {}, defaultTag: an, name: t.name || "Description" });
-  }
-  var ht = React2.createContext(() => {
+  let a = "div";
+  var s$1 = ((e2) => (e2[e2.None = 1] = "None", e2[e2.Focusable = 2] = "Focusable", e2[e2.Hidden = 4] = "Hidden", e2))(s$1 || {});
+  let h$4 = H$4(function(t2, o2) {
+    let _a2 = t2, { features: e2 = 1 } = _a2, r2 = __objRest(_a2, ["features"]), d2 = { ref: o2, "aria-hidden": (e2 & 2) === 2 ? true : void 0, style: __spreadValues({ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: "0" }, (e2 & 4) === 4 && (e2 & 2) !== 2 && { display: "none" }) };
+    return _({ ourProps: d2, theirProps: r2, slot: {}, defaultTag: a, name: "Hidden" });
   });
-  ht.displayName = "StackContext";
-  function cn() {
-    return React2.useContext(ht);
+  let o$1 = React2.createContext(null);
+  o$1.displayName = "OpenClosedContext";
+  var p$4 = ((e2) => (e2[e2.Open = 0] = "Open", e2[e2.Closed = 1] = "Closed", e2))(p$4 || {});
+  function s() {
+    return React2.useContext(o$1);
   }
-  function Eo({ children: e, onUpdate: t, type: r, element: o }) {
-    let n2 = cn(), i = React2.useCallback((...a) => {
-      t == null || t(...a), n2(...a);
-    }, [n2, t]);
-    return x(() => (i(0, r, o), () => i(1, r, o)), [i, r, o]), React__default["default"].createElement(ht.Provider, { value: i }, e);
+  function C$2({ value: t2, children: n2 }) {
+    return React__default["default"].createElement(o$1.Provider, { value: t2 }, n2);
   }
-  var yn = { [0](e, t) {
-    return e.titleId === t.id ? e : __spreadProps(__spreadValues({}, e), { titleId: t.id });
-  } }, Ve = React2.createContext(null);
-  Ve.displayName = "DialogContext";
-  function It(e) {
-    let t = React2.useContext(Ve);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <${An.displayName} /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, It), r;
+  var o = ((r2) => (r2.Space = " ", r2.Enter = "Enter", r2.Escape = "Escape", r2.Backspace = "Backspace", r2.Delete = "Delete", r2.ArrowLeft = "ArrowLeft", r2.ArrowUp = "ArrowUp", r2.ArrowRight = "ArrowRight", r2.ArrowDown = "ArrowDown", r2.Home = "Home", r2.End = "End", r2.PageUp = "PageUp", r2.PageDown = "PageDown", r2.Tab = "Tab", r2))(o || {});
+  function f$1() {
+    let e2 = React2.useRef(false);
+    return t$2(() => (e2.current = true, () => {
+      e2.current = false;
+    }), []), e2;
+  }
+  let d = React2.createContext(null);
+  function u$1() {
+    let r2 = React2.useContext(d);
+    if (r2 === null) {
+      let t2 = new Error("You used a <Description /> component, but it is not inside a relevant parent.");
+      throw Error.captureStackTrace && Error.captureStackTrace(t2, u$1), t2;
     }
-    return t;
+    return r2;
   }
-  function gn(e, t) {
-    return S(t.type, yn, e, t);
+  function k() {
+    let [r2, t2] = React2.useState([]);
+    return [r2.length > 0 ? r2.join(" ") : void 0, React2.useMemo(() => function(e2) {
+      let i2 = o$2((n2) => (t2((o2) => [...o2, n2]), () => t2((o2) => {
+        let c2 = o2.slice(), p2 = c2.indexOf(n2);
+        return p2 !== -1 && c2.splice(p2, 1), c2;
+      }))), s2 = React2.useMemo(() => ({ register: i2, slot: e2.slot, name: e2.name, props: e2.props }), [i2, e2.slot, e2.name, e2.props]);
+      return React__default["default"].createElement(d.Provider, { value: s2 }, e2.children);
+    }, [t2])];
   }
-  var Pn = "div", xn = 1 | 2, vn = D(function(t, r) {
-    let _a2 = t, { open: o, onClose: n2, initialFocus: i } = _a2, a = __objRest(_a2, ["open", "onClose", "initialFocus"]), [l, s] = React2.useState(0), u = _();
-    o === void 0 && u !== null && (o = S(u, { [0]: true, [1]: false }));
-    let c = React2.useRef(/* @__PURE__ */ new Set()), m2 = React2.useRef(null), b = I(m2, r), T = t.hasOwnProperty("open") || u !== null, y = t.hasOwnProperty("onClose");
-    if (!T && !y)
-      throw new Error("You have to provide an `open` and an `onClose` prop to the `Dialog` component.");
-    if (!T)
-      throw new Error("You provided an `onClose` prop to the `Dialog`, but forgot an `open` prop.");
-    if (!y)
-      throw new Error("You provided an `open` prop to the `Dialog`, but forgot an `onClose` prop.");
-    if (typeof o != "boolean")
-      throw new Error(`You provided an \`open\` prop to the \`Dialog\`, but the value is not a boolean. Received: ${o}`);
-    if (typeof n2 != "function")
-      throw new Error(`You provided an \`onClose\` prop to the \`Dialog\`, but the value is not a function. Received: ${n2}`);
-    let p2 = o ? 0 : 1, f2 = (() => u !== null ? u === 0 : p2 === 0)(), [d, P] = React2.useReducer(gn, { titleId: null, descriptionId: null }), C = React2.useCallback(() => n2(false), [n2]), R = React2.useCallback((F) => P({ type: 0, id: F }), [P]), v = q$1() && p2 === 0, h2 = l > 1, O = React2.useContext(Ve) !== null;
-    Ne(m2, v ? S(h2 ? "parent" : "leaf", { parent: 16, leaf: 30 }) : 1, { initialFocus: i, containers: c }), fo(m2, h2 ? v : false), w("mousedown", (F) => {
-      var H;
-      let $ = F.target;
-      p2 === 0 && (h2 || ((H = m2.current) == null ? void 0 : H.contains($)) || C());
-    }), w("keydown", (F) => {
-      F.key === "Escape" && p2 === 0 && (h2 || (F.preventDefault(), F.stopPropagation(), C()));
-    }), React2.useEffect(() => {
-      if (p2 !== 0 || O)
+  let S = "p", F$1 = H$4(function(t2, a2) {
+    let e2 = u$1(), i2 = `headlessui-description-${I()}`, s2 = y$1(a2);
+    t$2(() => e2.register(i2), [i2, e2.register]);
+    let n2 = t2, o2 = __spreadProps(__spreadValues({ ref: s2 }, e2.props), { id: i2 });
+    return _({ ourProps: o2, theirProps: n2, slot: e2.slot || {}, defaultTag: S, name: e2.name || "Description" });
+  });
+  var Q = ((o2) => (o2[o2.Open = 0] = "Open", o2[o2.Closed = 1] = "Closed", o2))(Q || {}), V = ((l2) => (l2[l2.ToggleDisclosure = 0] = "ToggleDisclosure", l2[l2.CloseDisclosure = 1] = "CloseDisclosure", l2[l2.SetButtonId = 2] = "SetButtonId", l2[l2.SetPanelId = 3] = "SetPanelId", l2[l2.LinkPanel = 4] = "LinkPanel", l2[l2.UnlinkPanel = 5] = "UnlinkPanel", l2))(V || {});
+  let X = { [0]: (e2) => __spreadProps(__spreadValues({}, e2), { disclosureState: u$2(e2.disclosureState, { [0]: 1, [1]: 0 }) }), [1]: (e2) => e2.disclosureState === 1 ? e2 : __spreadProps(__spreadValues({}, e2), { disclosureState: 1 }), [4](e2) {
+    return e2.linkedPanel === true ? e2 : __spreadProps(__spreadValues({}, e2), { linkedPanel: true });
+  }, [5](e2) {
+    return e2.linkedPanel === false ? e2 : __spreadProps(__spreadValues({}, e2), { linkedPanel: false });
+  }, [2](e2, t2) {
+    return e2.buttonId === t2.buttonId ? e2 : __spreadProps(__spreadValues({}, e2), { buttonId: t2.buttonId });
+  }, [3](e2, t2) {
+    return e2.panelId === t2.panelId ? e2 : __spreadProps(__spreadValues({}, e2), { panelId: t2.panelId });
+  } }, h$3 = React2.createContext(null);
+  h$3.displayName = "DisclosureContext";
+  function H$2(e2) {
+    let t2 = React2.useContext(h$3);
+    if (t2 === null) {
+      let o2 = new Error(`<${e2} /> is missing a parent <Disclosure /> component.`);
+      throw Error.captureStackTrace && Error.captureStackTrace(o2, H$2), o2;
+    }
+    return t2;
+  }
+  let U = React2.createContext(null);
+  U.displayName = "DisclosureAPIContext";
+  function K$1(e2) {
+    let t2 = React2.useContext(U);
+    if (t2 === null) {
+      let o2 = new Error(`<${e2} /> is missing a parent <Disclosure /> component.`);
+      throw Error.captureStackTrace && Error.captureStackTrace(o2, K$1), o2;
+    }
+    return t2;
+  }
+  let w$2 = React2.createContext(null);
+  w$2.displayName = "DisclosurePanelContext";
+  function Y() {
+    return React2.useContext(w$2);
+  }
+  function Z$1(e2, t2) {
+    return u$2(t2.type, X, e2, t2);
+  }
+  let ee$1 = React2.Fragment, te$1 = H$4(function(t$12, o2) {
+    let _a2 = t$12, { defaultOpen: n2 = false } = _a2, s2 = __objRest(_a2, ["defaultOpen"]), i2 = `headlessui-disclosure-button-${I()}`, l2 = `headlessui-disclosure-panel-${I()}`, u2 = React2.useRef(null), D = y$1(o2, T$2((f2) => {
+      u2.current = f2;
+    }, t$12.as === void 0 || t$12.as === React__default["default"].Fragment)), P = React2.useRef(null), m2 = React2.useRef(null), p2 = React2.useReducer(Z$1, { disclosureState: n2 ? 0 : 1, linkedPanel: false, buttonRef: m2, panelRef: P, buttonId: i2, panelId: l2 }), [{ disclosureState: a2 }, c2] = p2;
+    React2.useEffect(() => c2({ type: 2, buttonId: i2 }), [i2, c2]), React2.useEffect(() => c2({ type: 3, panelId: l2 }), [l2, c2]);
+    let T2 = o$2((f2) => {
+      c2({ type: 1 });
+      let A = t(u2);
+      if (!A)
         return;
-      let F = document.documentElement.style.overflow, $ = document.documentElement.style.paddingRight, H = window.innerWidth - document.documentElement.clientWidth;
-      return document.documentElement.style.overflow = "hidden", document.documentElement.style.paddingRight = `${H}px`, () => {
-        document.documentElement.style.overflow = F, document.documentElement.style.paddingRight = $;
-      };
-    }, [p2, O]), React2.useEffect(() => {
-      if (p2 !== 0 || !m2.current)
-        return;
-      let F = new IntersectionObserver(($) => {
-        for (let H of $)
-          H.boundingClientRect.x === 0 && H.boundingClientRect.y === 0 && H.boundingClientRect.width === 0 && H.boundingClientRect.height === 0 && C();
-      });
-      return F.observe(m2.current), () => F.disconnect();
-    }, [p2, m2, C]);
-    let [N, K] = re(), V = `headlessui-dialog-${A()}`, Fe = React2.useMemo(() => [{ dialogState: p2, close: C, setTitleId: R }, d], [p2, d, C, R]), ge = React2.useMemo(() => ({ open: p2 === 0 }), [p2]), we = { ref: b, id: V, role: "dialog", "aria-modal": p2 === 0 ? true : void 0, "aria-labelledby": d.titleId, "aria-describedby": N, onClick(F) {
-      F.stopPropagation();
-    } }, X = a;
-    return React__default["default"].createElement(Eo, { type: "Dialog", element: m2, onUpdate: React2.useCallback((F, $, H) => {
-      $ === "Dialog" && S(F, { [0]() {
-        c.current.add(H), s((Pe) => Pe + 1);
+      let I2 = (() => f2 ? f2 instanceof HTMLElement ? f2 : f2.current instanceof HTMLElement ? f2.current : A.getElementById(i2) : A.getElementById(i2))();
+      I2 == null || I2.focus();
+    }), C2 = React2.useMemo(() => ({ close: T2 }), [T2]), r2 = React2.useMemo(() => ({ open: a2 === 0, close: T2 }), [a2, T2]), d2 = { ref: D };
+    return React__default["default"].createElement(h$3.Provider, { value: p2 }, React__default["default"].createElement(U.Provider, { value: C2 }, React__default["default"].createElement(C$2, { value: u$2(a2, { [0]: p$4.Open, [1]: p$4.Closed }) }, _({ ourProps: d2, theirProps: s2, slot: r2, defaultTag: ee$1, name: "Disclosure" }))));
+  }), ne$1 = "button", le$1 = H$4(function(t2, o$12) {
+    let [n2, s2] = H$2("Disclosure.Button"), i2 = Y(), l2 = i2 === null ? false : i2 === n2.panelId, u2 = React2.useRef(null), D = y$1(u2, o$12, l2 ? null : n2.buttonRef), P = o$2((r2) => {
+      var d2;
+      if (l2) {
+        if (n2.disclosureState === 1)
+          return;
+        switch (r2.key) {
+          case o.Space:
+          case o.Enter:
+            r2.preventDefault(), r2.stopPropagation(), s2({ type: 0 }), (d2 = n2.buttonRef.current) == null || d2.focus();
+            break;
+        }
+      } else
+        switch (r2.key) {
+          case o.Space:
+          case o.Enter:
+            r2.preventDefault(), r2.stopPropagation(), s2({ type: 0 });
+            break;
+        }
+    }), m2 = o$2((r2) => {
+      switch (r2.key) {
+        case o.Space:
+          r2.preventDefault();
+          break;
+      }
+    }), p2 = o$2((r$12) => {
+      var d2;
+      r(r$12.currentTarget) || t2.disabled || (l2 ? (s2({ type: 0 }), (d2 = n2.buttonRef.current) == null || d2.focus()) : s2({ type: 0 }));
+    }), a2 = React2.useMemo(() => ({ open: n2.disclosureState === 0 }), [n2]), c2 = s$3(t2, u2), T2 = t2, C2 = l2 ? { ref: D, type: c2, onKeyDown: P, onClick: p2 } : { ref: D, id: n2.buttonId, type: c2, "aria-expanded": t2.disabled ? void 0 : n2.disclosureState === 0, "aria-controls": n2.linkedPanel ? n2.panelId : void 0, onKeyDown: P, onKeyUp: m2, onClick: p2 };
+    return _({ ourProps: C2, theirProps: T2, slot: a2, defaultTag: ne$1, name: "Disclosure.Button" });
+  }), oe$1 = "div", re$1 = x.RenderStrategy | x.Static, se$1 = H$4(function(t2, o2) {
+    let [n2, s$12] = H$2("Disclosure.Panel"), { close: i2 } = K$1("Disclosure.Panel"), l2 = y$1(o2, n2.panelRef, () => {
+      n2.linkedPanel || s$12({ type: 4 });
+    }), u2 = s(), D = (() => u2 !== null ? u2 === p$4.Open : n2.disclosureState === 0)();
+    React2.useEffect(() => () => s$12({ type: 5 }), [s$12]), React2.useEffect(() => {
+      var a2;
+      n2.disclosureState === 1 && ((a2 = t2.unmount) != null ? a2 : true) && s$12({ type: 5 });
+    }, [n2.disclosureState, t2.unmount, s$12]);
+    let P = React2.useMemo(() => ({ open: n2.disclosureState === 0, close: i2 }), [n2, i2]), m2 = t2, p2 = { ref: l2, id: n2.panelId };
+    return React__default["default"].createElement(w$2.Provider, { value: n2.panelId }, _({ ourProps: p2, theirProps: m2, slot: P, defaultTag: oe$1, features: re$1, visible: D, name: "Disclosure.Panel" }));
+  }), ke = Object.assign(te$1, { Button: le$1, Panel: se$1 });
+  var ce$1 = ((n2) => (n2[n2.Open = 0] = "Open", n2[n2.Closed = 1] = "Closed", n2))(ce$1 || {}), fe$1 = ((n2) => (n2[n2.Single = 0] = "Single", n2[n2.Multi = 1] = "Multi", n2))(fe$1 || {}), be$2 = ((n2) => (n2[n2.Pointer = 0] = "Pointer", n2[n2.Other = 1] = "Other", n2))(be$2 || {}), Te$1 = ((r2) => (r2[r2.OpenListbox = 0] = "OpenListbox", r2[r2.CloseListbox = 1] = "CloseListbox", r2[r2.SetDisabled = 2] = "SetDisabled", r2[r2.SetOrientation = 3] = "SetOrientation", r2[r2.GoToOption = 4] = "GoToOption", r2[r2.Search = 5] = "Search", r2[r2.ClearSearch = 6] = "ClearSearch", r2[r2.RegisterOption = 7] = "RegisterOption", r2[r2.UnregisterOption = 8] = "UnregisterOption", r2))(Te$1 || {});
+  function H$1(t2, i2 = (n2) => n2) {
+    let n2 = t2.activeOptionIndex !== null ? t2.options[t2.activeOptionIndex] : null, e2 = v$1(i2(t2.options.slice()), (p2) => p2.dataRef.current.domRef.current), o2 = n2 ? e2.indexOf(n2) : null;
+    return o2 === -1 && (o2 = null), { options: e2, activeOptionIndex: o2 };
+  }
+  let xe$1 = { [1](t2) {
+    return t2.disabled || t2.listboxState === 1 ? t2 : __spreadProps(__spreadValues({}, t2), { activeOptionIndex: null, listboxState: 1 });
+  }, [0](t2) {
+    if (t2.disabled || t2.listboxState === 0)
+      return t2;
+    let i2 = t2.activeOptionIndex, { value: n2, mode: e2, compare: o2 } = t2.propsRef.current, p2 = t2.options.findIndex((l2) => {
+      let s2 = l2.dataRef.current.value;
+      return u$2(e2, { [1]: () => n2.some((r2) => o2(r2, s2)), [0]: () => o2(n2, s2) });
+    });
+    return p2 !== -1 && (i2 = p2), __spreadProps(__spreadValues({}, t2), { listboxState: 0, activeOptionIndex: i2 });
+  }, [2](t2, i2) {
+    return t2.disabled === i2.disabled ? t2 : __spreadProps(__spreadValues({}, t2), { disabled: i2.disabled });
+  }, [3](t2, i2) {
+    return t2.orientation === i2.orientation ? t2 : __spreadProps(__spreadValues({}, t2), { orientation: i2.orientation });
+  }, [4](t2, i2) {
+    var o2;
+    if (t2.disabled || t2.listboxState === 1)
+      return t2;
+    let n2 = H$1(t2), e2 = x$1(i2, { resolveItems: () => n2.options, resolveActiveIndex: () => n2.activeOptionIndex, resolveId: (p2) => p2.id, resolveDisabled: (p2) => p2.dataRef.current.disabled });
+    return __spreadProps(__spreadValues(__spreadValues({}, t2), n2), { searchQuery: "", activeOptionIndex: e2, activationTrigger: (o2 = i2.trigger) != null ? o2 : 1 });
+  }, [5]: (t2, i2) => {
+    if (t2.disabled || t2.listboxState === 1)
+      return t2;
+    let e2 = t2.searchQuery !== "" ? 0 : 1, o2 = t2.searchQuery + i2.value.toLowerCase(), l2 = (t2.activeOptionIndex !== null ? t2.options.slice(t2.activeOptionIndex + e2).concat(t2.options.slice(0, t2.activeOptionIndex + e2)) : t2.options).find((u2) => {
+      var r2;
+      return !u2.dataRef.current.disabled && ((r2 = u2.dataRef.current.textValue) == null ? void 0 : r2.startsWith(o2));
+    }), s2 = l2 ? t2.options.indexOf(l2) : -1;
+    return s2 === -1 || s2 === t2.activeOptionIndex ? __spreadProps(__spreadValues({}, t2), { searchQuery: o2 }) : __spreadProps(__spreadValues({}, t2), { searchQuery: o2, activeOptionIndex: s2, activationTrigger: 1 });
+  }, [6](t2) {
+    return t2.disabled || t2.listboxState === 1 || t2.searchQuery === "" ? t2 : __spreadProps(__spreadValues({}, t2), { searchQuery: "" });
+  }, [7]: (t2, i2) => {
+    let n2 = { id: i2.id, dataRef: i2.dataRef }, e2 = H$1(t2, (o2) => [...o2, n2]);
+    if (t2.activeOptionIndex === null) {
+      let { value: o2, mode: p2, compare: l2 } = t2.propsRef.current, s2 = i2.dataRef.current.value;
+      u$2(p2, { [1]: () => o2.some((r2) => l2(r2, s2)), [0]: () => l2(o2, s2) }) && (e2.activeOptionIndex = e2.options.indexOf(n2));
+    }
+    return __spreadValues(__spreadValues({}, t2), e2);
+  }, [8]: (t2, i2) => {
+    let n2 = H$1(t2, (e2) => {
+      let o2 = e2.findIndex((p2) => p2.id === i2.id);
+      return o2 !== -1 && e2.splice(o2, 1), e2;
+    });
+    return __spreadProps(__spreadValues(__spreadValues({}, t2), n2), { activationTrigger: 1 });
+  } }, j$1 = React2.createContext(null);
+  j$1.displayName = "ListboxContext";
+  function w$1(t2) {
+    let i2 = React2.useContext(j$1);
+    if (i2 === null) {
+      let n2 = new Error(`<${t2} /> is missing a parent <Listbox /> component.`);
+      throw Error.captureStackTrace && Error.captureStackTrace(n2, w$1), n2;
+    }
+    return i2;
+  }
+  function ye$1(t2, i2) {
+    return u$2(i2.type, xe$1, t2, i2);
+  }
+  let Oe = React2.Fragment, me = H$4(function(i2, n2) {
+    let _a2 = i2, { value: e$1, name: o2, onChange: p2, disabled: l2 = false, horizontal: s2 = false, multiple: u2 = false } = _a2, r2 = __objRest(_a2, ["value", "name", "onChange", "disabled", "horizontal", "multiple"]);
+    const x2 = s2 ? "horizontal" : "vertical";
+    let A = y$1(n2), R2 = React2.useReducer(ye$1, { listboxState: 1, propsRef: { current: { value: e$1, onChange: p2, mode: u2 ? 1 : 0, compare: o$2((y2, m2) => y2 === m2) } }, labelRef: React2.createRef(), buttonRef: React2.createRef(), optionsRef: React2.createRef(), disabled: l2, orientation: x2, options: [], searchQuery: "", activeOptionIndex: null, activationTrigger: 1 }), [{ listboxState: b$1, propsRef: O, optionsRef: T2, buttonRef: d2 }, a2] = R2;
+    O.current.value = e$1, O.current.mode = u2 ? 1 : 0, t$2(() => {
+      O.current.onChange = (y2) => u$2(O.current.mode, { [0]() {
+        return p2(y2);
       }, [1]() {
-        c.current.add(H), s((Pe) => Pe - 1);
+        let m2 = O.current.value.slice(), C2 = m2.indexOf(y2);
+        return C2 === -1 ? m2.push(y2) : m2.splice(C2, 1), p2(m2);
       } });
-    }, []) }, React__default["default"].createElement(At, { force: true }, React__default["default"].createElement(We, null, React__default["default"].createElement(Ve.Provider, { value: Fe }, React__default["default"].createElement(We.Group, { target: m2 }, React__default["default"].createElement(At, { force: false }, React__default["default"].createElement(K, { slot: ge, name: "Dialog.Description" }, E({ props: __spreadValues(__spreadValues({}, X), we), slot: ge, defaultTag: Pn, features: xn, visible: f2, name: "Dialog" }))))))));
-  }), Rn = "div", En = D(function(t, r) {
-    let [{ dialogState: o, close: n2 }] = It("Dialog.Overlay"), i = I(r), a = `headlessui-dialog-overlay-${A()}`, l = React2.useCallback((m2) => {
-      if (m2.target === m2.currentTarget) {
-        if (G(m2.currentTarget))
-          return m2.preventDefault();
-        m2.preventDefault(), m2.stopPropagation(), n2();
-      }
-    }, [n2]), s = React2.useMemo(() => ({ open: o === 0 }), [o]);
-    return E({ props: __spreadValues(__spreadValues({}, t), { ref: i, id: a, "aria-hidden": true, onClick: l }), slot: s, defaultTag: Rn, name: "Dialog.Overlay" });
-  }), Cn = "h2";
-  function Sn(e) {
-    let [{ dialogState: t, setTitleId: r }] = It("Dialog.Title"), o = `headlessui-dialog-title-${A()}`;
-    React2.useEffect(() => (r(o), () => r(null)), [o, r]);
-    let n2 = React2.useMemo(() => ({ open: t === 0 }), [t]);
-    return E({ props: __spreadValues(__spreadValues({}, e), { id: o }), slot: n2, defaultTag: Cn, name: "Dialog.Title" });
-  }
-  var An = Object.assign(vn, { Overlay: En, Title: Sn, Description: me });
-  var Ln = { [0]: (e) => __spreadProps(__spreadValues({}, e), { disclosureState: S(e.disclosureState, { [0]: 1, [1]: 0 }) }), [1]: (e) => e.disclosureState === 1 ? e : __spreadProps(__spreadValues({}, e), { disclosureState: 1 }), [4](e) {
-    return e.linkedPanel === true ? e : __spreadProps(__spreadValues({}, e), { linkedPanel: true });
-  }, [5](e) {
-    return e.linkedPanel === false ? e : __spreadProps(__spreadValues({}, e), { linkedPanel: false });
-  }, [2](e, t) {
-    return e.buttonId === t.buttonId ? e : __spreadProps(__spreadValues({}, e), { buttonId: t.buttonId });
-  }, [3](e, t) {
-    return e.panelId === t.panelId ? e : __spreadProps(__spreadValues({}, e), { panelId: t.panelId });
-  } }, Mt = React2.createContext(null);
-  Mt.displayName = "DisclosureContext";
-  function Ft(e) {
-    let t = React2.useContext(Mt);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <${Ye.name} /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, Ft), r;
-    }
-    return t;
-  }
-  var wt = React2.createContext(null);
-  wt.displayName = "DisclosureAPIContext";
-  function Ao(e) {
-    let t = React2.useContext(wt);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <${Ye.name} /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, Ao), r;
-    }
-    return t;
-  }
-  var kt = React2.createContext(null);
-  kt.displayName = "DisclosurePanelContext";
-  function Dn() {
-    return React2.useContext(kt);
-  }
-  function Mn(e, t) {
-    return S(t.type, Ln, e, t);
-  }
-  var Fn = React2.Fragment;
-  function Ye(e) {
-    let _a2 = e, { defaultOpen: t = false } = _a2, r = __objRest(_a2, ["defaultOpen"]), o = `headlessui-disclosure-button-${A()}`, n2 = `headlessui-disclosure-panel-${A()}`, i = React2.useReducer(Mn, { disclosureState: t ? 0 : 1, linkedPanel: false, buttonId: o, panelId: n2 }), [{ disclosureState: a }, l] = i;
-    React2.useEffect(() => l({ type: 2, buttonId: o }), [o, l]), React2.useEffect(() => l({ type: 3, panelId: n2 }), [n2, l]);
-    let s = React2.useCallback((m2) => {
-      l({ type: 1 });
-      let b = (() => m2 ? m2 instanceof HTMLElement ? m2 : m2.current instanceof HTMLElement ? m2.current : document.getElementById(o) : document.getElementById(o))();
-      b == null || b.focus();
-    }, [l, o]), u = React2.useMemo(() => ({ close: s }), [s]), c = React2.useMemo(() => ({ open: a === 0, close: s }), [a, s]);
-    return React__default["default"].createElement(Mt.Provider, { value: i }, React__default["default"].createElement(wt.Provider, { value: u }, React__default["default"].createElement(W, { value: S(a, { [0]: 0, [1]: 1 }) }, E({ props: r, slot: c, defaultTag: Fn, name: "Disclosure" }))));
-  }
-  var wn = "button", kn = D(function(t, r) {
-    let [o, n2] = Ft("Disclosure.Button"), i = React2.useRef(null), a = I(i, r), l = Dn(), s = l === null ? false : l === o.panelId, u = React2.useCallback((f2) => {
-      var d;
-      if (s) {
-        if (o.disclosureState === 1)
-          return;
-        switch (f2.key) {
-          case " ":
-          case "Enter":
-            f2.preventDefault(), f2.stopPropagation(), n2({ type: 0 }), (d = document.getElementById(o.buttonId)) == null || d.focus();
-            break;
-        }
-      } else
-        switch (f2.key) {
-          case " ":
-          case "Enter":
-            f2.preventDefault(), f2.stopPropagation(), n2({ type: 0 });
-            break;
-        }
-    }, [n2, s, o.disclosureState, o.buttonId]), c = React2.useCallback((f2) => {
-      switch (f2.key) {
-        case " ":
-          f2.preventDefault();
+    }, [p2, O]), t$2(() => a2({ type: 2, disabled: l2 }), [l2]), t$2(() => a2({ type: 3, orientation: x2 }), [x2]), w$3([d2, T2], (y2, m2) => {
+      var C2;
+      b$1 === 0 && (a2({ type: 1 }), S$1(m2, b.Loose) || (y2.preventDefault(), (C2 = d2.current) == null || C2.focus()));
+    });
+    let c2 = React2.useMemo(() => ({ open: b$1 === 0, disabled: l2 }), [b$1, l2]), D = { ref: A };
+    return React__default["default"].createElement(j$1.Provider, { value: R2 }, React__default["default"].createElement(C$2, { value: u$2(b$1, { [0]: p$4.Open, [1]: p$4.Closed }) }, o2 != null && e$1 != null && e({ [o2]: e$1 }).map(([y2, m2]) => React__default["default"].createElement(h$4, __spreadValues({ features: s$1.Hidden }, g$2({ key: y2, as: "input", type: "hidden", hidden: true, readOnly: true, name: y2, value: m2 })))), _({ ourProps: D, theirProps: r2, slot: c2, defaultTag: Oe, name: "Listbox" })));
+  }), ge$1 = "button", Re = H$4(function(i2, n2) {
+    var T2;
+    let [e2, o$12] = w$1("Listbox.Button"), p2 = y$1(e2.buttonRef, n2), l2 = `headlessui-listbox-button-${I()}`, s2 = p$7(), u2 = o$2((d2) => {
+      switch (d2.key) {
+        case o.Space:
+        case o.Enter:
+        case o.ArrowDown:
+          d2.preventDefault(), o$12({ type: 0 }), s2.nextFrame(() => {
+            e2.propsRef.current.value || o$12({ type: 4, focus: a$1.First });
+          });
+          break;
+        case o.ArrowUp:
+          d2.preventDefault(), o$12({ type: 0 }), s2.nextFrame(() => {
+            e2.propsRef.current.value || o$12({ type: 4, focus: a$1.Last });
+          });
           break;
       }
-    }, []), m2 = React2.useCallback((f2) => {
-      var d;
-      G(f2.currentTarget) || t.disabled || (s ? (n2({ type: 0 }), (d = document.getElementById(o.buttonId)) == null || d.focus()) : n2({ type: 0 }));
-    }, [n2, t.disabled, o.buttonId, s]), b = React2.useMemo(() => ({ open: o.disclosureState === 0 }), [o]), T = U(t, i), y = t, p2 = s ? { ref: a, type: T, onKeyDown: u, onClick: m2 } : { ref: a, id: o.buttonId, type: T, "aria-expanded": t.disabled ? void 0 : o.disclosureState === 0, "aria-controls": o.linkedPanel ? o.panelId : void 0, onKeyDown: u, onKeyUp: c, onClick: m2 };
-    return E({ props: __spreadValues(__spreadValues({}, y), p2), slot: b, defaultTag: wn, name: "Disclosure.Button" });
-  }), _n = "div", Gn = 1 | 2, Hn = D(function(t, r) {
-    let [o, n2] = Ft("Disclosure.Panel"), { close: i } = Ao("Disclosure.Panel"), a = I(r, () => {
-      o.linkedPanel || n2({ type: 4 });
-    }), l = _(), s = (() => l !== null ? l === 0 : o.disclosureState === 0)();
-    React2.useEffect(() => () => n2({ type: 5 }), [n2]), React2.useEffect(() => {
-      var b;
-      o.disclosureState === 1 && ((b = t.unmount) != null ? b : true) && n2({ type: 5 });
-    }, [o.disclosureState, t.unmount, n2]);
-    let u = React2.useMemo(() => ({ open: o.disclosureState === 0, close: i }), [o, i]), c = { ref: a, id: o.panelId }, m2 = t;
-    return React__default["default"].createElement(kt.Provider, { value: o.panelId }, E({ props: __spreadValues(__spreadValues({}, m2), c), slot: u, defaultTag: _n, features: Gn, visible: s, name: "Disclosure.Panel" }));
+    }), r$12 = o$2((d2) => {
+      switch (d2.key) {
+        case o.Space:
+          d2.preventDefault();
+          break;
+      }
+    }), x2 = o$2((d2) => {
+      if (r(d2.currentTarget))
+        return d2.preventDefault();
+      e2.listboxState === 0 ? (o$12({ type: 1 }), s2.nextFrame(() => {
+        var a2;
+        return (a2 = e2.buttonRef.current) == null ? void 0 : a2.focus({ preventScroll: true });
+      })) : (d2.preventDefault(), o$12({ type: 0 }));
+    }), A = i$2(() => {
+      if (!!e2.labelRef.current)
+        return [e2.labelRef.current.id, l2].join(" ");
+    }, [e2.labelRef.current, l2]), R2 = React2.useMemo(() => ({ open: e2.listboxState === 0, disabled: e2.disabled }), [e2]), b2 = i2, O = { ref: p2, id: l2, type: s$3(i2, e2.buttonRef), "aria-haspopup": true, "aria-controls": (T2 = e2.optionsRef.current) == null ? void 0 : T2.id, "aria-expanded": e2.disabled ? void 0 : e2.listboxState === 0, "aria-labelledby": A, disabled: e2.disabled, onKeyDown: u2, onKeyUp: r$12, onClick: x2 };
+    return _({ ourProps: O, theirProps: b2, slot: R2, defaultTag: ge$1, name: "Listbox.Button" });
+  }), Le = "label", ve$1 = H$4(function(i2, n2) {
+    let [e2] = w$1("Listbox.Label"), o2 = `headlessui-listbox-label-${I()}`, p2 = y$1(e2.labelRef, n2), l2 = o$2(() => {
+      var x2;
+      return (x2 = e2.buttonRef.current) == null ? void 0 : x2.focus({ preventScroll: true });
+    }), s2 = React2.useMemo(() => ({ open: e2.listboxState === 0, disabled: e2.disabled }), [e2]);
+    return _({ ourProps: { ref: p2, id: o2, onClick: l2 }, theirProps: i2, slot: s2, defaultTag: Le, name: "Listbox.Label" });
+  }), Se$1 = "ul", Ae = x.RenderStrategy | x.Static, he = H$4(function(i2, n2) {
+    var d2;
+    let [e2, o$12] = w$1("Listbox.Options"), p2 = y$1(e2.optionsRef, n2), l2 = `headlessui-listbox-options-${I()}`, s$12 = p$7(), u2 = p$7(), r2 = s(), x2 = (() => r2 !== null ? r2 === p$4.Open : e2.listboxState === 0)();
+    React2.useEffect(() => {
+      var c2;
+      let a2 = e2.optionsRef.current;
+      !a2 || e2.listboxState === 0 && a2 !== ((c2 = t(a2)) == null ? void 0 : c2.activeElement) && a2.focus({ preventScroll: true });
+    }, [e2.listboxState, e2.optionsRef]);
+    let A = o$2((a2) => {
+      switch (u2.dispose(), a2.key) {
+        case o.Space:
+          if (e2.searchQuery !== "")
+            return a2.preventDefault(), a2.stopPropagation(), o$12({ type: 5, value: a2.key });
+        case o.Enter:
+          if (a2.preventDefault(), a2.stopPropagation(), e2.activeOptionIndex !== null) {
+            let { dataRef: c2 } = e2.options[e2.activeOptionIndex];
+            e2.propsRef.current.onChange(c2.current.value);
+          }
+          e2.propsRef.current.mode === 0 && (o$12({ type: 1 }), o$3().nextFrame(() => {
+            var c2;
+            return (c2 = e2.buttonRef.current) == null ? void 0 : c2.focus({ preventScroll: true });
+          }));
+          break;
+        case u$2(e2.orientation, { vertical: o.ArrowDown, horizontal: o.ArrowRight }):
+          return a2.preventDefault(), a2.stopPropagation(), o$12({ type: 4, focus: a$1.Next });
+        case u$2(e2.orientation, { vertical: o.ArrowUp, horizontal: o.ArrowLeft }):
+          return a2.preventDefault(), a2.stopPropagation(), o$12({ type: 4, focus: a$1.Previous });
+        case o.Home:
+        case o.PageUp:
+          return a2.preventDefault(), a2.stopPropagation(), o$12({ type: 4, focus: a$1.First });
+        case o.End:
+        case o.PageDown:
+          return a2.preventDefault(), a2.stopPropagation(), o$12({ type: 4, focus: a$1.Last });
+        case o.Escape:
+          return a2.preventDefault(), a2.stopPropagation(), o$12({ type: 1 }), s$12.nextFrame(() => {
+            var c2;
+            return (c2 = e2.buttonRef.current) == null ? void 0 : c2.focus({ preventScroll: true });
+          });
+        case o.Tab:
+          a2.preventDefault(), a2.stopPropagation();
+          break;
+        default:
+          a2.key.length === 1 && (o$12({ type: 5, value: a2.key }), u2.setTimeout(() => o$12({ type: 6 }), 350));
+          break;
+      }
+    }), R2 = i$2(() => {
+      var a2, c2, D;
+      return (D = (a2 = e2.labelRef.current) == null ? void 0 : a2.id) != null ? D : (c2 = e2.buttonRef.current) == null ? void 0 : c2.id;
+    }, [e2.labelRef.current, e2.buttonRef.current]), b2 = React2.useMemo(() => ({ open: e2.listboxState === 0 }), [e2]), O = i2, T2 = { "aria-activedescendant": e2.activeOptionIndex === null || (d2 = e2.options[e2.activeOptionIndex]) == null ? void 0 : d2.id, "aria-multiselectable": e2.propsRef.current.mode === 1 ? true : void 0, "aria-labelledby": R2, "aria-orientation": e2.orientation, id: l2, onKeyDown: A, role: "listbox", tabIndex: 0, ref: p2 };
+    return _({ ourProps: T2, theirProps: O, slot: b2, defaultTag: Se$1, features: Ae, visible: x2, name: "Listbox.Options" });
+  }), Pe = "li", De = H$4(function(i2, n2) {
+    let _a2 = i2, { disabled: e2 = false, value: o2 } = _a2, p2 = __objRest(_a2, ["disabled", "value"]), [l2, s2] = w$1("Listbox.Option"), u2 = `headlessui-listbox-option-${I()}`, r2 = l2.activeOptionIndex !== null ? l2.options[l2.activeOptionIndex].id === u2 : false, { value: x2, compare: A } = l2.propsRef.current, R2 = u$2(l2.propsRef.current.mode, { [1]: () => x2.some((S2) => A(S2, o2)), [0]: () => A(x2, o2) }), b2 = React2.useRef(null), O = y$1(n2, b2);
+    t$2(() => {
+      if (l2.listboxState !== 0 || !r2 || l2.activationTrigger === 0)
+        return;
+      let S2 = o$3();
+      return S2.requestAnimationFrame(() => {
+        var L2, K2;
+        (K2 = (L2 = b2.current) == null ? void 0 : L2.scrollIntoView) == null || K2.call(L2, { block: "nearest" });
+      }), S2.dispose;
+    }, [b2, r2, l2.listboxState, l2.activationTrigger, l2.activeOptionIndex]);
+    let T2 = React2.useRef({ disabled: e2, value: o2, domRef: b2 });
+    t$2(() => {
+      T2.current.disabled = e2;
+    }, [T2, e2]), t$2(() => {
+      T2.current.value = o2;
+    }, [T2, o2]), t$2(() => {
+      var S2, L2;
+      T2.current.textValue = (L2 = (S2 = b2.current) == null ? void 0 : S2.textContent) == null ? void 0 : L2.toLowerCase();
+    }, [T2, b2]);
+    let d2 = o$2(() => l2.propsRef.current.onChange(o2));
+    t$2(() => (s2({ type: 7, id: u2, dataRef: T2 }), () => s2({ type: 8, id: u2 })), [T2, u2]);
+    let a2 = o$2((S2) => {
+      if (e2)
+        return S2.preventDefault();
+      d2(), l2.propsRef.current.mode === 0 && (s2({ type: 1 }), o$3().nextFrame(() => {
+        var L2;
+        return (L2 = l2.buttonRef.current) == null ? void 0 : L2.focus({ preventScroll: true });
+      }));
+    }), c2 = o$2(() => {
+      if (e2)
+        return s2({ type: 4, focus: a$1.Nothing });
+      s2({ type: 4, focus: a$1.Specific, id: u2 });
+    }), D = o$2(() => {
+      e2 || r2 || s2({ type: 4, focus: a$1.Specific, id: u2, trigger: 0 });
+    }), y2 = o$2(() => {
+      e2 || !r2 || s2({ type: 4, focus: a$1.Nothing });
+    }), m2 = React2.useMemo(() => ({ active: r2, selected: R2, disabled: e2 }), [r2, R2, e2]);
+    return _({ ourProps: { id: u2, ref: O, role: "option", tabIndex: e2 === true ? void 0 : -1, "aria-disabled": e2 === true ? true : void 0, "aria-selected": R2 === true ? true : void 0, disabled: void 0, onClick: a2, onFocus: c2, onPointerMove: D, onMouseMove: D, onPointerLeave: y2, onMouseLeave: y2 }, theirProps: p2, slot: m2, defaultTag: Pe, name: "Listbox.Option" });
+  }), rt = Object.assign(me, { Button: Re, Label: ve$1, Options: he, Option: De });
+  let u = React2.createContext(null);
+  function c() {
+    let o2 = React2.useContext(u);
+    if (o2 === null) {
+      let t2 = new Error("You used a <Label /> component, but it is not inside a relevant parent.");
+      throw Error.captureStackTrace && Error.captureStackTrace(t2, c), t2;
+    }
+    return o2;
+  }
+  function M() {
+    let [o2, t2] = React2.useState([]);
+    return [o2.length > 0 ? o2.join(" ") : void 0, React2.useMemo(() => function(e2) {
+      let l2 = o$2((a2) => (t2((i2) => [...i2, a2]), () => t2((i2) => {
+        let n2 = i2.slice(), d2 = n2.indexOf(a2);
+        return d2 !== -1 && n2.splice(d2, 1), n2;
+      }))), r2 = React2.useMemo(() => ({ register: l2, slot: e2.slot, name: e2.name, props: e2.props }), [l2, e2.slot, e2.name, e2.props]);
+      return React__default["default"].createElement(u.Provider, { value: r2 }, e2.children);
+    }, [t2])];
+  }
+  let h$2 = "label", F = H$4(function(t2, s2) {
+    let _a2 = t2, { passive: e2 = false } = _a2, l2 = __objRest(_a2, ["passive"]), r2 = c(), a2 = `headlessui-label-${I()}`, i2 = y$1(s2);
+    t$2(() => r2.register(a2), [a2, r2.register]);
+    let n2 = __spreadProps(__spreadValues({ ref: i2 }, r2.props), { id: a2 });
+    return e2 && ("onClick" in n2 && delete n2.onClick, "onClick" in l2 && delete l2.onClick), _({ ourProps: n2, theirProps: l2, slot: r2.slot || {}, defaultTag: h$2, name: r2.name || "Label" });
   });
-  Ye.Button = kn;
-  Ye.Panel = Hn;
-  var $n = { [1](e) {
-    return e.disabled || e.listboxState === 1 ? e : __spreadProps(__spreadValues({}, e), { activeOptionIndex: null, listboxState: 1 });
-  }, [0](e) {
-    return e.disabled || e.listboxState === 0 ? e : __spreadProps(__spreadValues({}, e), { listboxState: 0 });
-  }, [2](e, t) {
-    return e.disabled === t.disabled ? e : __spreadProps(__spreadValues({}, e), { disabled: t.disabled });
-  }, [3](e, t) {
-    return e.orientation === t.orientation ? e : __spreadProps(__spreadValues({}, e), { orientation: t.orientation });
-  }, [4](e, t) {
-    if (e.disabled || e.listboxState === 1)
-      return e;
-    let r = ae(t, { resolveItems: () => e.options, resolveActiveIndex: () => e.activeOptionIndex, resolveId: (o) => o.id, resolveDisabled: (o) => o.dataRef.current.disabled });
-    return e.searchQuery === "" && e.activeOptionIndex === r ? e : __spreadProps(__spreadValues({}, e), { searchQuery: "", activeOptionIndex: r });
-  }, [5]: (e, t) => {
-    if (e.disabled || e.listboxState === 1)
-      return e;
-    let o = e.searchQuery !== "" ? 0 : 1, n2 = e.searchQuery + t.value.toLowerCase(), a = (e.activeOptionIndex !== null ? e.options.slice(e.activeOptionIndex + o).concat(e.options.slice(0, e.activeOptionIndex + o)) : e.options).find((s) => {
-      var u;
-      return !s.dataRef.current.disabled && ((u = s.dataRef.current.textValue) == null ? void 0 : u.startsWith(n2));
-    }), l = a ? e.options.indexOf(a) : -1;
-    return l === -1 || l === e.activeOptionIndex ? __spreadProps(__spreadValues({}, e), { searchQuery: n2 }) : __spreadProps(__spreadValues({}, e), { searchQuery: n2, activeOptionIndex: l });
-  }, [6](e) {
-    return e.disabled || e.listboxState === 1 || e.searchQuery === "" ? e : __spreadProps(__spreadValues({}, e), { searchQuery: "" });
-  }, [7]: (e, t) => {
-    var n2;
-    let r = Array.from((n2 = e.optionsRef.current) == null ? void 0 : n2.querySelectorAll('[id^="headlessui-listbox-option-"]')).reduce((i, a, l) => Object.assign(i, { [a.id]: l }), {}), o = [...e.options, { id: t.id, dataRef: t.dataRef }].sort((i, a) => r[i.id] - r[a.id]);
-    return __spreadProps(__spreadValues({}, e), { options: o });
-  }, [8]: (e, t) => {
-    let r = e.options.slice(), o = e.activeOptionIndex !== null ? r[e.activeOptionIndex] : null, n2 = r.findIndex((i) => i.id === t.id);
-    return n2 !== -1 && r.splice(n2, 1), __spreadProps(__spreadValues({}, e), { options: r, activeOptionIndex: (() => n2 === e.activeOptionIndex || o === null ? null : r.indexOf(o))() });
-  } }, Gt = React2.createContext(null);
-  Gt.displayName = "ListboxContext";
-  function Re(e) {
-    let t = React2.useContext(Gt);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <${Ee.name} /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, Re), r;
-    }
-    return t;
+  let p$3 = React2.createContext(null);
+  p$3.displayName = "GroupContext";
+  let j = React2.Fragment;
+  function N$2(m2) {
+    let [n2, i2] = React2.useState(null), [r2, s2] = M(), [l2, c2] = k(), d2 = React2.useMemo(() => ({ switch: n2, setSwitch: i2, labelledby: r2, describedby: l2 }), [n2, i2, r2, l2]), u2 = {}, e2 = m2;
+    return React__default["default"].createElement(c2, { name: "Switch.Description" }, React__default["default"].createElement(s2, { name: "Switch.Label", props: { onClick() {
+      !n2 || (n2.click(), n2.focus({ preventScroll: true }));
+    } } }, React__default["default"].createElement(p$3.Provider, { value: d2 }, _({ ourProps: u2, theirProps: e2, defaultTag: j, name: "Switch.Group" }))));
   }
-  function Qn(e, t) {
-    return S(t.type, $n, e, t);
-  }
-  var qn = React2.Fragment;
-  function Ee(e) {
-    let _a2 = e, { value: t, onChange: r, disabled: o = false, horizontal: n2 = false } = _a2, i = __objRest(_a2, ["value", "onChange", "disabled", "horizontal"]), a = n2 ? "horizontal" : "vertical", l = React2.useReducer(Qn, { listboxState: 1, propsRef: { current: { value: t, onChange: r } }, labelRef: React2.createRef(), buttonRef: React2.createRef(), optionsRef: React2.createRef(), disabled: o, orientation: a, options: [], searchQuery: "", activeOptionIndex: null }), [{ listboxState: s, propsRef: u, optionsRef: c, buttonRef: m2 }, b] = l;
-    x(() => {
-      u.current.value = t;
-    }, [t, u]), x(() => {
-      u.current.onChange = r;
-    }, [r, u]), x(() => b({ type: 2, disabled: o }), [o]), x(() => b({ type: 3, orientation: a }), [a]), w("mousedown", (y) => {
-      var f2, d, P;
-      let p2 = y.target;
-      s === 0 && (((f2 = m2.current) == null ? void 0 : f2.contains(p2)) || ((d = c.current) == null ? void 0 : d.contains(p2)) || (b({ type: 1 }), de(p2, 1) || (y.preventDefault(), (P = m2.current) == null || P.focus())));
-    });
-    let T = React2.useMemo(() => ({ open: s === 0, disabled: o }), [s, o]);
-    return React__default["default"].createElement(Gt.Provider, { value: l }, React__default["default"].createElement(W, { value: S(s, { [0]: 0, [1]: 1 }) }, E({ props: i, slot: T, defaultTag: qn, name: "Listbox" })));
-  }
-  var zn = "button", Yn = D(function(t, r) {
-    var p2;
-    let [o, n2] = Re("Listbox.Button"), i = I(o.buttonRef, r), a = `headlessui-listbox-button-${A()}`, l = Q(), s = React2.useCallback((f2) => {
-      switch (f2.key) {
-        case " ":
-        case "Enter":
-        case "ArrowDown":
-          f2.preventDefault(), n2({ type: 0 }), l.nextFrame(() => {
-            o.propsRef.current.value || n2({ type: 4, focus: 0 });
-          });
-          break;
-        case "ArrowUp":
-          f2.preventDefault(), n2({ type: 0 }), l.nextFrame(() => {
-            o.propsRef.current.value || n2({ type: 4, focus: 3 });
-          });
-          break;
-      }
-    }, [n2, o, l]), u = React2.useCallback((f2) => {
-      switch (f2.key) {
-        case " ":
-          f2.preventDefault();
-          break;
-      }
-    }, []), c = React2.useCallback((f2) => {
-      if (G(f2.currentTarget))
-        return f2.preventDefault();
-      o.listboxState === 0 ? (n2({ type: 1 }), l.nextFrame(() => {
-        var d;
-        return (d = o.buttonRef.current) == null ? void 0 : d.focus({ preventScroll: true });
-      })) : (f2.preventDefault(), n2({ type: 0 }));
-    }, [n2, l, o]), m2 = ee(() => {
-      if (!!o.labelRef.current)
-        return [o.labelRef.current.id, a].join(" ");
-    }, [o.labelRef.current, a]), b = React2.useMemo(() => ({ open: o.listboxState === 0, disabled: o.disabled }), [o]), T = t, y = { ref: i, id: a, type: U(t, o.buttonRef), "aria-haspopup": true, "aria-controls": (p2 = o.optionsRef.current) == null ? void 0 : p2.id, "aria-expanded": o.disabled ? void 0 : o.listboxState === 0, "aria-labelledby": m2, disabled: o.disabled, onKeyDown: s, onKeyUp: u, onClick: c };
-    return E({ props: __spreadValues(__spreadValues({}, T), y), slot: b, defaultTag: zn, name: "Listbox.Button" });
-  }), Xn = "label";
-  function Jn(e) {
-    let [t] = Re("Listbox.Label"), r = `headlessui-listbox-label-${A()}`, o = React2.useCallback(() => {
-      var a;
-      return (a = t.buttonRef.current) == null ? void 0 : a.focus({ preventScroll: true });
-    }, [t.buttonRef]), n2 = React2.useMemo(() => ({ open: t.listboxState === 0, disabled: t.disabled }), [t]), i = { ref: t.labelRef, id: r, onClick: o };
-    return E({ props: __spreadValues(__spreadValues({}, e), i), slot: n2, defaultTag: Xn, name: "Listbox.Label" });
-  }
-  var Zn = "ul", ei = 1 | 2, ti = D(function(t, r) {
-    var f2;
-    let [o, n2] = Re("Listbox.Options"), i = I(o.optionsRef, r), a = `headlessui-listbox-options-${A()}`, l = Q(), s = Q(), u = _(), c = (() => u !== null ? u === 0 : o.listboxState === 0)();
-    x(() => {
-      let d = o.optionsRef.current;
-      !d || o.listboxState === 0 && d !== document.activeElement && d.focus({ preventScroll: true });
-    }, [o.listboxState, o.optionsRef]);
-    let m2 = React2.useCallback((d) => {
-      switch (s.dispose(), d.key) {
-        case " ":
-          if (o.searchQuery !== "")
-            return d.preventDefault(), d.stopPropagation(), n2({ type: 5, value: d.key });
-        case "Enter":
-          if (d.preventDefault(), d.stopPropagation(), n2({ type: 1 }), o.activeOptionIndex !== null) {
-            let { dataRef: P } = o.options[o.activeOptionIndex];
-            o.propsRef.current.onChange(P.current.value);
-          }
-          k().nextFrame(() => {
-            var P;
-            return (P = o.buttonRef.current) == null ? void 0 : P.focus({ preventScroll: true });
-          });
-          break;
-        case S(o.orientation, { vertical: "ArrowDown", horizontal: "ArrowRight" }):
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 4, focus: 2 });
-        case S(o.orientation, { vertical: "ArrowUp", horizontal: "ArrowLeft" }):
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 4, focus: 1 });
-        case "Home":
-        case "PageUp":
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 4, focus: 0 });
-        case "End":
-        case "PageDown":
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 4, focus: 3 });
-        case "Escape":
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 1 }), l.nextFrame(() => {
-            var P;
-            return (P = o.buttonRef.current) == null ? void 0 : P.focus({ preventScroll: true });
-          });
-        case "Tab":
-          d.preventDefault(), d.stopPropagation();
-          break;
-        default:
-          d.key.length === 1 && (n2({ type: 5, value: d.key }), s.setTimeout(() => n2({ type: 6 }), 350));
-          break;
-      }
-    }, [l, n2, s, o]), b = ee(() => {
-      var d, P, C;
-      return (C = (d = o.labelRef.current) == null ? void 0 : d.id) != null ? C : (P = o.buttonRef.current) == null ? void 0 : P.id;
-    }, [o.labelRef.current, o.buttonRef.current]), T = React2.useMemo(() => ({ open: o.listboxState === 0 }), [o]), y = { "aria-activedescendant": o.activeOptionIndex === null || (f2 = o.options[o.activeOptionIndex]) == null ? void 0 : f2.id, "aria-labelledby": b, "aria-orientation": o.orientation, id: a, onKeyDown: m2, role: "listbox", tabIndex: 0, ref: i };
-    return E({ props: __spreadValues(__spreadValues({}, t), y), slot: T, defaultTag: Zn, features: ei, visible: c, name: "Listbox.Options" });
-  }), oi = "li";
-  function ri(e) {
-    let _a2 = e, { disabled: t = false, value: r } = _a2, o = __objRest(_a2, ["disabled", "value"]), [n2, i] = Re("Listbox.Option"), a = `headlessui-listbox-option-${A()}`, l = n2.activeOptionIndex !== null ? n2.options[n2.activeOptionIndex].id === a : false, s = n2.propsRef.current.value === r, u = React2.useRef({ disabled: t, value: r });
-    x(() => {
-      u.current.disabled = t;
-    }, [u, t]), x(() => {
-      u.current.value = r;
-    }, [u, r]), x(() => {
-      var d, P;
-      u.current.textValue = (P = (d = document.getElementById(a)) == null ? void 0 : d.textContent) == null ? void 0 : P.toLowerCase();
-    }, [u, a]);
-    let c = React2.useCallback(() => n2.propsRef.current.onChange(r), [n2.propsRef, r]);
-    x(() => (i({ type: 7, id: a, dataRef: u }), () => i({ type: 8, id: a })), [u, a]), x(() => {
-      var d, P;
-      n2.listboxState === 0 && (!s || (i({ type: 4, focus: 4, id: a }), (P = (d = document.getElementById(a)) == null ? void 0 : d.focus) == null || P.call(d)));
-    }, [n2.listboxState]), x(() => {
-      if (n2.listboxState !== 0 || !l)
-        return;
-      let d = k();
-      return d.requestAnimationFrame(() => {
-        var P, C;
-        (C = (P = document.getElementById(a)) == null ? void 0 : P.scrollIntoView) == null || C.call(P, { block: "nearest" });
-      }), d.dispose;
-    }, [a, l, n2.listboxState, n2.activeOptionIndex]);
-    let m2 = React2.useCallback((d) => {
-      if (t)
-        return d.preventDefault();
-      c(), i({ type: 1 }), k().nextFrame(() => {
-        var P;
-        return (P = n2.buttonRef.current) == null ? void 0 : P.focus({ preventScroll: true });
-      });
-    }, [i, n2.buttonRef, t, c]), b = React2.useCallback(() => {
-      if (t)
-        return i({ type: 4, focus: 5 });
-      i({ type: 4, focus: 4, id: a });
-    }, [t, a, i]), T = React2.useCallback(() => {
-      t || l || i({ type: 4, focus: 4, id: a });
-    }, [t, l, a, i]), y = React2.useCallback(() => {
-      t || !l || i({ type: 4, focus: 5 });
-    }, [t, l, i]), p2 = React2.useMemo(() => ({ active: l, selected: s, disabled: t }), [l, s, t]);
-    return E({ props: __spreadValues(__spreadValues({}, o), { id: a, role: "option", tabIndex: t === true ? void 0 : -1, "aria-disabled": t === true ? true : void 0, "aria-selected": s === true ? true : void 0, disabled: void 0, onClick: m2, onFocus: b, onPointerMove: T, onMouseMove: T, onPointerLeave: y, onMouseLeave: y }), slot: p2, defaultTag: oi, name: "Listbox.Option" });
-  }
-  Ee.Button = Yn;
-  Ee.Label = Jn;
-  Ee.Options = ti;
-  Ee.Option = ri;
-  var ui = { [1](e) {
-    return e.menuState === 1 ? e : __spreadProps(__spreadValues({}, e), { activeItemIndex: null, menuState: 1 });
-  }, [0](e) {
-    return e.menuState === 0 ? e : __spreadProps(__spreadValues({}, e), { menuState: 0 });
-  }, [2]: (e, t) => {
-    let r = ae(t, { resolveItems: () => e.items, resolveActiveIndex: () => e.activeItemIndex, resolveId: (o) => o.id, resolveDisabled: (o) => o.dataRef.current.disabled });
-    return e.searchQuery === "" && e.activeItemIndex === r ? e : __spreadProps(__spreadValues({}, e), { searchQuery: "", activeItemIndex: r });
-  }, [3]: (e, t) => {
-    let o = e.searchQuery !== "" ? 0 : 1, n2 = e.searchQuery + t.value.toLowerCase(), a = (e.activeItemIndex !== null ? e.items.slice(e.activeItemIndex + o).concat(e.items.slice(0, e.activeItemIndex + o)) : e.items).find((s) => {
-      var u;
-      return ((u = s.dataRef.current.textValue) == null ? void 0 : u.startsWith(n2)) && !s.dataRef.current.disabled;
-    }), l = a ? e.items.indexOf(a) : -1;
-    return l === -1 || l === e.activeItemIndex ? __spreadProps(__spreadValues({}, e), { searchQuery: n2 }) : __spreadProps(__spreadValues({}, e), { searchQuery: n2, activeItemIndex: l });
-  }, [4](e) {
-    return e.searchQuery === "" ? e : __spreadProps(__spreadValues({}, e), { searchQuery: "", searchActiveItemIndex: null });
-  }, [5]: (e, t) => {
-    var n2;
-    let r = Array.from((n2 = e.itemsRef.current) == null ? void 0 : n2.querySelectorAll('[id^="headlessui-menu-item-"]')).reduce((i, a, l) => Object.assign(i, { [a.id]: l }), {}), o = [...e.items, { id: t.id, dataRef: t.dataRef }].sort((i, a) => r[i.id] - r[a.id]);
-    return __spreadProps(__spreadValues({}, e), { items: o });
-  }, [6]: (e, t) => {
-    let r = e.items.slice(), o = e.activeItemIndex !== null ? r[e.activeItemIndex] : null, n2 = r.findIndex((i) => i.id === t.id);
-    return n2 !== -1 && r.splice(n2, 1), __spreadProps(__spreadValues({}, e), { items: r, activeItemIndex: (() => n2 === e.activeItemIndex || o === null ? null : r.indexOf(o))() });
-  } }, Ht = React2.createContext(null);
-  Ht.displayName = "MenuContext";
-  function Je(e) {
-    let t = React2.useContext(Ht);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <${Ze.name} /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, Je), r;
-    }
-    return t;
-  }
-  function pi(e, t) {
-    return S(t.type, ui, e, t);
-  }
-  var di = React2.Fragment;
-  function Ze(e) {
-    let t = React2.useReducer(pi, { menuState: 1, buttonRef: React2.createRef(), itemsRef: React2.createRef(), items: [], searchQuery: "", activeItemIndex: null }), [{ menuState: r, itemsRef: o, buttonRef: n2 }, i] = t;
-    w("mousedown", (l) => {
-      var u, c, m2;
-      let s = l.target;
-      r === 0 && (((u = n2.current) == null ? void 0 : u.contains(s)) || ((c = o.current) == null ? void 0 : c.contains(s)) || (i({ type: 1 }), de(s, 1) || (l.preventDefault(), (m2 = n2.current) == null || m2.focus())));
-    });
-    let a = React2.useMemo(() => ({ open: r === 0 }), [r]);
-    return React__default["default"].createElement(Ht.Provider, { value: t }, React__default["default"].createElement(W, { value: S(r, { [0]: 0, [1]: 1 }) }, E({ props: e, slot: a, defaultTag: di, name: "Menu" })));
-  }
-  var ci = "button", fi = D(function(t, r) {
-    var y;
-    let [o, n2] = Je("Menu.Button"), i = I(o.buttonRef, r), a = `headlessui-menu-button-${A()}`, l = Q(), s = React2.useCallback((p2) => {
-      switch (p2.key) {
-        case " ":
-        case "Enter":
-        case "ArrowDown":
-          p2.preventDefault(), p2.stopPropagation(), n2({ type: 0 }), l.nextFrame(() => n2({ type: 2, focus: 0 }));
-          break;
-        case "ArrowUp":
-          p2.preventDefault(), p2.stopPropagation(), n2({ type: 0 }), l.nextFrame(() => n2({ type: 2, focus: 3 }));
-          break;
-      }
-    }, [n2, l]), u = React2.useCallback((p2) => {
-      switch (p2.key) {
-        case " ":
-          p2.preventDefault();
-          break;
-      }
-    }, []), c = React2.useCallback((p2) => {
-      if (G(p2.currentTarget))
-        return p2.preventDefault();
-      t.disabled || (o.menuState === 0 ? (n2({ type: 1 }), l.nextFrame(() => {
-        var f2;
-        return (f2 = o.buttonRef.current) == null ? void 0 : f2.focus({ preventScroll: true });
-      })) : (p2.preventDefault(), p2.stopPropagation(), n2({ type: 0 })));
-    }, [n2, l, o, t.disabled]), m2 = React2.useMemo(() => ({ open: o.menuState === 0 }), [o]), b = t, T = { ref: i, id: a, type: U(t, o.buttonRef), "aria-haspopup": true, "aria-controls": (y = o.itemsRef.current) == null ? void 0 : y.id, "aria-expanded": t.disabled ? void 0 : o.menuState === 0, onKeyDown: s, onKeyUp: u, onClick: c };
-    return E({ props: __spreadValues(__spreadValues({}, b), T), slot: m2, defaultTag: ci, name: "Menu.Button" });
-  }), mi = "div", bi = 1 | 2, Ti = D(function(t, r) {
-    var p2, f2;
-    let [o, n2] = Je("Menu.Items"), i = I(o.itemsRef, r), a = `headlessui-menu-items-${A()}`, l = Q(), s = _(), u = (() => s !== null ? s === 0 : o.menuState === 0)();
-    React2.useEffect(() => {
-      let d = o.itemsRef.current;
-      !d || o.menuState === 0 && d !== document.activeElement && d.focus({ preventScroll: true });
-    }, [o.menuState, o.itemsRef]), se({ container: o.itemsRef.current, enabled: o.menuState === 0, accept(d) {
-      return d.getAttribute("role") === "menuitem" ? NodeFilter.FILTER_REJECT : d.hasAttribute("role") ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT;
-    }, walk(d) {
-      d.setAttribute("role", "none");
-    } });
-    let c = React2.useCallback((d) => {
-      var P;
-      switch (l.dispose(), d.key) {
-        case " ":
-          if (o.searchQuery !== "")
-            return d.preventDefault(), d.stopPropagation(), n2({ type: 3, value: d.key });
-        case "Enter":
-          if (d.preventDefault(), d.stopPropagation(), n2({ type: 1 }), o.activeItemIndex !== null) {
-            let { id: C } = o.items[o.activeItemIndex];
-            (P = document.getElementById(C)) == null || P.click();
-          }
-          k().nextFrame(() => {
-            var C;
-            return (C = o.buttonRef.current) == null ? void 0 : C.focus({ preventScroll: true });
-          });
-          break;
-        case "ArrowDown":
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 2, focus: 2 });
-        case "ArrowUp":
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 2, focus: 1 });
-        case "Home":
-        case "PageUp":
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 2, focus: 0 });
-        case "End":
-        case "PageDown":
-          return d.preventDefault(), d.stopPropagation(), n2({ type: 2, focus: 3 });
-        case "Escape":
-          d.preventDefault(), d.stopPropagation(), n2({ type: 1 }), k().nextFrame(() => {
-            var C;
-            return (C = o.buttonRef.current) == null ? void 0 : C.focus({ preventScroll: true });
-          });
-          break;
-        case "Tab":
-          d.preventDefault(), d.stopPropagation();
-          break;
-        default:
-          d.key.length === 1 && (n2({ type: 3, value: d.key }), l.setTimeout(() => n2({ type: 4 }), 350));
-          break;
-      }
-    }, [n2, l, o]), m2 = React2.useCallback((d) => {
-      switch (d.key) {
-        case " ":
-          d.preventDefault();
-          break;
-      }
-    }, []), b = React2.useMemo(() => ({ open: o.menuState === 0 }), [o]), T = { "aria-activedescendant": o.activeItemIndex === null || (p2 = o.items[o.activeItemIndex]) == null ? void 0 : p2.id, "aria-labelledby": (f2 = o.buttonRef.current) == null ? void 0 : f2.id, id: a, onKeyDown: c, onKeyUp: m2, role: "menu", tabIndex: 0, ref: i };
-    return E({ props: __spreadValues(__spreadValues({}, t), T), slot: b, defaultTag: mi, features: bi, visible: u, name: "Menu.Items" });
-  }), yi = React2.Fragment;
-  function gi(e) {
-    let _a2 = e, { disabled: t = false, onClick: r } = _a2, o = __objRest(_a2, ["disabled", "onClick"]), [n2, i] = Je("Menu.Item"), a = `headlessui-menu-item-${A()}`, l = n2.activeItemIndex !== null ? n2.items[n2.activeItemIndex].id === a : false;
-    x(() => {
-      if (n2.menuState !== 0 || !l)
-        return;
-      let p2 = k();
-      return p2.requestAnimationFrame(() => {
-        var f2, d;
-        (d = (f2 = document.getElementById(a)) == null ? void 0 : f2.scrollIntoView) == null || d.call(f2, { block: "nearest" });
-      }), p2.dispose;
-    }, [a, l, n2.menuState, n2.activeItemIndex]);
-    let s = React2.useRef({ disabled: t });
-    x(() => {
-      s.current.disabled = t;
-    }, [s, t]), x(() => {
-      var p2, f2;
-      s.current.textValue = (f2 = (p2 = document.getElementById(a)) == null ? void 0 : p2.textContent) == null ? void 0 : f2.toLowerCase();
-    }, [s, a]), x(() => (i({ type: 5, id: a, dataRef: s }), () => i({ type: 6, id: a })), [s, a]);
-    let u = React2.useCallback((p2) => {
-      if (t)
-        return p2.preventDefault();
-      if (i({ type: 1 }), k().nextFrame(() => {
-        var f2;
-        return (f2 = n2.buttonRef.current) == null ? void 0 : f2.focus({ preventScroll: true });
-      }), r)
-        return r(p2);
-    }, [i, n2.buttonRef, t, r]), c = React2.useCallback(() => {
-      if (t)
-        return i({ type: 2, focus: 5 });
-      i({ type: 2, focus: 4, id: a });
-    }, [t, a, i]), m2 = React2.useCallback(() => {
-      t || l || i({ type: 2, focus: 4, id: a });
-    }, [t, l, a, i]), b = React2.useCallback(() => {
-      t || !l || i({ type: 2, focus: 5 });
-    }, [t, l, i]), T = React2.useMemo(() => ({ active: l, disabled: t }), [l, t]);
-    return E({ props: __spreadValues(__spreadValues({}, o), { id: a, role: "menuitem", tabIndex: t === true ? void 0 : -1, "aria-disabled": t === true ? true : void 0, disabled: void 0, onClick: u, onFocus: c, onPointerMove: m2, onMouseMove: m2, onPointerLeave: b, onMouseLeave: b }), slot: T, defaultTag: yi, name: "Menu.Item" });
-  }
-  Ze.Button = fi;
-  Ze.Items = Ti;
-  Ze.Item = gi;
-  var vi = { [0]: (e) => __spreadProps(__spreadValues({}, e), { popoverState: S(e.popoverState, { [0]: 1, [1]: 0 }) }), [1](e) {
-    return e.popoverState === 1 ? e : __spreadProps(__spreadValues({}, e), { popoverState: 1 });
-  }, [2](e, t) {
-    return e.button === t.button ? e : __spreadProps(__spreadValues({}, e), { button: t.button });
-  }, [3](e, t) {
-    return e.buttonId === t.buttonId ? e : __spreadProps(__spreadValues({}, e), { buttonId: t.buttonId });
-  }, [4](e, t) {
-    return e.panel === t.panel ? e : __spreadProps(__spreadValues({}, e), { panel: t.panel });
-  }, [5](e, t) {
-    return e.panelId === t.panelId ? e : __spreadProps(__spreadValues({}, e), { panelId: t.panelId });
-  } }, Ut = React2.createContext(null);
-  Ut.displayName = "PopoverContext";
-  function ot(e) {
-    let t = React2.useContext(Ut);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <${Te.name} /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, ot), r;
-    }
-    return t;
-  }
-  var Bt = React2.createContext(null);
-  Bt.displayName = "PopoverAPIContext";
-  function Mo(e) {
-    let t = React2.useContext(Bt);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <${Te.name} /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, Mo), r;
-    }
-    return t;
-  }
-  var Nt = React2.createContext(null);
-  Nt.displayName = "PopoverGroupContext";
-  function Fo() {
-    return React2.useContext(Nt);
-  }
-  var Wt = React2.createContext(null);
-  Wt.displayName = "PopoverPanelContext";
-  function Ri() {
-    return React2.useContext(Wt);
-  }
-  function Ei(e, t) {
-    return S(t.type, vi, e, t);
-  }
-  var Ci = "div";
-  function Te(e) {
-    let t = `headlessui-popover-button-${A()}`, r = `headlessui-popover-panel-${A()}`, o = React2.useReducer(Ei, { popoverState: 1, button: null, buttonId: t, panel: null, panelId: r }), [{ popoverState: n2, button: i, panel: a }, l] = o;
-    React2.useEffect(() => l({ type: 3, buttonId: t }), [t, l]), React2.useEffect(() => l({ type: 5, panelId: r }), [r, l]);
-    let s = React2.useMemo(() => ({ buttonId: t, panelId: r, close: () => l({ type: 1 }) }), [t, r, l]), u = Fo(), c = u == null ? void 0 : u.registerPopover, m2 = React2.useCallback(() => {
-      var p2;
-      return (p2 = u == null ? void 0 : u.isFocusWithinPopoverGroup()) != null ? p2 : (i == null ? void 0 : i.contains(document.activeElement)) || (a == null ? void 0 : a.contains(document.activeElement));
-    }, [u, i, a]);
-    React2.useEffect(() => c == null ? void 0 : c(s), [c, s]), w("focus", () => {
-      n2 === 0 && (m2() || !i || !a || l({ type: 1 }));
-    }, true), w("mousedown", (p2) => {
-      let f2 = p2.target;
-      n2 === 0 && ((i == null ? void 0 : i.contains(f2)) || (a == null ? void 0 : a.contains(f2)) || (l({ type: 1 }), de(f2, 1) || (p2.preventDefault(), i == null || i.focus())));
-    });
-    let b = React2.useCallback((p2) => {
-      l({ type: 1 });
-      let f2 = (() => p2 ? p2 instanceof HTMLElement ? p2 : p2.current instanceof HTMLElement ? p2.current : i : i)();
-      f2 == null || f2.focus();
-    }, [l, i]), T = React2.useMemo(() => ({ close: b }), [b]), y = React2.useMemo(() => ({ open: n2 === 0, close: b }), [n2, b]);
-    return React__default["default"].createElement(Ut.Provider, { value: o }, React__default["default"].createElement(Bt.Provider, { value: T }, React__default["default"].createElement(W, { value: S(n2, { [0]: 0, [1]: 1 }) }, E({ props: e, slot: y, defaultTag: Ci, name: "Popover" }))));
-  }
-  var Si = "button", Ai = D(function(t, r) {
-    let [o, n2] = ot("Popover.Button"), i = React2.useRef(null), a = Fo(), l = a == null ? void 0 : a.closeOthers, s = Ri(), u = s === null ? false : s === o.panelId, c = I(i, r, u ? null : (g2) => n2({ type: 2, button: g2 })), m2 = I(i, r), b = React2.useRef(null), T = React2.useRef(typeof window == "undefined" ? null : document.activeElement);
-    w("focus", () => {
-      T.current = b.current, b.current = document.activeElement;
-    }, true);
-    let y = React2.useCallback((g2) => {
-      var v, h2;
-      if (u) {
-        if (o.popoverState === 1)
+  let $$2 = "button", q$1 = H$4(function(n2, i2) {
+    let _a2 = n2, { checked: r$12, onChange: s2, name: l2, value: c2 } = _a2, d2 = __objRest(_a2, ["checked", "onChange", "name", "value"]), u2 = `headlessui-switch-${I()}`, e2 = React2.useContext(p$3), f2 = React2.useRef(null), S2 = y$1(f2, i2, e2 === null ? null : e2.setSwitch), h2 = o$2(() => s2(!r$12)), E = o$2((t2) => {
+      if (r(t2.currentTarget))
+        return t2.preventDefault();
+      t2.preventDefault(), h2();
+    }), w2 = o$2((t2) => {
+      t2.key === o.Space ? (t2.preventDefault(), h2()) : t2.key === o.Enter && p$6(t2.currentTarget);
+    }), P = o$2((t2) => t2.preventDefault()), v2 = React2.useMemo(() => ({ checked: r$12 }), [r$12]), g2 = { id: u2, ref: S2, role: "switch", type: s$3(n2, f2), tabIndex: 0, "aria-checked": r$12, "aria-labelledby": e2 == null ? void 0 : e2.labelledby, "aria-describedby": e2 == null ? void 0 : e2.describedby, onClick: E, onKeyUp: w2, onKeyPress: P };
+    return React__default["default"].createElement(React__default["default"].Fragment, null, l2 != null && r$12 && React__default["default"].createElement(h$4, __spreadValues({ features: s$1.Hidden }, g$2({ as: "input", type: "checkbox", hidden: true, readOnly: true, checked: r$12, name: l2, value: c2 }))), _({ ourProps: g2, theirProps: d2, slot: v2, defaultTag: $$2, name: "Switch" }));
+  }), ue$1 = Object.assign(q$1, { Group: N$2, Label: F, Description: F$1 });
+  function p$2({ onFocus: n2 }) {
+    let [r2, o2] = React2.useState(true);
+    return r2 ? React__default["default"].createElement(h$4, { as: "button", type: "button", features: s$1.Focusable, onFocus: (a2) => {
+      a2.preventDefault();
+      let e2, u2 = 50;
+      function t2() {
+        if (u2-- <= 0) {
+          e2 && cancelAnimationFrame(e2);
           return;
-        switch (g2.key) {
-          case " ":
-          case "Enter":
-            g2.preventDefault(), g2.stopPropagation(), n2({ type: 1 }), (v = o.button) == null || v.focus();
-            break;
         }
-      } else
-        switch (g2.key) {
-          case " ":
-          case "Enter":
-            g2.preventDefault(), g2.stopPropagation(), o.popoverState === 1 && (l == null || l(o.buttonId)), n2({ type: 0 });
-            break;
-          case "Escape":
-            if (o.popoverState !== 0)
-              return l == null ? void 0 : l(o.buttonId);
-            if (!i.current || !i.current.contains(document.activeElement))
-              return;
-            g2.preventDefault(), g2.stopPropagation(), n2({ type: 1 });
-            break;
-          case "Tab":
-            if (o.popoverState !== 0 || !o.panel || !o.button)
-              return;
-            if (g2.shiftKey) {
-              if (!T.current || ((h2 = o.button) == null ? void 0 : h2.contains(T.current)) || o.panel.contains(T.current))
-                return;
-              let O = xe(), L = O.indexOf(T.current);
-              if (O.indexOf(o.button) > L)
-                return;
-              g2.preventDefault(), g2.stopPropagation(), M(o.panel, 8);
-            } else
-              g2.preventDefault(), g2.stopPropagation(), M(o.panel, 1);
-            break;
-        }
-    }, [n2, o.popoverState, o.buttonId, o.button, o.panel, i, l, u]), p2 = React2.useCallback((g2) => {
-      var v;
-      if (!u && (g2.key === " " && g2.preventDefault(), o.popoverState === 0 && !!o.panel && !!o.button))
-        switch (g2.key) {
-          case "Tab":
-            if (!T.current || ((v = o.button) == null ? void 0 : v.contains(T.current)) || o.panel.contains(T.current))
-              return;
-            let h2 = xe(), O = h2.indexOf(T.current);
-            if (h2.indexOf(o.button) > O)
-              return;
-            g2.preventDefault(), g2.stopPropagation(), M(o.panel, 8);
-            break;
-        }
-    }, [o.popoverState, o.panel, o.button, u]), f2 = React2.useCallback((g2) => {
-      var v, h2;
-      G(g2.currentTarget) || t.disabled || (u ? (n2({ type: 1 }), (v = o.button) == null || v.focus()) : (o.popoverState === 1 && (l == null || l(o.buttonId)), (h2 = o.button) == null || h2.focus(), n2({ type: 0 })));
-    }, [n2, o.button, o.popoverState, o.buttonId, t.disabled, l, u]), d = React2.useMemo(() => ({ open: o.popoverState === 0 }), [o]), P = U(t, i), C = t, R = u ? { ref: m2, type: P, onKeyDown: y, onClick: f2 } : { ref: c, id: o.buttonId, type: P, "aria-expanded": t.disabled ? void 0 : o.popoverState === 0, "aria-controls": o.panel ? o.panelId : void 0, onKeyDown: y, onKeyUp: p2, onClick: f2 };
-    return E({ props: __spreadValues(__spreadValues({}, C), R), slot: d, defaultTag: Si, name: "Popover.Button" });
-  }), hi = "div", Oi = 1 | 2, Ii = D(function(t, r) {
-    let [{ popoverState: o }, n2] = ot("Popover.Overlay"), i = I(r), a = `headlessui-popover-overlay-${A()}`, l = _(), s = (() => l !== null ? l === 0 : o === 0)(), u = React2.useCallback((T) => {
-      if (G(T.currentTarget))
-        return T.preventDefault();
-      n2({ type: 1 });
-    }, [n2]), c = React2.useMemo(() => ({ open: o === 0 }), [o]);
-    return E({ props: __spreadValues(__spreadValues({}, t), { ref: i, id: a, "aria-hidden": true, onClick: u }), slot: c, defaultTag: hi, features: Oi, visible: s, name: "Popover.Overlay" });
-  }), Li = "div", Di = 1 | 2, Mi = D(function(t, r) {
-    let _a2 = t, { focus: o = false } = _a2, n2 = __objRest(_a2, ["focus"]), [i, a] = ot("Popover.Panel"), { close: l } = Mo("Popover.Panel"), s = React2.useRef(null), u = I(s, r, (p2) => {
-      a({ type: 4, panel: p2 });
-    }), c = _(), m2 = (() => c !== null ? c === 0 : i.popoverState === 0)(), b = React2.useCallback((p2) => {
-      var f2;
-      switch (p2.key) {
-        case "Escape":
-          if (i.popoverState !== 0 || !s.current || !s.current.contains(document.activeElement))
-            return;
-          p2.preventDefault(), p2.stopPropagation(), a({ type: 1 }), (f2 = i.button) == null || f2.focus();
-          break;
-      }
-    }, [i, s, a]);
-    React2.useEffect(() => () => a({ type: 4, panel: null }), [a]), React2.useEffect(() => {
-      var p2;
-      t.static || i.popoverState === 1 && ((p2 = t.unmount) != null ? p2 : true) && a({ type: 4, panel: null });
-    }, [i.popoverState, t.unmount, t.static, a]), React2.useEffect(() => {
-      if (!o || i.popoverState !== 0 || !s.current)
-        return;
-      let p2 = document.activeElement;
-      s.current.contains(p2) || M(s.current, 1);
-    }, [o, s, i.popoverState]), w("keydown", (p2) => {
-      var d;
-      if (i.popoverState !== 0 || !s.current || p2.key !== "Tab" || !document.activeElement || !s.current || !s.current.contains(document.activeElement))
-        return;
-      p2.preventDefault();
-      let f2 = M(s.current, p2.shiftKey ? 2 : 4);
-      if (f2 === 3)
-        return (d = i.button) == null ? void 0 : d.focus();
-      if (f2 === 1) {
-        if (!i.button)
+        if (n2()) {
+          o2(false), cancelAnimationFrame(e2);
           return;
-        let P = xe(), C = P.indexOf(i.button), R = P.splice(C + 1).filter((g2) => {
-          var v;
-          return !((v = s.current) == null ? void 0 : v.contains(g2));
-        });
-        M(R, 1) === 0 && M(document.body, 1);
-      }
-    }), w("focus", () => {
-      var p2;
-      !o || i.popoverState === 0 && (!s.current || ((p2 = s.current) == null ? void 0 : p2.contains(document.activeElement)) || a({ type: 1 }));
-    }, true);
-    let T = React2.useMemo(() => ({ open: i.popoverState === 0, close: l }), [i, l]), y = { ref: u, id: i.panelId, onKeyDown: b };
-    return React__default["default"].createElement(Wt.Provider, { value: i.panelId }, E({ props: __spreadValues(__spreadValues({}, n2), y), slot: T, defaultTag: Li, features: Di, visible: m2, name: "Popover.Panel" }));
-  }), Fi = "div";
-  function wi(e) {
-    let t = React2.useRef(null), [r, o] = React2.useState([]), n2 = React2.useCallback((b) => {
-      o((T) => {
-        let y = T.indexOf(b);
-        if (y !== -1) {
-          let p2 = T.slice();
-          return p2.splice(y, 1), p2;
         }
-        return T;
-      });
-    }, [o]), i = React2.useCallback((b) => (o((T) => [...T, b]), () => n2(b)), [o, n2]), a = React2.useCallback(() => {
-      var T;
-      let b = document.activeElement;
-      return ((T = t.current) == null ? void 0 : T.contains(b)) ? true : r.some((y) => {
-        var p2, f2;
-        return ((p2 = document.getElementById(y.buttonId)) == null ? void 0 : p2.contains(b)) || ((f2 = document.getElementById(y.panelId)) == null ? void 0 : f2.contains(b));
-      });
-    }, [t, r]), l = React2.useCallback((b) => {
-      for (let T of r)
-        T.buttonId !== b && T.close();
-    }, [r]), s = React2.useMemo(() => ({ registerPopover: i, unregisterPopover: n2, isFocusWithinPopoverGroup: a, closeOthers: l }), [i, n2, a, l]), u = React2.useMemo(() => ({}), []), c = { ref: t }, m2 = e;
-    return React__default["default"].createElement(Nt.Provider, { value: s }, E({ props: __spreadValues(__spreadValues({}, m2), c), slot: u, defaultTag: Fi, name: "Popover.Group" }));
-  }
-  Te.Button = Ai;
-  Te.Overlay = Ii;
-  Te.Panel = Mi;
-  Te.Group = wi;
-  var _o = React2.createContext(null);
-  function Go() {
-    let e = React2.useContext(_o);
-    if (e === null) {
-      let t = new Error("You used a <Label /> component, but it is not inside a relevant parent.");
-      throw Error.captureStackTrace && Error.captureStackTrace(t, Go), t;
-    }
-    return e;
-  }
-  function Ae() {
-    let [e, t] = React2.useState([]);
-    return [e.length > 0 ? e.join(" ") : void 0, React2.useMemo(() => function(o) {
-      let n2 = React2.useCallback((a) => (t((l) => [...l, a]), () => t((l) => {
-        let s = l.slice(), u = s.indexOf(a);
-        return u !== -1 && s.splice(u, 1), s;
-      })), []), i = React2.useMemo(() => ({ register: n2, slot: o.slot, name: o.name, props: o.props }), [n2, o.slot, o.name, o.props]);
-      return React__default["default"].createElement(_o.Provider, { value: i }, o.children);
-    }, [t])];
-  }
-  var Ni = "label";
-  function nt(e) {
-    let _a2 = e, { passive: t = false } = _a2, r = __objRest(_a2, ["passive"]), o = Go(), n2 = `headlessui-label-${A()}`;
-    x(() => o.register(n2), [n2, o.register]);
-    let i = __spreadProps(__spreadValues({}, o.props), { id: n2 }), a = __spreadValues(__spreadValues({}, r), i);
-    return t && delete a.onClick, E({ props: a, slot: o.slot || {}, defaultTag: Ni, name: o.name || "Label" });
-  }
-  var jt = React2.createContext(null);
-  jt.displayName = "RadioGroupContext";
-  var $t = React2.createContext(null);
-  $t.displayName = "GroupContext";
-  var tl = React2.Fragment;
-  function ol(e) {
-    let [t, r] = React2.useState(null), [o, n2] = Ae(), [i, a] = re(), l = React2.useMemo(() => ({ switch: t, setSwitch: r, labelledby: o, describedby: i }), [t, r, o, i]);
-    return React__default["default"].createElement(a, { name: "Switch.Description" }, React__default["default"].createElement(n2, { name: "Switch.Label", props: { onClick() {
-      !t || (t.click(), t.focus({ preventScroll: true }));
-    } } }, React__default["default"].createElement($t.Provider, { value: l }, E({ props: e, defaultTag: tl, name: "Switch.Group" }))));
-  }
-  var rl = "button";
-  function Qt(e) {
-    let _a2 = e, { checked: t, onChange: r } = _a2, o = __objRest(_a2, ["checked", "onChange"]), n2 = `headlessui-switch-${A()}`, i = React2.useContext($t), a = React2.useRef(null), l = I(a, i === null ? null : i.setSwitch), s = React2.useCallback(() => r(!t), [r, t]), u = React2.useCallback((y) => {
-      if (G(y.currentTarget))
-        return y.preventDefault();
-      y.preventDefault(), s();
-    }, [s]), c = React2.useCallback((y) => {
-      y.key !== "Tab" && y.preventDefault(), y.key === " " && s();
-    }, [s]), m2 = React2.useCallback((y) => y.preventDefault(), []), b = React2.useMemo(() => ({ checked: t }), [t]), T = { id: n2, ref: l, role: "switch", type: U(e, a), tabIndex: 0, "aria-checked": t, "aria-labelledby": i == null ? void 0 : i.labelledby, "aria-describedby": i == null ? void 0 : i.describedby, onClick: u, onKeyUp: c, onKeyPress: m2 };
-    return E({ props: __spreadValues(__spreadValues({}, o), T), slot: b, defaultTag: rl, name: "Switch" });
-  }
-  Qt.Group = ol;
-  Qt.Label = nt;
-  Qt.Description = me;
-  var ul = { [0](e, t) {
-    return e.selectedIndex === t.index ? e : __spreadProps(__spreadValues({}, e), { selectedIndex: t.index });
-  }, [1](e, t) {
-    return e.orientation === t.orientation ? e : __spreadProps(__spreadValues({}, e), { orientation: t.orientation });
-  }, [2](e, t) {
-    return e.activation === t.activation ? e : __spreadProps(__spreadValues({}, e), { activation: t.activation });
-  }, [3](e, t) {
-    return e.tabs.includes(t.tab) ? e : __spreadProps(__spreadValues({}, e), { tabs: [...e.tabs, t.tab] });
-  }, [4](e, t) {
-    return __spreadProps(__spreadValues({}, e), { tabs: e.tabs.filter((r) => r !== t.tab) });
-  }, [5](e, t) {
-    return e.panels.includes(t.panel) ? e : __spreadProps(__spreadValues({}, e), { panels: [...e.panels, t.panel] });
-  }, [6](e, t) {
-    return __spreadProps(__spreadValues({}, e), { panels: e.panels.filter((r) => r !== t.panel) });
-  }, [7](e) {
-    return __spreadValues({}, e);
-  } }, zt = React2.createContext(null);
-  zt.displayName = "TabsContext";
-  function Le(e) {
-    let t = React2.useContext(zt);
-    if (t === null) {
-      let r = new Error(`<${e} /> is missing a parent <Tab.Group /> component.`);
-      throw Error.captureStackTrace && Error.captureStackTrace(r, Le), r;
-    }
-    return t;
-  }
-  function pl(e, t) {
-    return S(t.type, ul, e, t);
-  }
-  var dl = React2.Fragment;
-  function cl(e) {
-    let _a2 = e, { defaultIndex: t = 0, vertical: r = false, manual: o = false, onChange: n2, selectedIndex: i = null } = _a2, a = __objRest(_a2, ["defaultIndex", "vertical", "manual", "onChange", "selectedIndex"]), l = r ? "vertical" : "horizontal", s = o ? "manual" : "auto", [u, c] = React2.useReducer(pl, { selectedIndex: null, tabs: [], panels: [], orientation: l, activation: s }), m2 = React2.useMemo(() => ({ selectedIndex: u.selectedIndex }), [u.selectedIndex]), b = React2.useRef(() => {
-    });
-    React2.useEffect(() => {
-      c({ type: 1, orientation: l });
-    }, [l]), React2.useEffect(() => {
-      c({ type: 2, activation: s });
-    }, [s]), React2.useEffect(() => {
-      typeof n2 == "function" && (b.current = n2);
-    }, [n2]), React2.useEffect(() => {
-      if (u.tabs.length <= 0 || i === null && u.selectedIndex !== null)
-        return;
-      let p2 = u.tabs.map((P) => P.current).filter(Boolean), f2 = p2.filter((P) => !P.hasAttribute("disabled")), d = i != null ? i : t;
-      if (d < 0)
-        c({ type: 0, index: p2.indexOf(f2[0]) });
-      else if (d > u.tabs.length)
-        c({ type: 0, index: p2.indexOf(f2[f2.length - 1]) });
-      else {
-        let P = p2.slice(0, d), R = [...p2.slice(d), ...P].find((g2) => f2.includes(g2));
-        if (!R)
-          return;
-        c({ type: 0, index: p2.indexOf(R) });
+        e2 = requestAnimationFrame(t2);
       }
-    }, [t, i, u.tabs, u.selectedIndex]);
-    let T = React2.useRef(u.selectedIndex);
-    React2.useEffect(() => {
-      T.current = u.selectedIndex;
-    }, [u.selectedIndex]);
-    let y = React2.useMemo(() => [u, { dispatch: c, change(p2) {
-      T.current !== p2 && b.current(p2), T.current = p2, c({ type: 0, index: p2 });
-    } }], [u, c]);
-    return React__default["default"].createElement(zt.Provider, { value: y }, E({ props: __spreadValues({}, a), slot: m2, defaultTag: dl, name: "Tabs" }));
+      e2 = requestAnimationFrame(t2);
+    } }) : null;
   }
-  var fl = "div";
-  function ml(e) {
-    let [{ selectedIndex: t, orientation: r }] = Le("Tab.List"), o = { selectedIndex: t };
-    return E({ props: __spreadValues(__spreadValues({}, e), { role: "tablist", "aria-orientation": r }), slot: o, defaultTag: fl, name: "Tabs.List" });
-  }
-  var bl = "button";
-  function De(e) {
-    var C, R;
-    let t = `headlessui-tabs-tab-${A()}`, [{ selectedIndex: r, tabs: o, panels: n2, orientation: i, activation: a }, { dispatch: l, change: s }] = Le(De.name), u = React2.useRef(null), c = I(u, (g2) => {
-      !g2 || l({ type: 7 });
+  var re = ((n2) => (n2[n2.SetSelectedIndex = 0] = "SetSelectedIndex", n2[n2.RegisterTab = 1] = "RegisterTab", n2[n2.UnregisterTab = 2] = "UnregisterTab", n2[n2.RegisterPanel = 3] = "RegisterPanel", n2[n2.UnregisterPanel = 4] = "UnregisterPanel", n2[n2.ForceRerender = 5] = "ForceRerender", n2))(re || {});
+  let ne = { [0](e2, t2) {
+    let r2 = e2.tabs.filter((n2) => {
+      var l2;
+      return !((l2 = n2.current) != null && l2.hasAttribute("disabled"));
     });
-    x(() => (l({ type: 3, tab: u }), () => l({ type: 4, tab: u })), [l, u]);
-    let m2 = o.indexOf(u), b = m2 === r, T = React2.useCallback((g2) => {
-      let v = o.map((h2) => h2.current).filter(Boolean);
-      if (g2.key === " " || g2.key === "Enter") {
-        g2.preventDefault(), g2.stopPropagation(), s(m2);
+    if (t2.index < 0)
+      return __spreadProps(__spreadValues({}, e2), { selectedIndex: e2.tabs.indexOf(r2[0]) });
+    if (t2.index > e2.tabs.length)
+      return __spreadProps(__spreadValues({}, e2), { selectedIndex: e2.tabs.indexOf(r2[r2.length - 1]) });
+    let s2 = e2.tabs.slice(0, t2.index), d2 = [...e2.tabs.slice(t2.index), ...s2].find((n2) => r2.includes(n2));
+    return d2 ? __spreadProps(__spreadValues({}, e2), { selectedIndex: e2.tabs.indexOf(d2) }) : e2;
+  }, [1](e2, t2) {
+    return e2.tabs.includes(t2.tab) ? e2 : __spreadProps(__spreadValues({}, e2), { tabs: v$1([...e2.tabs, t2.tab], (r2) => r2.current) });
+  }, [2](e2, t2) {
+    return __spreadProps(__spreadValues({}, e2), { tabs: v$1(e2.tabs.filter((r2) => r2 !== t2.tab), (r2) => r2.current) });
+  }, [3](e2, t2) {
+    return e2.panels.includes(t2.panel) ? e2 : __spreadProps(__spreadValues({}, e2), { panels: [...e2.panels, t2.panel] });
+  }, [4](e2, t2) {
+    return __spreadProps(__spreadValues({}, e2), { panels: e2.panels.filter((r2) => r2 !== t2.panel) });
+  }, [5](e2) {
+    return __spreadValues({}, e2);
+  } }, N$1 = React2.createContext(null);
+  N$1.displayName = "TabsSSRContext";
+  function B(e2) {
+    let t2 = React2.useContext(N$1);
+    if (t2 === null) {
+      let r2 = new Error(`<${e2} /> is missing a parent <Tab.Group /> component.`);
+      throw Error.captureStackTrace && Error.captureStackTrace(r2, B), r2;
+    }
+    return t2;
+  }
+  let K = React2.createContext(null);
+  K.displayName = "TabsDataContext";
+  function C$1(e2) {
+    let t2 = React2.useContext(K);
+    if (t2 === null) {
+      let r2 = new Error(`<${e2} /> is missing a parent <Tab.Group /> component.`);
+      throw Error.captureStackTrace && Error.captureStackTrace(r2, C$1), r2;
+    }
+    return t2;
+  }
+  let $$1 = React2.createContext(null);
+  $$1.displayName = "TabsActionsContext";
+  function z(e2) {
+    let t2 = React2.useContext($$1);
+    if (t2 === null) {
+      let r2 = new Error(`<${e2} /> is missing a parent <Tab.Group /> component.`);
+      throw Error.captureStackTrace && Error.captureStackTrace(r2, z), r2;
+    }
+    return t2;
+  }
+  function ae(e2, t2) {
+    return u$2(t2.type, ne, e2, t2);
+  }
+  let le = React2.Fragment, oe = H$4(function(t2, r2) {
+    let _a2 = t2, { defaultIndex: s2 = 0, vertical: b2 = false, manual: d2 = false, onChange: n2, selectedIndex: l2 = null } = _a2, P = __objRest(_a2, ["defaultIndex", "vertical", "manual", "onChange", "selectedIndex"]);
+    const u2 = b2 ? "vertical" : "horizontal", y2 = d2 ? "manual" : "auto";
+    let c2 = y$1(r2), [p2, o2] = React2.useReducer(ae, { selectedIndex: l2 != null ? l2 : s2, tabs: [], panels: [] }), T2 = React2.useMemo(() => ({ selectedIndex: p2.selectedIndex }), [p2.selectedIndex]), g2 = s$5(n2 || (() => {
+    })), L2 = s$5(p2.tabs), x2 = React2.useMemo(() => __spreadValues({ orientation: u2, activation: y2 }, p2), [u2, y2, p2]), R2 = s$5(p2.selectedIndex), h2 = React2.useMemo(() => ({ registerTab(i2) {
+      return o2({ type: 1, tab: i2 }), () => o2({ type: 2, tab: i2 });
+    }, registerPanel(i2) {
+      return o2({ type: 3, panel: i2 }), () => o2({ type: 4, panel: i2 });
+    }, forceRerender() {
+      o2({ type: 5 });
+    }, change(i2) {
+      R2.current !== i2 && g2.current(i2), R2.current = i2, o2({ type: 0, index: i2 });
+    } }), [o2]);
+    t$2(() => {
+      o2({ type: 0, index: l2 != null ? l2 : s2 });
+    }, [l2]);
+    let H2 = React2.useRef({ tabs: [], panels: [] }), w2 = { ref: c2 };
+    return React__default["default"].createElement(N$1.Provider, { value: H2 }, React__default["default"].createElement($$1.Provider, { value: h2 }, React__default["default"].createElement(K.Provider, { value: x2 }, x2.tabs.length <= 0 && React__default["default"].createElement(p$2, { onFocus: () => {
+      var i2, I2;
+      for (let M2 of L2.current)
+        if (((i2 = M2.current) == null ? void 0 : i2.tabIndex) === 0)
+          return (I2 = M2.current) == null || I2.focus(), true;
+      return false;
+    } }), _({ ourProps: w2, theirProps: P, slot: T2, defaultTag: le, name: "Tabs" }))));
+  }), se = "div", ie = H$4(function(t2, r2) {
+    let { orientation: s2, selectedIndex: b2 } = C$1("Tab.List"), d2 = y$1(r2);
+    return _({ ourProps: { ref: d2, role: "tablist", "aria-orientation": s2 }, theirProps: t2, slot: { selectedIndex: b2 }, defaultTag: se, name: "Tabs.List" });
+  }), ue = "button", ce = H$4(function(t2, r2) {
+    var I$1, M2;
+    let s2 = `headlessui-tabs-tab-${I()}`, { orientation: b2, activation: d2, selectedIndex: n2, tabs: l2, panels: P } = C$1("Tab"), u2 = z("Tab"), y2 = B("Tab"), c2 = React2.useRef(null), p2 = y$1(c2, r2, (a2) => {
+      !a2 || u2.forceRerender();
+    });
+    t$2(() => u2.registerTab(c2), [u2, c2]);
+    let o$12 = y2.current.tabs.indexOf(s2);
+    o$12 === -1 && (o$12 = y2.current.tabs.push(s2) - 1);
+    let T2 = l2.indexOf(c2);
+    T2 === -1 && (T2 = o$12);
+    let g2 = T2 === n2, L2 = o$2((a2) => {
+      let A = l2.map((X2) => X2.current).filter(Boolean);
+      if (a2.key === o.Space || a2.key === o.Enter) {
+        a2.preventDefault(), a2.stopPropagation(), u2.change(T2);
         return;
       }
-      switch (g2.key) {
-        case "Home":
-        case "PageUp":
-          return g2.preventDefault(), g2.stopPropagation(), M(v, 1);
-        case "End":
-        case "PageDown":
-          return g2.preventDefault(), g2.stopPropagation(), M(v, 8);
+      switch (a2.key) {
+        case o.Home:
+        case o.PageUp:
+          return a2.preventDefault(), a2.stopPropagation(), H$3(A, p$5.First);
+        case o.End:
+        case o.PageDown:
+          return a2.preventDefault(), a2.stopPropagation(), H$3(A, p$5.Last);
       }
-      return S(i, { vertical() {
-        if (g2.key === "ArrowUp")
-          return M(v, 2 | 16);
-        if (g2.key === "ArrowDown")
-          return M(v, 4 | 16);
+      return u$2(b2, { vertical() {
+        if (a2.key === o.ArrowUp)
+          return H$3(A, p$5.Previous | p$5.WrapAround);
+        if (a2.key === o.ArrowDown)
+          return H$3(A, p$5.Next | p$5.WrapAround);
       }, horizontal() {
-        if (g2.key === "ArrowLeft")
-          return M(v, 2 | 16);
-        if (g2.key === "ArrowRight")
-          return M(v, 4 | 16);
+        if (a2.key === o.ArrowLeft)
+          return H$3(A, p$5.Previous | p$5.WrapAround);
+        if (a2.key === o.ArrowRight)
+          return H$3(A, p$5.Next | p$5.WrapAround);
       } });
-    }, [o, i, m2, s]), y = React2.useCallback(() => {
-      var g2;
-      (g2 = u.current) == null || g2.focus();
-    }, [u]), p2 = React2.useCallback(() => {
-      var g2;
-      (g2 = u.current) == null || g2.focus(), s(m2);
-    }, [s, m2, u]), f2 = React2.useMemo(() => ({ selected: b }), [b]), d = { ref: c, onKeyDown: T, onFocus: a === "manual" ? y : p2, onClick: p2, id: t, role: "tab", type: U(e, u), "aria-controls": (R = (C = n2[m2]) == null ? void 0 : C.current) == null ? void 0 : R.id, "aria-selected": b, tabIndex: b ? 0 : -1 };
-    return E({ props: __spreadValues(__spreadValues({}, e), d), slot: f2, defaultTag: bl, name: "Tabs.Tab" });
-  }
-  var Tl = "div";
-  function yl(e) {
-    let [{ selectedIndex: t }] = Le("Tab.Panels"), r = React2.useMemo(() => ({ selectedIndex: t }), [t]);
-    return E({ props: e, slot: r, defaultTag: Tl, name: "Tabs.Panels" });
-  }
-  var gl = "div", Pl = 1 | 2;
-  function xl(e) {
-    var T, y;
-    let [{ selectedIndex: t, tabs: r, panels: o }, { dispatch: n2 }] = Le("Tab.Panel"), i = `headlessui-tabs-panel-${A()}`, a = React2.useRef(null), l = I(a, (p2) => {
-      !p2 || n2({ type: 7 });
+    }), x2 = o$2(() => {
+      var a2;
+      (a2 = c2.current) == null || a2.focus();
+    }), R2 = o$2(() => {
+      var a2;
+      (a2 = c2.current) == null || a2.focus(), u2.change(T2);
+    }), h2 = o$2((a2) => {
+      a2.preventDefault();
+    }), H2 = React2.useMemo(() => ({ selected: g2 }), [g2]), w2 = t2, i2 = { ref: p2, onKeyDown: L2, onFocus: d2 === "manual" ? x2 : R2, onMouseDown: h2, onClick: R2, id: s2, role: "tab", type: s$3(t2, c2), "aria-controls": (M2 = (I$1 = P[T2]) == null ? void 0 : I$1.current) == null ? void 0 : M2.id, "aria-selected": g2, tabIndex: g2 ? 0 : -1 };
+    return _({ ourProps: i2, theirProps: w2, slot: H2, defaultTag: ue, name: "Tabs.Tab" });
+  }), pe = "div", de = H$4(function(t2, r2) {
+    let { selectedIndex: s2 } = C$1("Tab.Panels"), b2 = y$1(r2), d2 = React2.useMemo(() => ({ selectedIndex: s2 }), [s2]);
+    return _({ ourProps: { ref: b2 }, theirProps: t2, slot: d2, defaultTag: pe, name: "Tabs.Panels" });
+  }), be$1 = "div", Te = x.RenderStrategy | x.Static, fe = H$4(function(t2, r2) {
+    var x2, R2;
+    let { selectedIndex: s2, tabs: b2, panels: d2 } = C$1("Tab.Panel"), n2 = z("Tab.Panel"), l2 = B("Tab.Panel"), P = `headlessui-tabs-panel-${I()}`, u2 = React2.useRef(null), y2 = y$1(u2, r2, (h2) => {
+      !h2 || n2.forceRerender();
     });
-    x(() => (n2({ type: 5, panel: a }), () => n2({ type: 6, panel: a })), [n2, a]);
-    let s = o.indexOf(a), u = s === t, c = React2.useMemo(() => ({ selected: u }), [u]), m2 = { ref: l, id: i, role: "tabpanel", "aria-labelledby": (y = (T = r[s]) == null ? void 0 : T.current) == null ? void 0 : y.id, tabIndex: u ? 0 : -1 };
-    return E({ props: __spreadValues(__spreadValues({}, e), m2), slot: c, defaultTag: gl, features: Pl, visible: u, name: "Tabs.Panel" });
+    t$2(() => n2.registerPanel(u2), [n2, u2]);
+    let c2 = l2.current.panels.indexOf(P);
+    c2 === -1 && (c2 = l2.current.panels.push(P) - 1);
+    let p2 = d2.indexOf(u2);
+    p2 === -1 && (p2 = c2);
+    let o2 = p2 === s2, T2 = React2.useMemo(() => ({ selected: o2 }), [o2]), g2 = t2, L2 = { ref: y2, id: P, role: "tabpanel", "aria-labelledby": (R2 = (x2 = b2[p2]) == null ? void 0 : x2.current) == null ? void 0 : R2.id, tabIndex: o2 ? 0 : -1 };
+    return _({ ourProps: L2, theirProps: g2, slot: T2, defaultTag: be$1, features: Te, visible: o2, name: "Tabs.Panel" });
+  }), we = Object.assign(ce, { Group: oe, List: ie, Panels: de, Panel: fe });
+  function l(r2) {
+    let e2 = { called: false };
+    return (...t2) => {
+      if (!e2.called)
+        return e2.called = true, r2(...t2);
+    };
   }
-  De.Group = cl;
-  De.List = ml;
-  De.Panels = yl;
-  De.Panel = xl;
-  function Bo() {
-    let e = React2.useRef(true);
+  function p$1(t2, ...e2) {
+    t2 && e2.length > 0 && t2.classList.add(...e2);
+  }
+  function v(t2, ...e2) {
+    t2 && e2.length > 0 && t2.classList.remove(...e2);
+  }
+  var g$1 = ((n2) => (n2.Ended = "ended", n2.Cancelled = "cancelled", n2))(g$1 || {});
+  function T(t2, e2) {
+    let n2 = o$3();
+    if (!t2)
+      return n2.dispose;
+    let { transitionDuration: l2, transitionDelay: a2 } = getComputedStyle(t2), [d2, s2] = [l2, a2].map((i2) => {
+      let [r2 = 0] = i2.split(",").filter(Boolean).map((o2) => o2.includes("ms") ? parseFloat(o2) : parseFloat(o2) * 1e3).sort((o2, E) => E - o2);
+      return r2;
+    });
+    if (d2 + s2 !== 0) {
+      let i2 = [];
+      i2.push(n2.addEventListener(t2, "transitionrun", () => {
+        i2.splice(0).forEach((r2) => r2()), i2.push(n2.addEventListener(t2, "transitionend", () => {
+          e2("ended"), i2.splice(0).forEach((r2) => r2());
+        }, { once: true }), n2.addEventListener(t2, "transitioncancel", () => {
+          e2("cancelled"), i2.splice(0).forEach((r2) => r2());
+        }, { once: true }));
+      }, { once: true }));
+    } else
+      e2("ended");
+    return n2.add(() => e2("cancelled")), n2.dispose;
+  }
+  function C(t2, e2, n2, l$12) {
+    let a2 = n2 ? "enter" : "leave", d2 = o$3(), s2 = l$12 !== void 0 ? l(l$12) : () => {
+    }, m2 = u$2(a2, { enter: () => e2.enter, leave: () => e2.leave }), i2 = u$2(a2, { enter: () => e2.enterTo, leave: () => e2.leaveTo }), r2 = u$2(a2, { enter: () => e2.enterFrom, leave: () => e2.leaveFrom });
+    return v(t2, ...e2.enter, ...e2.enterTo, ...e2.enterFrom, ...e2.leave, ...e2.leaveFrom, ...e2.leaveTo, ...e2.entered), p$1(t2, ...m2, ...r2), d2.nextFrame(() => {
+      v(t2, ...r2), p$1(t2, ...i2), T(t2, (o2) => (o2 === "ended" && (v(t2, ...m2), p$1(t2, ...e2.entered)), s2(o2)));
+    }), d2.dispose;
+  }
+  function H({ container: u2, direction: o2, classes: c2, events: t2, onStart: d2, onStop: l2 }) {
+    let f2 = f$1(), m2 = p$7(), e2 = s$5(o2), b2 = o$2(() => u$2(e2.current, { enter: () => t2.current.beforeEnter(), leave: () => t2.current.beforeLeave(), idle: () => {
+    } })), p2 = o$2(() => u$2(e2.current, { enter: () => t2.current.afterEnter(), leave: () => t2.current.afterLeave(), idle: () => {
+    } }));
+    t$2(() => {
+      let r2 = o$3();
+      m2.add(r2.dispose);
+      let i2 = u2.current;
+      if (!!i2 && e2.current !== "idle" && !!f2.current)
+        return r2.dispose(), b2(), d2.current(e2.current), r2.add(C(i2, c2.current, e2.current === "enter", (v2) => {
+          r2.dispose(), u$2(v2, { [g$1.Ended]() {
+            p2(), l2.current(e2.current);
+          }, [g$1.Cancelled]: () => {
+          } });
+        })), r2.dispose;
+    }, [o2]);
+  }
+  function h$1(e2 = "") {
+    return e2.split(" ").filter((n2) => n2.trim().length > 1);
+  }
+  let N = React2.createContext(null);
+  N.displayName = "TransitionContext";
+  var ge = ((t2) => (t2.Visible = "visible", t2.Hidden = "hidden", t2))(ge || {});
+  function ve() {
+    let e2 = React2.useContext(N);
+    if (e2 === null)
+      throw new Error("A <Transition.Child /> is used but it is missing a parent <Transition /> or <Transition.Root />.");
+    return e2;
+  }
+  function Ce() {
+    let e2 = React2.useContext(L);
+    if (e2 === null)
+      throw new Error("A <Transition.Child /> is used but it is missing a parent <Transition /> or <Transition.Root />.");
+    return e2;
+  }
+  let L = React2.createContext(null);
+  L.displayName = "NestingContext";
+  function w(e2) {
+    return "children" in e2 ? w(e2.children) : e2.current.filter(({ state: n2 }) => n2 === "visible").length > 0;
+  }
+  function Z(e2) {
+    let n2 = s$5(e2), t2 = React2.useRef([]), r2 = f$1(), s2 = o$2((l2, o2 = R.Hidden) => {
+      let a2 = t2.current.findIndex(({ id: u2 }) => u2 === l2);
+      a2 !== -1 && (u$2(o2, { [R.Unmount]() {
+        t2.current.splice(a2, 1);
+      }, [R.Hidden]() {
+        t2.current[a2].state = "hidden";
+      } }), t$1(() => {
+        var u2;
+        !w(t2) && r2.current && ((u2 = n2.current) == null || u2.call(n2));
+      }));
+    }), g2 = o$2((l2) => {
+      let o2 = t2.current.find(({ id: a2 }) => a2 === l2);
+      return o2 ? o2.state !== "visible" && (o2.state = "visible") : t2.current.push({ id: l2, state: "visible" }), () => s2(l2, R.Unmount);
+    });
+    return React2.useMemo(() => ({ children: t2, register: g2, unregister: s2 }), [g2, s2, t2]);
+  }
+  function be() {
+  }
+  let Se = ["beforeEnter", "afterEnter", "beforeLeave", "afterLeave"];
+  function $(e2) {
+    var t2;
+    let n2 = {};
+    for (let r2 of Se)
+      n2[r2] = (t2 = e2[r2]) != null ? t2 : be;
+    return n2;
+  }
+  function Ee(e2) {
+    let n2 = React2.useRef($(e2));
     return React2.useEffect(() => {
-      e.current = false;
-    }, []), e.current;
+      n2.current = $(e2);
+    }, [e2]), n2;
   }
-  function No(e) {
-    let t = { called: false };
-    return (...r) => {
-      if (!t.called)
-        return t.called = true, e(...r);
-    };
-  }
-  function Yt(e, ...t) {
-    e && t.length > 0 && e.classList.add(...t);
-  }
-  function ut(e, ...t) {
-    e && t.length > 0 && e.classList.remove(...t);
-  }
-  function El(e, t) {
-    let r = k();
-    if (!e)
-      return r.dispose;
-    let { transitionDuration: o, transitionDelay: n2 } = getComputedStyle(e), [i, a] = [o, n2].map((l) => {
-      let [s = 0] = l.split(",").filter(Boolean).map((u) => u.includes("ms") ? parseFloat(u) : parseFloat(u) * 1e3).sort((u, c) => c - u);
-      return s;
-    });
-    return i !== 0 ? r.setTimeout(() => {
-      t("finished");
-    }, i + a) : t("finished"), r.add(() => t("cancelled")), r.dispose;
-  }
-  function Xt(e, t, r, o, n2, i) {
-    let a = k(), l = i !== void 0 ? No(i) : () => {
-    };
-    return ut(e, ...n2), Yt(e, ...t, ...r), a.nextFrame(() => {
-      ut(e, ...r), Yt(e, ...o), a.add(El(e, (s) => (ut(e, ...o, ...t), Yt(e, ...n2), l(s))));
-    }), a.add(() => ut(e, ...t, ...r, ...o, ...n2)), a.add(() => l("cancelled")), a.dispose;
-  }
-  function le(e = "") {
-    return React2.useMemo(() => e.split(" ").filter((t) => t.trim().length > 1), [e]);
-  }
-  var dt = React2.createContext(null);
-  dt.displayName = "TransitionContext";
-  function Cl() {
-    let e = React2.useContext(dt);
-    if (e === null)
-      throw new Error("A <Transition.Child /> is used but it is missing a parent <Transition /> or <Transition.Root />.");
-    return e;
-  }
-  function Sl() {
-    let e = React2.useContext(ct);
-    if (e === null)
-      throw new Error("A <Transition.Child /> is used but it is missing a parent <Transition /> or <Transition.Root />.");
-    return e;
-  }
-  var ct = React2.createContext(null);
-  ct.displayName = "NestingContext";
-  function ft(e) {
-    return "children" in e ? ft(e.children) : e.current.filter(({ state: t }) => t === "visible").length > 0;
-  }
-  function $o(e) {
-    let t = React2.useRef(e), r = React2.useRef([]), o = Be();
+  let xe = "div", ee = x.RenderStrategy, te = H$4(function(n2, t2) {
+    let _a2 = n2, { beforeEnter: r2, afterEnter: s2, beforeLeave: g2, afterLeave: l2, enter: o2, enterFrom: a2, enterTo: u2, entered: A, leave: v2, leaveFrom: E, leaveTo: x2 } = _a2, y2 = __objRest(_a2, ["beforeEnter", "afterEnter", "beforeLeave", "afterLeave", "enter", "enterFrom", "enterTo", "entered", "leave", "leaveFrom", "leaveTo"]), d2 = React2.useRef(null), D = y$1(d2, t2), [i2, C2] = React2.useState("visible"), p2 = y2.unmount ? R.Unmount : R.Hidden, { show: b2, appear: re2, initial: ne2 } = ve(), { register: H$12, unregister: P } = Ce(), F2 = React2.useRef(null), f2 = I();
     React2.useEffect(() => {
-      t.current = e;
-    }, [e]);
-    let n2 = React2.useCallback((a, l = 1) => {
-      var u;
-      let s = r.current.findIndex(({ id: c }) => c === a);
-      s !== -1 && (S(l, { [0]() {
-        r.current.splice(s, 1);
-      }, [1]() {
-        r.current[s].state = "hidden";
-      } }), !ft(r) && o.current && ((u = t.current) == null || u.call(t)));
-    }, [t, o, r]), i = React2.useCallback((a) => {
-      let l = r.current.find(({ id: s }) => s === a);
-      return l ? l.state !== "visible" && (l.state = "visible") : r.current.push({ id: a, state: "visible" }), () => n2(a, 0);
-    }, [r, n2]);
-    return React2.useMemo(() => ({ children: r, register: i, unregister: n2 }), [i, n2, r]);
-  }
-  function Al() {
-  }
-  var hl = ["beforeEnter", "afterEnter", "beforeLeave", "afterLeave"];
-  function Qo(e) {
-    var r;
-    let t = {};
-    for (let o of hl)
-      t[o] = (r = e[o]) != null ? r : Al;
-    return t;
-  }
-  function Ol(e) {
-    let t = React2.useRef(Qo(e));
-    return React2.useEffect(() => {
-      t.current = Qo(e);
-    }, [e]), t;
-  }
-  var Il = "div", qo = 1;
-  function zo(e) {
-    let _a2 = e, { beforeEnter: t, afterEnter: r, beforeLeave: o, afterLeave: n2, enter: i, enterFrom: a, enterTo: l, entered: s, leave: u, leaveFrom: c, leaveTo: m2 } = _a2, b = __objRest(_a2, ["beforeEnter", "afterEnter", "beforeLeave", "afterLeave", "enter", "enterFrom", "enterTo", "entered", "leave", "leaveFrom", "leaveTo"]), T = React2.useRef(null), [y, p2] = React2.useState("visible"), f2 = b.unmount ? 0 : 1, { show: d, appear: P, initial: C } = Cl(), { register: R, unregister: g2 } = Sl(), v = A(), h2 = React2.useRef(false), O = $o(() => {
-      h2.current || (p2("hidden"), g2(v), X.current.afterLeave());
-    });
-    x(() => {
-      if (!!v)
-        return R(v);
-    }, [R, v]), x(() => {
-      if (f2 === 1 && !!v) {
-        if (d && y !== "visible") {
-          p2("visible");
+      if (!!f2)
+        return H$12(f2);
+    }, [H$12, f2]), React2.useEffect(() => {
+      if (p2 === R.Hidden && !!f2) {
+        if (b2 && i2 !== "visible") {
+          C2("visible");
           return;
         }
-        S(y, { hidden: () => g2(v), visible: () => R(v) });
+        u$2(i2, { ["hidden"]: () => P(f2), ["visible"]: () => H$12(f2) });
       }
-    }, [y, v, R, g2, d, f2]);
-    let L = le(i), N = le(a), K = le(l), V = le(s), Fe = le(u), ge = le(c), we = le(m2), X = Ol({ beforeEnter: t, afterEnter: r, beforeLeave: o, afterLeave: n2 }), F = q$1();
+    }, [i2, f2, H$12, P, b2, p2]);
+    let ie2 = s$5({ enter: h$1(o2), enterFrom: h$1(a2), enterTo: h$1(u2), entered: h$1(A), leave: h$1(v2), leaveFrom: h$1(E), leaveTo: h$1(x2) }), se2 = Ee({ beforeEnter: r2, afterEnter: s2, beforeLeave: g2, afterLeave: l2 }), O = a$2();
     React2.useEffect(() => {
-      if (F && y === "visible" && T.current === null)
+      if (O && i2 === "visible" && d2.current === null)
         throw new Error("Did you forget to passthrough the `ref` to the actual DOM node?");
-    }, [T, y, F]);
-    let $ = C && !P;
-    x(() => {
-      let bt = T.current;
-      if (!!bt && !$)
-        return h2.current = true, d && X.current.beforeEnter(), d || X.current.beforeLeave(), d ? Xt(bt, L, N, K, V, (Tt) => {
-          h2.current = false, Tt === "finished" && X.current.afterEnter();
-        }) : Xt(bt, Fe, ge, we, V, (Tt) => {
-          h2.current = false, Tt === "finished" && (ft(O) || (p2("hidden"), g2(v), X.current.afterLeave()));
-        });
-    }, [X, v, h2, g2, O, T, $, d, L, N, K, Fe, ge, we]);
-    let H = { ref: T }, Pe = b;
-    return React__default["default"].createElement(ct.Provider, { value: O }, React__default["default"].createElement(W, { value: S(y, { visible: 0, hidden: 1 }) }, E({ props: __spreadValues(__spreadValues({}, Pe), H), defaultTag: Il, features: qo, visible: y === "visible", name: "Transition.Child" })));
-  }
-  function mt(e) {
-    let _a2 = e, { show: t, appear: r = false, unmount: o } = _a2, n2 = __objRest(_a2, ["show", "appear", "unmount"]), i = _();
-    if (t === void 0 && i !== null && (t = S(i, { [0]: true, [1]: false })), ![true, false].includes(t))
+    }, [d2, i2, O]);
+    let M2 = ne2 && !re2, oe2 = (() => !O || M2 || F2.current === b2 ? "idle" : b2 ? "enter" : "leave")(), _$1 = React2.useRef(false), B2 = Z(() => {
+      _$1.current || (C2("hidden"), P(f2));
+    });
+    H({ container: d2, classes: ie2, events: se2, direction: oe2, onStart: s$5(() => {
+      _$1.current = true;
+    }), onStop: s$5((ue2) => {
+      _$1.current = false, ue2 === "leave" && !w(B2) && (C2("hidden"), P(f2));
+    }) }), React2.useEffect(() => {
+      !M2 || (p2 === R.Hidden ? F2.current = null : F2.current = b2);
+    }, [b2, M2, i2]);
+    let le2 = y2, ae2 = { ref: D };
+    return React__default["default"].createElement(L.Provider, { value: B2 }, React__default["default"].createElement(C$2, { value: u$2(i2, { ["visible"]: p$4.Open, ["hidden"]: p$4.Closed }) }, _({ ourProps: ae2, theirProps: le2, defaultTag: xe, features: ee, visible: i2 === "visible", name: "Transition.Child" })));
+  }), G = H$4(function(n2, t2) {
+    let _a2 = n2, { show: r2, appear: s$12 = false, unmount: g2 } = _a2, l2 = __objRest(_a2, ["show", "appear", "unmount"]), o2 = React2.useRef(null), a2 = y$1(o2, t2);
+    a$2();
+    let u2 = s();
+    if (r2 === void 0 && u2 !== null && (r2 = u$2(u2, { [p$4.Open]: true, [p$4.Closed]: false })), ![true, false].includes(r2))
       throw new Error("A <Transition /> is used but it is missing a `show={true | false}` prop.");
-    let [a, l] = React2.useState(t ? "visible" : "hidden"), s = $o(() => {
-      l("hidden");
-    }), u = Bo(), c = React2.useMemo(() => ({ show: t, appear: r || !u, initial: u }), [t, r, u]);
+    let [A, v2] = React2.useState(r2 ? "visible" : "hidden"), E = Z(() => {
+      v2("hidden");
+    }), [x2, y2] = React2.useState(true), d2 = React2.useRef([r2]);
+    t$2(() => {
+      x2 !== false && d2.current[d2.current.length - 1] !== r2 && (d2.current.push(r2), y2(false));
+    }, [d2, r2]);
+    let D = React2.useMemo(() => ({ show: r2, appear: s$12, initial: x2 }), [r2, s$12, x2]);
     React2.useEffect(() => {
-      t ? l("visible") : ft(s) || l("hidden");
-    }, [t, s]);
-    let m2 = { unmount: o };
-    return React__default["default"].createElement(ct.Provider, { value: s }, React__default["default"].createElement(dt.Provider, { value: c }, E({ props: __spreadProps(__spreadValues({}, m2), { as: React2.Fragment, children: React__default["default"].createElement(zo, __spreadValues(__spreadValues({}, m2), n2)) }), defaultTag: React2.Fragment, features: qo, visible: a === "visible", name: "Transition" })));
-  }
-  mt.Child = function(t) {
-    let r = React2.useContext(dt) !== null, o = _() !== null;
-    return !r && o ? React__default["default"].createElement(mt, __spreadValues({}, t)) : React__default["default"].createElement(zo, __spreadValues({}, t));
-  };
-  mt.Root = mt;
+      if (r2)
+        v2("visible");
+      else if (!w(E))
+        v2("hidden");
+      else {
+        let C2 = o2.current;
+        if (!C2)
+          return;
+        let p2 = C2.getBoundingClientRect();
+        p2.x === 0 && p2.y === 0 && p2.width === 0 && p2.height === 0 && v2("hidden");
+      }
+    }, [r2, E]);
+    let i2 = { unmount: g2 };
+    return React__default["default"].createElement(L.Provider, { value: E }, React__default["default"].createElement(N.Provider, { value: D }, _({ ourProps: __spreadProps(__spreadValues({}, i2), { as: React2.Fragment, children: React__default["default"].createElement(te, __spreadValues(__spreadValues({ ref: a2 }, i2), l2)) }), theirProps: {}, defaultTag: React2.Fragment, features: ee, visible: A === "visible", name: "Transition" })));
+  }), ye = H$4(function(n2, t2) {
+    let r2 = React2.useContext(N) !== null, s$12 = s() !== null;
+    return React__default["default"].createElement(React__default["default"].Fragment, null, !r2 && s$12 ? React__default["default"].createElement(G, __spreadValues({ ref: t2 }, n2)) : React__default["default"].createElement(te, __spreadValues({ ref: t2 }, n2)));
+  }), We = Object.assign(G, { Child: ye, Root: G });
   var jsxRuntime = { exports: {} };
   var reactJsxRuntime_production_min = {};
   /*
@@ -2105,8 +1471,8 @@ var __objRest = (source, exclude) => {
         return false;
       }
       var test2 = {};
-      for (var i = 0; i < 10; i++) {
-        test2["_" + String.fromCharCode(i)] = i;
+      for (var i2 = 0; i2 < 10; i2++) {
+        test2["_" + String.fromCharCode(i2)] = i2;
       }
       var order2 = Object.getOwnPropertyNames(test2).map(function(n2) {
         return test2[n2];
@@ -2130,8 +1496,8 @@ var __objRest = (source, exclude) => {
     var from;
     var to2 = toObject(target);
     var symbols;
-    for (var s = 1; s < arguments.length; s++) {
-      from = Object(arguments[s]);
+    for (var s2 = 1; s2 < arguments.length; s2++) {
+      from = Object(arguments[s2]);
       for (var key in from) {
         if (hasOwnProperty.call(from, key)) {
           to2[key] = from[key];
@@ -2139,9 +1505,9 @@ var __objRest = (source, exclude) => {
       }
       if (getOwnPropertySymbols) {
         symbols = getOwnPropertySymbols(from);
-        for (var i = 0; i < symbols.length; i++) {
-          if (propIsEnumerable.call(from, symbols[i])) {
-            to2[symbols[i]] = from[symbols[i]];
+        for (var i2 = 0; i2 < symbols.length; i2++) {
+          if (propIsEnumerable.call(from, symbols[i2])) {
+            to2[symbols[i2]] = from[symbols[i2]];
           }
         }
       }
@@ -2164,17 +1530,17 @@ var __objRest = (source, exclude) => {
     reactJsxRuntime_production_min.Fragment = h("react.fragment");
   }
   var m = f.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, n = Object.prototype.hasOwnProperty, p = { key: true, ref: true, __self: true, __source: true };
-  function q(c, a, k2) {
-    var b, d = {}, e = null, l = null;
-    k2 !== void 0 && (e = "" + k2);
-    a.key !== void 0 && (e = "" + a.key);
-    a.ref !== void 0 && (l = a.ref);
-    for (b in a)
-      n.call(a, b) && !p.hasOwnProperty(b) && (d[b] = a[b]);
-    if (c && c.defaultProps)
-      for (b in a = c.defaultProps, a)
-        d[b] === void 0 && (d[b] = a[b]);
-    return { $$typeof: g, type: c, key: e, ref: l, props: d, _owner: m.current };
+  function q(c2, a2, k2) {
+    var b2, d2 = {}, e2 = null, l2 = null;
+    k2 !== void 0 && (e2 = "" + k2);
+    a2.key !== void 0 && (e2 = "" + a2.key);
+    a2.ref !== void 0 && (l2 = a2.ref);
+    for (b2 in a2)
+      n.call(a2, b2) && !p.hasOwnProperty(b2) && (d2[b2] = a2[b2]);
+    if (c2 && c2.defaultProps)
+      for (b2 in a2 = c2.defaultProps, a2)
+        d2[b2] === void 0 && (d2[b2] = a2[b2]);
+    return { $$typeof: g, type: c2, key: e2, ref: l2, props: d2, _owner: m.current };
   }
   reactJsxRuntime_production_min.jsx = q;
   reactJsxRuntime_production_min.jsxs = q;
@@ -2199,7 +1565,7 @@ var __objRest = (source, exclude) => {
         children: labelLeft
       }), /* @__PURE__ */ jsx("div", {
         className: "w-1/2",
-        children: /* @__PURE__ */ jsx(Qt, {
+        children: /* @__PURE__ */ jsx(ue$1, {
           checked,
           onChange,
           className: `${checked ? "bg-blue-600" : "bg-gray-200"} relative inline-flex items-center h-6 rounded-full w-11`,
@@ -2265,12 +1631,12 @@ var __objRest = (source, exclude) => {
       optionList,
       show
     } = props;
-    return /* @__PURE__ */ jsx(Ee, {
+    return /* @__PURE__ */ jsx(rt, {
       value: selected,
       onChange: setSelected,
       children: /* @__PURE__ */ jsxs("div", {
         className: "relative mt-1",
-        children: [/* @__PURE__ */ jsxs(Ee.Button, {
+        children: [/* @__PURE__ */ jsxs(rt.Button, {
           className: "relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm",
           children: [/* @__PURE__ */ jsx("span", {
             className: "block truncate text-gray-900",
@@ -2282,14 +1648,14 @@ var __objRest = (source, exclude) => {
               "aria-hidden": "true"
             })
           })]
-        }), /* @__PURE__ */ jsx(mt, {
+        }), /* @__PURE__ */ jsx(We, {
           as: React2.Fragment,
           leave: "transition ease-in duration-100",
           leaveFrom: "opacity-100",
           leaveTo: "opacity-0",
-          children: /* @__PURE__ */ jsx(Ee.Options, {
+          children: /* @__PURE__ */ jsx(rt.Options, {
             className: "absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm",
-            children: optionList.map((person, personIdx) => /* @__PURE__ */ jsx(Ee.Option, {
+            children: optionList.map((person, personIdx) => /* @__PURE__ */ jsx(rt.Option, {
               className: ({
                 active
               }) => `cursor-default select-none relative py-2 pl-10 pr-4 ${active ? "text-amber-900 bg-amber-100" : "text-gray-900"}`,
@@ -2448,70 +1814,30 @@ var __objRest = (source, exclude) => {
       })]
     });
   }
-  var isAbsoluteURL$1 = function isAbsoluteURL2(url) {
-    return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(url);
-  };
-  var combineURLs$1 = function combineURLs2(baseURL, relativeURL) {
-    return relativeURL ? baseURL.replace(/\/+$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL;
-  };
-  var isAbsoluteURL = isAbsoluteURL$1;
-  var combineURLs = combineURLs$1;
-  var buildFullPath$1 = function buildFullPath2(baseURL, requestedURL) {
-    if (baseURL && !isAbsoluteURL(requestedURL)) {
-      return combineURLs(baseURL, requestedURL);
-    }
-    return requestedURL;
-  };
-  var enhanceError$2 = function enhanceError2(error, config, code, request, response) {
-    error.config = config;
-    if (code) {
-      error.code = code;
-    }
-    error.request = request;
-    error.response = response;
-    error.isAxiosError = true;
-    error.toJSON = function toJSON() {
-      return {
-        message: this.message,
-        name: this.name,
-        description: this.description,
-        number: this.number,
-        fileName: this.fileName,
-        lineNumber: this.lineNumber,
-        columnNumber: this.columnNumber,
-        stack: this.stack,
-        config: this.config,
-        code: this.code,
-        status: this.response && this.response.status ? this.response.status : null
-      };
-    };
-    return error;
-  };
-  var enhanceError$1 = enhanceError$2;
-  var createError$2 = function createError2(message, config, code, request, response) {
-    var error = new Error(message);
-    return enhanceError$1(error, config, code, request, response);
-  };
-  var createError$1 = createError$2;
-  var settle$1 = function settle2(resolve, reject, response) {
-    var validateStatus = response.config.validateStatus;
-    if (!response.status || !validateStatus || validateStatus(response.status)) {
-      resolve(response);
-    } else {
-      reject(createError$1("Request failed with status code " + response.status, response.config, null, response.request, response));
-    }
-  };
+  var axios$2 = { exports: {} };
   var bind$2 = function bind2(fn, thisArg) {
     return function wrap() {
       var args = new Array(arguments.length);
-      for (var i = 0; i < args.length; i++) {
-        args[i] = arguments[i];
+      for (var i2 = 0; i2 < args.length; i2++) {
+        args[i2] = arguments[i2];
       }
       return fn.apply(thisArg, args);
     };
   };
   var bind$1 = bind$2;
   var toString = Object.prototype.toString;
+  var kindOf = function(cache) {
+    return function(thing) {
+      var str = toString.call(thing);
+      return cache[str] || (cache[str] = str.slice(8, -1).toLowerCase());
+    };
+  }(/* @__PURE__ */ Object.create(null));
+  function kindOfTest(type) {
+    type = type.toLowerCase();
+    return function isKindOf(thing) {
+      return kindOf(thing) === type;
+    };
+  }
   function isArray(val) {
     return Array.isArray(val);
   }
@@ -2521,12 +1847,7 @@ var __objRest = (source, exclude) => {
   function isBuffer(val) {
     return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor) && typeof val.constructor.isBuffer === "function" && val.constructor.isBuffer(val);
   }
-  function isArrayBuffer(val) {
-    return toString.call(val) === "[object ArrayBuffer]";
-  }
-  function isFormData(val) {
-    return toString.call(val) === "[object FormData]";
-  }
+  var isArrayBuffer = kindOfTest("ArrayBuffer");
   function isArrayBufferView(val) {
     var result;
     if (typeof ArrayBuffer !== "undefined" && ArrayBuffer.isView) {
@@ -2546,30 +1867,27 @@ var __objRest = (source, exclude) => {
     return val !== null && typeof val === "object";
   }
   function isPlainObject(val) {
-    if (toString.call(val) !== "[object Object]") {
+    if (kindOf(val) !== "object") {
       return false;
     }
-    var prototype = Object.getPrototypeOf(val);
-    return prototype === null || prototype === Object.prototype;
+    var prototype2 = Object.getPrototypeOf(val);
+    return prototype2 === null || prototype2 === Object.prototype;
   }
-  function isDate(val) {
-    return toString.call(val) === "[object Date]";
-  }
-  function isFile(val) {
-    return toString.call(val) === "[object File]";
-  }
-  function isBlob(val) {
-    return toString.call(val) === "[object Blob]";
-  }
+  var isDate = kindOfTest("Date");
+  var isFile = kindOfTest("File");
+  var isBlob = kindOfTest("Blob");
+  var isFileList = kindOfTest("FileList");
   function isFunction(val) {
     return toString.call(val) === "[object Function]";
   }
   function isStream(val) {
     return isObject(val) && isFunction(val.pipe);
   }
-  function isURLSearchParams(val) {
-    return toString.call(val) === "[object URLSearchParams]";
+  function isFormData(thing) {
+    var pattern = "[object FormData]";
+    return thing && (typeof FormData === "function" && thing instanceof FormData || toString.call(thing) === pattern || isFunction(thing.toString) && thing.toString() === pattern);
   }
+  var isURLSearchParams = kindOfTest("URLSearchParams");
   function trim(str) {
     return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g, "");
   }
@@ -2587,8 +1905,8 @@ var __objRest = (source, exclude) => {
       obj = [obj];
     }
     if (isArray(obj)) {
-      for (var i = 0, l = obj.length; i < l; i++) {
-        fn.call(null, obj[i], i, obj);
+      for (var i2 = 0, l2 = obj.length; i2 < l2; i2++) {
+        fn.call(null, obj[i2], i2, obj);
       }
     } else {
       for (var key in obj) {
@@ -2611,20 +1929,20 @@ var __objRest = (source, exclude) => {
         result[key] = val;
       }
     }
-    for (var i = 0, l = arguments.length; i < l; i++) {
-      forEach(arguments[i], assignValue);
+    for (var i2 = 0, l2 = arguments.length; i2 < l2; i2++) {
+      forEach(arguments[i2], assignValue);
     }
     return result;
   }
-  function extend(a, b, thisArg) {
-    forEach(b, function assignValue(val, key) {
+  function extend(a2, b2, thisArg) {
+    forEach(b2, function assignValue(val, key) {
       if (thisArg && typeof val === "function") {
-        a[key] = bind$1(val, thisArg);
+        a2[key] = bind$1(val, thisArg);
       } else {
-        a[key] = val;
+        a2[key] = val;
       }
     });
-    return a;
+    return a2;
   }
   function stripBOM(content) {
     if (content.charCodeAt(0) === 65279) {
@@ -2632,7 +1950,58 @@ var __objRest = (source, exclude) => {
     }
     return content;
   }
-  var utils$e = {
+  function inherits(constructor, superConstructor, props, descriptors2) {
+    constructor.prototype = Object.create(superConstructor.prototype, descriptors2);
+    constructor.prototype.constructor = constructor;
+    props && Object.assign(constructor.prototype, props);
+  }
+  function toFlatObject(sourceObj, destObj, filter) {
+    var props;
+    var i2;
+    var prop;
+    var merged = {};
+    destObj = destObj || {};
+    do {
+      props = Object.getOwnPropertyNames(sourceObj);
+      i2 = props.length;
+      while (i2-- > 0) {
+        prop = props[i2];
+        if (!merged[prop]) {
+          destObj[prop] = sourceObj[prop];
+          merged[prop] = true;
+        }
+      }
+      sourceObj = Object.getPrototypeOf(sourceObj);
+    } while (sourceObj && (!filter || filter(sourceObj, destObj)) && sourceObj !== Object.prototype);
+    return destObj;
+  }
+  function endsWith(str, searchString, position) {
+    str = String(str);
+    if (position === void 0 || position > str.length) {
+      position = str.length;
+    }
+    position -= searchString.length;
+    var lastIndex = str.indexOf(searchString, position);
+    return lastIndex !== -1 && lastIndex === position;
+  }
+  function toArray(thing) {
+    if (!thing)
+      return null;
+    var i2 = thing.length;
+    if (isUndefined(i2))
+      return null;
+    var arr = new Array(i2);
+    while (i2-- > 0) {
+      arr[i2] = thing[i2];
+    }
+    return arr;
+  }
+  var isTypedArray = function(TypedArray) {
+    return function(thing) {
+      return TypedArray && thing instanceof TypedArray;
+    };
+  }(typeof Uint8Array !== "undefined" && Object.getPrototypeOf(Uint8Array));
+  var utils$h = {
     isArray,
     isArrayBuffer,
     isBuffer,
@@ -2654,9 +2023,17 @@ var __objRest = (source, exclude) => {
     merge,
     extend,
     trim,
-    stripBOM
+    stripBOM,
+    inherits,
+    toFlatObject,
+    kindOf,
+    kindOfTest,
+    endsWith,
+    toArray,
+    isTypedArray,
+    isFileList
   };
-  var utils$d = utils$e;
+  var utils$g = utils$h;
   function encode(val) {
     return encodeURIComponent(val).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
   }
@@ -2667,26 +2044,26 @@ var __objRest = (source, exclude) => {
     var serializedParams;
     if (paramsSerializer) {
       serializedParams = paramsSerializer(params);
-    } else if (utils$d.isURLSearchParams(params)) {
+    } else if (utils$g.isURLSearchParams(params)) {
       serializedParams = params.toString();
     } else {
       var parts = [];
-      utils$d.forEach(params, function serialize(val, key) {
+      utils$g.forEach(params, function serialize(val, key) {
         if (val === null || typeof val === "undefined") {
           return;
         }
-        if (utils$d.isArray(val)) {
+        if (utils$g.isArray(val)) {
           key = key + "[]";
         } else {
           val = [val];
         }
-        utils$d.forEach(val, function parseValue(v) {
-          if (utils$d.isDate(v)) {
-            v = v.toISOString();
-          } else if (utils$d.isObject(v)) {
-            v = JSON.stringify(v);
+        utils$g.forEach(val, function parseValue(v2) {
+          if (utils$g.isDate(v2)) {
+            v2 = v2.toISOString();
+          } else if (utils$g.isObject(v2)) {
+            v2 = JSON.stringify(v2);
           }
-          parts.push(encode(key) + "=" + encode(v));
+          parts.push(encode(key) + "=" + encode(v2));
         });
       });
       serializedParams = parts.join("&");
@@ -2700,120 +2077,7 @@ var __objRest = (source, exclude) => {
     }
     return url;
   };
-  var utils$c = utils$e;
-  var ignoreDuplicateOf = [
-    "age",
-    "authorization",
-    "content-length",
-    "content-type",
-    "etag",
-    "expires",
-    "from",
-    "host",
-    "if-modified-since",
-    "if-unmodified-since",
-    "last-modified",
-    "location",
-    "max-forwards",
-    "proxy-authorization",
-    "referer",
-    "retry-after",
-    "user-agent"
-  ];
-  var parseHeaders$1 = function parseHeaders2(headers) {
-    var parsed = {};
-    var key;
-    var val;
-    var i;
-    if (!headers) {
-      return parsed;
-    }
-    utils$c.forEach(headers.split("\n"), function parser(line) {
-      i = line.indexOf(":");
-      key = utils$c.trim(line.substr(0, i)).toLowerCase();
-      val = utils$c.trim(line.substr(i + 1));
-      if (key) {
-        if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
-          return;
-        }
-        if (key === "set-cookie") {
-          parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
-        } else {
-          parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
-        }
-      }
-    });
-    return parsed;
-  };
-  function xhrAdapter(config) {
-    return new Promise((resolve, reject) => {
-      var _a2;
-      let requestData = config.data;
-      const requestHeaders = (_a2 = config.headers) != null ? _a2 : {};
-      if (utils$e.isFormData(requestData)) {
-        delete requestHeaders["Content-Type"];
-      }
-      if (config.auth) {
-        const username = config.auth.username || "";
-        const password = config.auth.password || "";
-        requestHeaders.Authorization = "Basic " + btoa(username + ":" + password);
-      }
-      const onerror = function handleError() {
-        reject(createError$2("Network Error", config));
-      };
-      const ontimeout = function handleTimeout() {
-        reject(createError$2("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED"));
-      };
-      utils$e.forEach(requestHeaders, function setRequestHeader(val, key) {
-        if (typeof requestData === "undefined" && key.toLowerCase() === "content-type") {
-          delete requestHeaders[key];
-        }
-      });
-      if (requestData === void 0) {
-        requestData = null;
-      }
-      const onload = function handleLoad(resp) {
-        const responseHeaders = "responseHeaders" in resp ? parseHeaders$1(resp.responseHeaders) : {};
-        const responseData = !config.responseType || config.responseType === "text" ? resp.responseText : resp.response;
-        const response = {
-          data: responseData,
-          status: resp.status,
-          statusText: resp.statusText,
-          headers: responseHeaders,
-          config,
-          request: {
-            responseURL: resp.finalUrl,
-            status: resp.status,
-            statusText: resp.statusText,
-            responseXML: null
-          }
-        };
-        settle$1(resolve, reject, response);
-      };
-      if (config.cancelToken) {
-        config.cancelToken.promise.then(function onCanceled(cancel) {
-          reject(cancel);
-        });
-      }
-      const method = config.method.toUpperCase();
-      if (method === "UNLINK" || method === "PURGE" || method === "LINK") {
-        reject(createError$2(`${method} is not a supported method by GM.xmlHttpRequest`, config));
-      } else {
-        GM.xmlHttpRequest({
-          method,
-          url: buildURL$2(buildFullPath$1(config.baseURL, config.url), config.params, config.paramsSerializer),
-          headers: Object.fromEntries(Object.entries(requestHeaders).map(([key, val]) => [key, val.toString()])),
-          data: requestData,
-          timeout: config.timeout,
-          ontimeout,
-          onload,
-          onerror
-        });
-      }
-    });
-  }
-  var axios$2 = { exports: {} };
-  var utils$b = utils$e;
+  var utils$f = utils$h;
   function InterceptorManager$1() {
     this.handlers = [];
   }
@@ -2832,40 +2096,152 @@ var __objRest = (source, exclude) => {
     }
   };
   InterceptorManager$1.prototype.forEach = function forEach2(fn) {
-    utils$b.forEach(this.handlers, function forEachHandler(h2) {
+    utils$f.forEach(this.handlers, function forEachHandler(h2) {
       if (h2 !== null) {
         fn(h2);
       }
     });
   };
   var InterceptorManager_1 = InterceptorManager$1;
-  var utils$a = utils$e;
+  var utils$e = utils$h;
   var normalizeHeaderName$1 = function normalizeHeaderName2(headers, normalizedName) {
-    utils$a.forEach(headers, function processHeader(value, name) {
+    utils$e.forEach(headers, function processHeader(value, name) {
       if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
         headers[normalizedName] = value;
         delete headers[name];
       }
     });
   };
+  var utils$d = utils$h;
+  function AxiosError$5(message, code, config, request, response) {
+    Error.call(this);
+    this.message = message;
+    this.name = "AxiosError";
+    code && (this.code = code);
+    config && (this.config = config);
+    request && (this.request = request);
+    response && (this.response = response);
+  }
+  utils$d.inherits(AxiosError$5, Error, {
+    toJSON: function toJSON() {
+      return {
+        message: this.message,
+        name: this.name,
+        description: this.description,
+        number: this.number,
+        fileName: this.fileName,
+        lineNumber: this.lineNumber,
+        columnNumber: this.columnNumber,
+        stack: this.stack,
+        config: this.config,
+        code: this.code,
+        status: this.response && this.response.status ? this.response.status : null
+      };
+    }
+  });
+  var prototype = AxiosError$5.prototype;
+  var descriptors = {};
+  [
+    "ERR_BAD_OPTION_VALUE",
+    "ERR_BAD_OPTION",
+    "ECONNABORTED",
+    "ETIMEDOUT",
+    "ERR_NETWORK",
+    "ERR_FR_TOO_MANY_REDIRECTS",
+    "ERR_DEPRECATED",
+    "ERR_BAD_RESPONSE",
+    "ERR_BAD_REQUEST",
+    "ERR_CANCELED"
+  ].forEach(function(code) {
+    descriptors[code] = { value: code };
+  });
+  Object.defineProperties(AxiosError$5, descriptors);
+  Object.defineProperty(prototype, "isAxiosError", { value: true });
+  AxiosError$5.from = function(error, code, config, request, response, customProps) {
+    var axiosError = Object.create(prototype);
+    utils$d.toFlatObject(error, axiosError, function filter(obj) {
+      return obj !== Error.prototype;
+    });
+    AxiosError$5.call(axiosError, error.message, code, config, request, response);
+    axiosError.name = error.name;
+    customProps && Object.assign(axiosError, customProps);
+    return axiosError;
+  };
+  var AxiosError_1 = AxiosError$5;
   var transitional = {
     silentJSONParsing: true,
     forcedJSONParsing: true,
     clarifyTimeoutError: false
   };
-  var utils$9 = utils$e;
-  var cookies$1 = utils$9.isStandardBrowserEnv() ? function standardBrowserEnv() {
+  var utils$c = utils$h;
+  function toFormData$1(obj, formData) {
+    formData = formData || new FormData();
+    var stack = [];
+    function convertValue(value) {
+      if (value === null)
+        return "";
+      if (utils$c.isDate(value)) {
+        return value.toISOString();
+      }
+      if (utils$c.isArrayBuffer(value) || utils$c.isTypedArray(value)) {
+        return typeof Blob === "function" ? new Blob([value]) : Buffer.from(value);
+      }
+      return value;
+    }
+    function build(data2, parentKey) {
+      if (utils$c.isPlainObject(data2) || utils$c.isArray(data2)) {
+        if (stack.indexOf(data2) !== -1) {
+          throw Error("Circular reference detected in " + parentKey);
+        }
+        stack.push(data2);
+        utils$c.forEach(data2, function each(value, key) {
+          if (utils$c.isUndefined(value))
+            return;
+          var fullKey = parentKey ? parentKey + "." + key : key;
+          var arr;
+          if (value && !parentKey && typeof value === "object") {
+            if (utils$c.endsWith(key, "{}")) {
+              value = JSON.stringify(value);
+            } else if (utils$c.endsWith(key, "[]") && (arr = utils$c.toArray(value))) {
+              arr.forEach(function(el) {
+                !utils$c.isUndefined(el) && formData.append(fullKey, convertValue(el));
+              });
+              return;
+            }
+          }
+          build(value, fullKey);
+        });
+        stack.pop();
+      } else {
+        formData.append(parentKey, convertValue(data2));
+      }
+    }
+    build(obj);
+    return formData;
+  }
+  var toFormData_1 = toFormData$1;
+  var AxiosError$4 = AxiosError_1;
+  var settle$1 = function settle2(resolve, reject, response) {
+    var validateStatus = response.config.validateStatus;
+    if (!response.status || !validateStatus || validateStatus(response.status)) {
+      resolve(response);
+    } else {
+      reject(new AxiosError$4("Request failed with status code " + response.status, [AxiosError$4.ERR_BAD_REQUEST, AxiosError$4.ERR_BAD_RESPONSE][Math.floor(response.status / 100) - 4], response.config, response.request, response));
+    }
+  };
+  var utils$b = utils$h;
+  var cookies$1 = utils$b.isStandardBrowserEnv() ? function standardBrowserEnv() {
     return {
       write: function write(name, value, expires, path, domain, secure) {
         var cookie = [];
         cookie.push(name + "=" + encodeURIComponent(value));
-        if (utils$9.isNumber(expires)) {
+        if (utils$b.isNumber(expires)) {
           cookie.push("expires=" + new Date(expires).toGMTString());
         }
-        if (utils$9.isString(path)) {
+        if (utils$b.isString(path)) {
           cookie.push("path=" + path);
         }
-        if (utils$9.isString(domain)) {
+        if (utils$b.isString(domain)) {
           cookie.push("domain=" + domain);
         }
         if (secure === true) {
@@ -2892,8 +2268,67 @@ var __objRest = (source, exclude) => {
       }
     };
   }();
-  var utils$8 = utils$e;
-  var isURLSameOrigin$1 = utils$8.isStandardBrowserEnv() ? function standardBrowserEnv() {
+  var isAbsoluteURL$1 = function isAbsoluteURL2(url) {
+    return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(url);
+  };
+  var combineURLs$1 = function combineURLs2(baseURL, relativeURL) {
+    return relativeURL ? baseURL.replace(/\/+$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL;
+  };
+  var isAbsoluteURL = isAbsoluteURL$1;
+  var combineURLs = combineURLs$1;
+  var buildFullPath$2 = function buildFullPath2(baseURL, requestedURL) {
+    if (baseURL && !isAbsoluteURL(requestedURL)) {
+      return combineURLs(baseURL, requestedURL);
+    }
+    return requestedURL;
+  };
+  var utils$a = utils$h;
+  var ignoreDuplicateOf = [
+    "age",
+    "authorization",
+    "content-length",
+    "content-type",
+    "etag",
+    "expires",
+    "from",
+    "host",
+    "if-modified-since",
+    "if-unmodified-since",
+    "last-modified",
+    "location",
+    "max-forwards",
+    "proxy-authorization",
+    "referer",
+    "retry-after",
+    "user-agent"
+  ];
+  var parseHeaders$1 = function parseHeaders2(headers) {
+    var parsed = {};
+    var key;
+    var val;
+    var i2;
+    if (!headers) {
+      return parsed;
+    }
+    utils$a.forEach(headers.split("\n"), function parser(line) {
+      i2 = line.indexOf(":");
+      key = utils$a.trim(line.substr(0, i2)).toLowerCase();
+      val = utils$a.trim(line.substr(i2 + 1));
+      if (key) {
+        if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
+          return;
+        }
+        if (key === "set-cookie") {
+          parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
+        } else {
+          parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
+        }
+      }
+    });
+    return parsed;
+  };
+  var utils$9 = utils$h;
+  var isURLSameOrigin$1 = utils$9.isStandardBrowserEnv() ? function standardBrowserEnv() {
     var msie = /(msie|trident)/i.test(navigator.userAgent);
     var urlParsingNode = document.createElement("a");
     var originURL;
@@ -2917,7 +2352,7 @@ var __objRest = (source, exclude) => {
     }
     originURL = resolveURL(window.location.href);
     return function isURLSameOrigin2(requestURL) {
-      var parsed = utils$8.isString(requestURL) ? resolveURL(requestURL) : requestURL;
+      var parsed = utils$9.isString(requestURL) ? resolveURL(requestURL) : requestURL;
       return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
     };
   }() : function nonStandardBrowserEnv() {
@@ -2925,24 +2360,31 @@ var __objRest = (source, exclude) => {
       return true;
     };
   }();
-  function Cancel$3(message) {
-    this.message = message;
+  var AxiosError$3 = AxiosError_1;
+  var utils$8 = utils$h;
+  function CanceledError$3(message) {
+    AxiosError$3.call(this, message == null ? "canceled" : message, AxiosError$3.ERR_CANCELED);
+    this.name = "CanceledError";
   }
-  Cancel$3.prototype.toString = function toString2() {
-    return "Cancel" + (this.message ? ": " + this.message : "");
+  utils$8.inherits(CanceledError$3, AxiosError$3, {
+    __CANCEL__: true
+  });
+  var CanceledError_1 = CanceledError$3;
+  var parseProtocol$1 = function parseProtocol2(url) {
+    var match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url);
+    return match && match[1] || "";
   };
-  Cancel$3.prototype.__CANCEL__ = true;
-  var Cancel_1 = Cancel$3;
-  var utils$7 = utils$e;
+  var utils$7 = utils$h;
   var settle = settle$1;
   var cookies = cookies$1;
   var buildURL$1 = buildURL$2;
-  var buildFullPath = buildFullPath$1;
+  var buildFullPath$1 = buildFullPath$2;
   var parseHeaders = parseHeaders$1;
   var isURLSameOrigin = isURLSameOrigin$1;
-  var createError = createError$2;
   var transitionalDefaults$1 = transitional;
-  var Cancel$2 = Cancel_1;
+  var AxiosError$2 = AxiosError_1;
+  var CanceledError$2 = CanceledError_1;
+  var parseProtocol = parseProtocol$1;
   var xhr = function xhrAdapter2(config) {
     return new Promise(function dispatchXhrRequest(resolve, reject) {
       var requestData = config.data;
@@ -2957,7 +2399,7 @@ var __objRest = (source, exclude) => {
           config.signal.removeEventListener("abort", onCanceled);
         }
       }
-      if (utils$7.isFormData(requestData)) {
+      if (utils$7.isFormData(requestData) && utils$7.isStandardBrowserEnv()) {
         delete requestHeaders["Content-Type"];
       }
       var request = new XMLHttpRequest();
@@ -2966,7 +2408,7 @@ var __objRest = (source, exclude) => {
         var password = config.auth.password ? unescape(encodeURIComponent(config.auth.password)) : "";
         requestHeaders.Authorization = "Basic " + btoa(username + ":" + password);
       }
-      var fullPath = buildFullPath(config.baseURL, config.url);
+      var fullPath = buildFullPath$1(config.baseURL, config.url);
       request.open(config.method.toUpperCase(), buildURL$1(fullPath, config.params, config.paramsSerializer), true);
       request.timeout = config.timeout;
       function onloadend() {
@@ -3009,11 +2451,11 @@ var __objRest = (source, exclude) => {
         if (!request) {
           return;
         }
-        reject(createError("Request aborted", config, "ECONNABORTED", request));
+        reject(new AxiosError$2("Request aborted", AxiosError$2.ECONNABORTED, config, request));
         request = null;
       };
       request.onerror = function handleError() {
-        reject(createError("Network Error", config, null, request));
+        reject(new AxiosError$2("Network Error", AxiosError$2.ERR_NETWORK, config, request, request));
         request = null;
       };
       request.ontimeout = function handleTimeout() {
@@ -3022,7 +2464,7 @@ var __objRest = (source, exclude) => {
         if (config.timeoutErrorMessage) {
           timeoutErrorMessage = config.timeoutErrorMessage;
         }
-        reject(createError(timeoutErrorMessage, config, transitional2.clarifyTimeoutError ? "ETIMEDOUT" : "ECONNABORTED", request));
+        reject(new AxiosError$2(timeoutErrorMessage, transitional2.clarifyTimeoutError ? AxiosError$2.ETIMEDOUT : AxiosError$2.ECONNABORTED, config, request));
         request = null;
       };
       if (utils$7.isStandardBrowserEnv()) {
@@ -3057,7 +2499,7 @@ var __objRest = (source, exclude) => {
           if (!request) {
             return;
           }
-          reject(!cancel || cancel && cancel.type ? new Cancel$2("canceled") : cancel);
+          reject(!cancel || cancel && cancel.type ? new CanceledError$2() : cancel);
           request.abort();
           request = null;
         };
@@ -3069,13 +2511,20 @@ var __objRest = (source, exclude) => {
       if (!requestData) {
         requestData = null;
       }
+      var protocol = parseProtocol(fullPath);
+      if (protocol && ["http", "https", "file"].indexOf(protocol) === -1) {
+        reject(new AxiosError$2("Unsupported protocol " + protocol + ":", AxiosError$2.ERR_BAD_REQUEST, config));
+        return;
+      }
       request.send(requestData);
     });
   };
-  var utils$6 = utils$e;
+  var _null = null;
+  var utils$6 = utils$h;
   var normalizeHeaderName = normalizeHeaderName$1;
-  var enhanceError = enhanceError$2;
+  var AxiosError$1 = AxiosError_1;
   var transitionalDefaults = transitional;
+  var toFormData = toFormData_1;
   var DEFAULT_CONTENT_TYPE = {
     "Content-Type": "application/x-www-form-urlencoded"
   };
@@ -3098,9 +2547,9 @@ var __objRest = (source, exclude) => {
       try {
         (parser || JSON.parse)(rawValue);
         return utils$6.trim(rawValue);
-      } catch (e) {
-        if (e.name !== "SyntaxError") {
-          throw e;
+      } catch (e2) {
+        if (e2.name !== "SyntaxError") {
+          throw e2;
         }
       }
     }
@@ -3122,7 +2571,13 @@ var __objRest = (source, exclude) => {
         setContentTypeIfUnset(headers, "application/x-www-form-urlencoded;charset=utf-8");
         return data2.toString();
       }
-      if (utils$6.isObject(data2) || headers && headers["Content-Type"] === "application/json") {
+      var isObjectPayload = utils$6.isObject(data2);
+      var contentType = headers && headers["Content-Type"];
+      var isFileList2;
+      if ((isFileList2 = utils$6.isFileList(data2)) || isObjectPayload && contentType === "multipart/form-data") {
+        var _FormData = this.env && this.env.FormData;
+        return toFormData(isFileList2 ? { "files[]": data2 } : data2, _FormData && new _FormData());
+      } else if (isObjectPayload || contentType === "application/json") {
         setContentTypeIfUnset(headers, "application/json");
         return stringifySafely(data2);
       }
@@ -3136,12 +2591,12 @@ var __objRest = (source, exclude) => {
       if (strictJSONParsing || forcedJSONParsing && utils$6.isString(data2) && data2.length) {
         try {
           return JSON.parse(data2);
-        } catch (e) {
+        } catch (e2) {
           if (strictJSONParsing) {
-            if (e.name === "SyntaxError") {
-              throw enhanceError(e, this, "E_JSON_PARSE");
+            if (e2.name === "SyntaxError") {
+              throw AxiosError$1.from(e2, AxiosError$1.ERR_BAD_RESPONSE, this, null, this.response);
             }
-            throw e;
+            throw e2;
           }
         }
       }
@@ -3152,6 +2607,9 @@ var __objRest = (source, exclude) => {
     xsrfHeaderName: "X-XSRF-TOKEN",
     maxContentLength: -1,
     maxBodyLength: -1,
+    env: {
+      FormData: _null
+    },
     validateStatus: function validateStatus(status) {
       return status >= 200 && status < 300;
     },
@@ -3168,7 +2626,7 @@ var __objRest = (source, exclude) => {
     defaults$3.headers[method] = utils$6.merge(DEFAULT_CONTENT_TYPE);
   });
   var defaults_1 = defaults$3;
-  var utils$5 = utils$e;
+  var utils$5 = utils$h;
   var defaults$2 = defaults_1;
   var transformData$1 = function transformData2(data2, headers, fns) {
     var context = this || defaults$2;
@@ -3180,17 +2638,17 @@ var __objRest = (source, exclude) => {
   var isCancel$1 = function isCancel2(value) {
     return !!(value && value.__CANCEL__);
   };
-  var utils$4 = utils$e;
+  var utils$4 = utils$h;
   var transformData = transformData$1;
   var isCancel = isCancel$1;
   var defaults$1 = defaults_1;
-  var Cancel$1 = Cancel_1;
+  var CanceledError$1 = CanceledError_1;
   function throwIfCancellationRequested(config) {
     if (config.cancelToken) {
       config.cancelToken.throwIfRequested();
     }
     if (config.signal && config.signal.aborted) {
-      throw new Cancel$1("canceled");
+      throw new CanceledError$1();
     }
   }
   var dispatchRequest$1 = function dispatchRequest2(config) {
@@ -3216,7 +2674,7 @@ var __objRest = (source, exclude) => {
       return Promise.reject(reason);
     });
   };
-  var utils$3 = utils$e;
+  var utils$3 = utils$h;
   var mergeConfig$2 = function mergeConfig2(config1, config2) {
     config2 = config2 || {};
     var config = {};
@@ -3276,6 +2734,7 @@ var __objRest = (source, exclude) => {
       "decompress": defaultToConfig2,
       "maxContentLength": defaultToConfig2,
       "maxBodyLength": defaultToConfig2,
+      "beforeRedirect": defaultToConfig2,
       "transport": defaultToConfig2,
       "httpAgent": defaultToConfig2,
       "httpsAgent": defaultToConfig2,
@@ -3292,13 +2751,14 @@ var __objRest = (source, exclude) => {
     return config;
   };
   var data = {
-    "version": "0.26.1"
+    "version": "0.27.2"
   };
   var VERSION = data.version;
+  var AxiosError = AxiosError_1;
   var validators$1 = {};
-  ["object", "boolean", "number", "function", "string", "symbol"].forEach(function(type, i) {
+  ["object", "boolean", "number", "function", "string", "symbol"].forEach(function(type, i2) {
     validators$1[type] = function validator2(thing) {
-      return typeof thing === type || "a" + (i < 1 ? "n " : " ") + type;
+      return typeof thing === type || "a" + (i2 < 1 ? "n " : " ") + type;
     };
   });
   var deprecatedWarnings = {};
@@ -3308,7 +2768,7 @@ var __objRest = (source, exclude) => {
     }
     return function(value, opt, opts) {
       if (validator2 === false) {
-        throw new Error(formatMessage(opt, " has been removed" + (version ? " in " + version : "")));
+        throw new AxiosError(formatMessage(opt, " has been removed" + (version ? " in " + version : "")), AxiosError.ERR_DEPRECATED);
       }
       if (version && !deprecatedWarnings[opt]) {
         deprecatedWarnings[opt] = true;
@@ -3319,23 +2779,23 @@ var __objRest = (source, exclude) => {
   };
   function assertOptions(options, schema, allowUnknown) {
     if (typeof options !== "object") {
-      throw new TypeError("options must be an object");
+      throw new AxiosError("options must be an object", AxiosError.ERR_BAD_OPTION_VALUE);
     }
     var keys = Object.keys(options);
-    var i = keys.length;
-    while (i-- > 0) {
-      var opt = keys[i];
+    var i2 = keys.length;
+    while (i2-- > 0) {
+      var opt = keys[i2];
       var validator2 = schema[opt];
       if (validator2) {
         var value = options[opt];
         var result = value === void 0 || validator2(value, opt, options);
         if (result !== true) {
-          throw new TypeError("option " + opt + " must be " + result);
+          throw new AxiosError("option " + opt + " must be " + result, AxiosError.ERR_BAD_OPTION_VALUE);
         }
         continue;
       }
       if (allowUnknown !== true) {
-        throw Error("Unknown option " + opt);
+        throw new AxiosError("Unknown option " + opt, AxiosError.ERR_BAD_OPTION);
       }
     }
   }
@@ -3343,11 +2803,12 @@ var __objRest = (source, exclude) => {
     assertOptions,
     validators: validators$1
   };
-  var utils$2 = utils$e;
+  var utils$2 = utils$h;
   var buildURL = buildURL$2;
   var InterceptorManager = InterceptorManager_1;
   var dispatchRequest = dispatchRequest$1;
   var mergeConfig$1 = mergeConfig$2;
+  var buildFullPath = buildFullPath$2;
   var validator = validator$1;
   var validators = validator.validators;
   function Axios$1(instanceConfig) {
@@ -3427,7 +2888,8 @@ var __objRest = (source, exclude) => {
   };
   Axios$1.prototype.getUri = function getUri(config) {
     config = mergeConfig$1(this.defaults, config);
-    return buildURL(config.url, config.params, config.paramsSerializer).replace(/^\?/, "");
+    var fullPath = buildFullPath(config.baseURL, config.url);
+    return buildURL(fullPath, config.params, config.paramsSerializer);
   };
   utils$2.forEach(["delete", "get", "head", "options"], function forEachMethodNoData(method) {
     Axios$1.prototype[method] = function(url, config) {
@@ -3439,16 +2901,23 @@ var __objRest = (source, exclude) => {
     };
   });
   utils$2.forEach(["post", "put", "patch"], function forEachMethodWithData(method) {
-    Axios$1.prototype[method] = function(url, data2, config) {
-      return this.request(mergeConfig$1(config || {}, {
-        method,
-        url,
-        data: data2
-      }));
-    };
+    function generateHTTPMethod(isForm) {
+      return function httpMethod(url, data2, config) {
+        return this.request(mergeConfig$1(config || {}, {
+          method,
+          headers: isForm ? {
+            "Content-Type": "multipart/form-data"
+          } : {},
+          url,
+          data: data2
+        }));
+      };
+    }
+    Axios$1.prototype[method] = generateHTTPMethod();
+    Axios$1.prototype[method + "Form"] = generateHTTPMethod(true);
   });
   var Axios_1 = Axios$1;
-  var Cancel = Cancel_1;
+  var CanceledError = CanceledError_1;
   function CancelToken(executor) {
     if (typeof executor !== "function") {
       throw new TypeError("executor must be a function.");
@@ -3461,10 +2930,10 @@ var __objRest = (source, exclude) => {
     this.promise.then(function(cancel) {
       if (!token._listeners)
         return;
-      var i;
-      var l = token._listeners.length;
-      for (i = 0; i < l; i++) {
-        token._listeners[i](cancel);
+      var i2;
+      var l2 = token._listeners.length;
+      for (i2 = 0; i2 < l2; i2++) {
+        token._listeners[i2](cancel);
       }
       token._listeners = null;
     });
@@ -3483,7 +2952,7 @@ var __objRest = (source, exclude) => {
       if (token.reason) {
         return;
       }
-      token.reason = new Cancel(message);
+      token.reason = new CanceledError(message);
       resolvePromise(token.reason);
     });
   }
@@ -3514,8 +2983,8 @@ var __objRest = (source, exclude) => {
   };
   CancelToken.source = function source() {
     var cancel;
-    var token = new CancelToken(function executor(c) {
-      cancel = c;
+    var token = new CancelToken(function executor(c2) {
+      cancel = c2;
     });
     return {
       token,
@@ -3528,11 +2997,11 @@ var __objRest = (source, exclude) => {
       return callback.apply(null, arr);
     };
   };
-  var utils$1 = utils$e;
+  var utils$1 = utils$h;
   var isAxiosError = function isAxiosError2(payload) {
     return utils$1.isObject(payload) && payload.isAxiosError === true;
   };
-  var utils = utils$e;
+  var utils = utils$h;
   var bind = bind$2;
   var Axios = Axios_1;
   var mergeConfig = mergeConfig$2;
@@ -3549,10 +3018,13 @@ var __objRest = (source, exclude) => {
   }
   var axios$1 = createInstance(defaults);
   axios$1.Axios = Axios;
-  axios$1.Cancel = Cancel_1;
+  axios$1.CanceledError = CanceledError_1;
   axios$1.CancelToken = CancelToken_1;
   axios$1.isCancel = isCancel$1;
   axios$1.VERSION = data.version;
+  axios$1.toFormData = toFormData_1;
+  axios$1.AxiosError = AxiosError_1;
+  axios$1.Cancel = axios$1.CanceledError;
   axios$1.all = function all(promises) {
     return Promise.all(promises);
   };
@@ -3561,6 +3033,78 @@ var __objRest = (source, exclude) => {
   axios$2.exports = axios$1;
   axios$2.exports.default = axios$1;
   var axios = axios$2.exports;
+  function xhrAdapter(config) {
+    return new Promise((resolve, reject) => {
+      var _a2;
+      let requestData = config.data;
+      const requestHeaders = (_a2 = config.headers) != null ? _a2 : {};
+      if (utils$h.isFormData(requestData)) {
+        delete requestHeaders["Content-Type"];
+      }
+      if (config.auth) {
+        const username = config.auth.username || "";
+        const password = config.auth.password || "";
+        requestHeaders.Authorization = "Basic " + Buffer.from(username + ":" + password).toString("base64");
+      }
+      const onerror = function handleError() {
+        reject(new axios.AxiosError("Network Error", axios.AxiosError.ERR_NETWORK, config));
+      };
+      const ontimeout = function handleTimeout() {
+        reject(new axios.AxiosError("timeout of " + config.timeout + "ms exceeded", axios.AxiosError.ECONNABORTED, config));
+      };
+      utils$h.forEach(requestHeaders, function setRequestHeader(val, key) {
+        if (typeof requestData === "undefined" && key.toLowerCase() === "content-type") {
+          delete requestHeaders[key];
+        }
+      });
+      if (requestData === void 0) {
+        requestData = null;
+      }
+      const onload = function handleLoad(resp) {
+        const responseHeaders = "responseHeaders" in resp ? parseHeaders$1(resp.responseHeaders) : {};
+        const responseData = !config.responseType || config.responseType === "text" ? resp.responseText : resp.response;
+        const response = {
+          data: responseData,
+          status: resp.status,
+          statusText: resp.statusText,
+          headers: responseHeaders,
+          config,
+          request: {
+            responseURL: resp.finalUrl,
+            status: resp.status,
+            statusText: resp.statusText,
+            responseXML: null
+          }
+        };
+        settle$1(resolve, reject, response);
+      };
+      if (config.cancelToken) {
+        config.cancelToken.promise.then(function onCanceled(cancel) {
+          reject(cancel);
+        });
+      }
+      let responseType;
+      if (config.responseType && config.responseType !== "json") {
+        responseType = config.responseType;
+      }
+      const method = config.method.toUpperCase();
+      if (method === "UNLINK" || method === "PURGE" || method === "LINK") {
+        reject(new axios.AxiosError(`${method} is not a supported method by GM.xmlHttpRequest`));
+      } else {
+        GM.xmlHttpRequest({
+          method,
+          url: buildURL$2(buildFullPath$2(config.baseURL, config.url), config.params, config.paramsSerializer),
+          headers: Object.fromEntries(Object.entries(requestHeaders).map(([key, val]) => [key, val.toString()])),
+          responseType,
+          data: requestData,
+          timeout: config.timeout,
+          ontimeout,
+          onload,
+          onerror
+        });
+      }
+    });
+  }
   const BBS_URL = "https://webstatic.mihoyo.com/ys/event/e20210928review/index.html";
   const ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
   const CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list";
@@ -3641,21 +3185,21 @@ var __objRest = (source, exclude) => {
     let maxPageSize = Math.ceil(charactersNum / requestPageSize);
     let idxs = Array.from(new Array(maxPageSize).keys());
     const characters2 = [];
-    for await (let i of idxs) {
-      characters2.push.apply(characters2, await getCharacters(game_uid, region, i + 1));
+    for await (let i2 of idxs) {
+      characters2.push.apply(characters2, await getCharacters(game_uid, region, i2 + 1));
     }
-    const details = characters2.map((c) => getCharacterDetail(c, game_uid, region));
+    const details = characters2.map((c2) => getCharacterDetail(c2, game_uid, region));
     const detailList = [];
-    for await (let d of details) {
-      detailList.push(d);
+    for await (let d2 of details) {
+      detailList.push(d2);
     }
     return detailList;
   };
   function ExDialog() {
     const [gameBizSwitchEnabled, setGameBizSwitchEnabled] = React2.useState(() => isGlobal());
-    const onChangeGameBiz = (e) => {
-      setGameBizSwitchEnabled(e);
-      let gameBizNew = !e ? "hk4e_cn" : "hk4e_global";
+    const onChangeGameBiz = (e2) => {
+      setGameBizSwitchEnabled(e2);
+      let gameBizNew = !e2 ? "hk4e_cn" : "hk4e_global";
       console.log(gameBizNew);
       localStorage.setItem("gameBiz", gameBizNew);
     };
@@ -3696,22 +3240,22 @@ var __objRest = (source, exclude) => {
       getDetailList(game_uid, region).then((res) => {
         console.group("\u8FD4\u56DE\u6570\u636E");
         console.groupCollapsed("\u89D2\u8272");
-        console.table(res.map((a) => a.character));
+        console.table(res.map((a2) => a2.character));
         console.groupEnd();
         console.groupCollapsed("\u6B66\u5668");
-        console.table(res.map((a) => a.weapon));
+        console.table(res.map((a2) => a2.weapon));
         console.groupEnd();
         console.groupCollapsed("\u89D2\u8272\u5929\u8D4B");
-        res.forEach((c) => {
-          const name = c.character.name;
+        res.forEach((c2) => {
+          const name = c2.character.name;
           console.groupCollapsed(name);
-          console.table(c.skill_list);
+          console.table(c2.skill_list);
           console.groupEnd();
         });
         console.groupEnd();
         console.groupEnd();
-        res.forEach((v) => {
-          addCharacter(v);
+        res.forEach((v2) => {
+          addCharacter(v2);
         });
         console.log(`\u7C73\u6E38\u793E\u6570\u636E\u65E0\u6CD5\u5224\u65AD\u662F\u5426\u7A81\u7834,\u8BF7\u81EA\u884C\u6BD4\u8F83\u6574\u6570\u7B49\u7EA7\u662F\u5426\u5DF2\u7A81\u7834`);
         console.log(`\u89D2\u8272\u4FE1\u606F\u540C\u6B65\u5B8C\u6BD5`);
@@ -3733,18 +3277,18 @@ var __objRest = (source, exclude) => {
         className: "w-full p-4",
         children: /* @__PURE__ */ jsxs("div", {
           className: "w-full max-w-md p-2 mx-auto bg-purple rounded-2xl",
-          children: [/* @__PURE__ */ jsx(Ye, {
+          children: [/* @__PURE__ */ jsx(ke, {
             children: ({
               open
             }) => /* @__PURE__ */ jsxs(Fragment, {
-              children: [/* @__PURE__ */ jsxs(Ye.Button, {
+              children: [/* @__PURE__ */ jsxs(ke.Button, {
                 className: "flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-slate-900 bg-purple-100 rounded-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75",
                 children: [/* @__PURE__ */ jsx("span", {
                   children: "\u89D2\u8272\u4FE1\u606F\u540C\u6B65"
                 }), /* @__PURE__ */ jsx(ChevronUpIcon$1, {
                   className: `${open ? "transform rotate-180" : ""} w-5 h-5 text-purple-500`
                 })]
-              }), /* @__PURE__ */ jsxs(Ye.Panel, {
+              }), /* @__PURE__ */ jsxs(ke.Panel, {
                 className: "px-4 pt-4 pb-2 text-sm text-white-500",
                 children: [/* @__PURE__ */ jsxs("div", {
                   className: "flex pt-4",
@@ -3795,39 +3339,39 @@ var __objRest = (source, exclude) => {
                 })]
               })]
             })
-          }), /* @__PURE__ */ jsx(Ye, {
+          }), /* @__PURE__ */ jsx(ke, {
             as: "div",
             className: "mt-2",
             children: ({
               open
             }) => /* @__PURE__ */ jsxs(Fragment, {
-              children: [/* @__PURE__ */ jsxs(Ye.Button, {
+              children: [/* @__PURE__ */ jsxs(ke.Button, {
                 className: "flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-slate-900 bg-purple-100 rounded-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75",
                 children: [/* @__PURE__ */ jsx("span", {
                   children: "\u89C4\u5212\u6279\u91CF\u64CD\u4F5C"
                 }), /* @__PURE__ */ jsx(ChevronUpIcon$1, {
                   className: `${open ? "transform rotate-180" : ""} w-5 h-5 text-purple-500`
                 })]
-              }), /* @__PURE__ */ jsx(Ye.Panel, {
+              }), /* @__PURE__ */ jsx(ke.Panel, {
                 className: "px-4 pt-4 pb-2 text-sm text-white-500",
-                children: /* @__PURE__ */ jsxs(De.Group, {
-                  children: [/* @__PURE__ */ jsx(De.List, {
+                children: /* @__PURE__ */ jsxs(we.Group, {
+                  children: [/* @__PURE__ */ jsx(we.List, {
                     className: "flex p-1 space-x-1 bg-blue-900/20 rounded-xl",
-                    children: ["\u89D2\u8272\u76EE\u6807\u7B49\u7EA7", "\u5929\u8D4B\u76EE\u6807\u7B49\u7EA7", "\u6B66\u5668\u76EE\u6807\u7B49\u7EA7"].map((category) => /* @__PURE__ */ jsx(De, {
+                    children: ["\u89D2\u8272\u76EE\u6807\u7B49\u7EA7", "\u5929\u8D4B\u76EE\u6807\u7B49\u7EA7", "\u6B66\u5668\u76EE\u6807\u7B49\u7EA7"].map((category) => /* @__PURE__ */ jsx(we, {
                       className: ({
                         selected
                       }) => classNames("w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg", "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60", selected ? "bg-white shadow" : "text-blue-100 hover:bg-white/[0.12] hover:text-white"),
                       children: category
                     }, category))
-                  }), /* @__PURE__ */ jsxs(De.Panels, {
-                    children: [/* @__PURE__ */ jsx(De.Panel, {
+                  }), /* @__PURE__ */ jsxs(we.Panels, {
+                    children: [/* @__PURE__ */ jsx(we.Panel, {
                       children: /* @__PURE__ */ jsx(CharacterGoalTab, {
                         showText: "\u89D2\u8272",
                         batchUpdateCharacter
                       })
-                    }), /* @__PURE__ */ jsx(De.Panel, {
+                    }), /* @__PURE__ */ jsx(we.Panel, {
                       children: /* @__PURE__ */ jsx(TalentGoalTab, {})
-                    }), /* @__PURE__ */ jsx(De.Panel, {
+                    }), /* @__PURE__ */ jsx(we.Panel, {
                       children: /* @__PURE__ */ jsx(CharacterGoalTab, {
                         showText: "\u6B66\u5668",
                         batchUpdateCharacter: batchUpdateWeapon
@@ -3855,20 +3399,20 @@ var __objRest = (source, exclude) => {
         y: 500
       };
     });
-    const handleDragStop = (e, data2) => {
+    const handleDragStop = (e2, data2) => {
       const {
         x: x2,
-        y
+        y: y2
       } = data2;
       localStorage.setItem("seelieExPosition", JSON.stringify({
         x: x2,
-        y
+        y: y2
       }));
       setPosition({
         x: x2,
-        y
+        y: y2
       });
-      eventControl(e);
+      eventControl(e2);
     };
     const [isDragging, setIsDragging] = React2.useState(false);
     const eventControl = (event, info) => {
@@ -3909,7 +3453,7 @@ var __objRest = (source, exclude) => {
   let seelieEx = document.createElement("div");
   seelieEx.id = "seelieEx";
   seelieEx.className = "flex";
-  (_a = document.getElementById("app")) == null ? void 0 : _a.append(seelieEx);
+  (_b = (_a = document.getElementById("app")) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.append(seelieEx);
   ReactDOM__default["default"].render(/* @__PURE__ */ jsx(React__default["default"].StrictMode, {
     children: /* @__PURE__ */ jsx(App, {})
   }), document.getElementById("seelieEx"));
