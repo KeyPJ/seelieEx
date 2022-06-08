@@ -5,7 +5,7 @@ import App from './App';
 let seelieEx = document.createElement('div');
 seelieEx.id = 'seelieEx'
 seelieEx.className = 'flex'
-document.getElementById('app')?.append(seelieEx);
+document.getElementById('app')?.parentElement?.append(seelieEx);
 
 ReactDOM.render(
     <React.StrictMode>
