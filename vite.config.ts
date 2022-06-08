@@ -1,3 +1,4 @@
+import pkg from './package.json';
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import monkeyPlugin from 'vite-plugin-monkey';
@@ -11,14 +12,14 @@ export default defineConfig({
             userscript: {
                 author: 'KeyPJ',
                 name: {
-                    '': 'genshinSeelieEx',
-                    ':zh': '原神规划助手扩展',
+                    '': pkg.name,
+                    'zh': '原神规划助手扩展',
                 },
                 description: {
-                    ':zh': '个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie'
+                    'zh': '个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie'
                 },
                 namespace: 'https://github.com/KeyPJ/seelieEx',
-                version: '2.6.0',
+                version: pkg.version,
                 include: ['https://seelie.inmagi.com/*', "https://seelie.me/*"],
                 grant: ['unsafeWindow', 'GM_xmlhttpRequest', 'GM_openInTab', 'GM_getResourceText'],
                 extra: [
@@ -28,13 +29,13 @@ export default defineConfig({
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
                 connect: ['api-takumi.mihoyo.com', 'api-os-takumi.mihoyo.com', 'sg-public-api.mihoyo.com'],
                 resource: {
-                    character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json",
-                    weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/weapon.json"
+                    character: "https://seelie-ex.vercel.app/character.json",
+                    weapon: "https://seelie-ex.vercel.app/weapon.json"
                 },
                 "run-at": "document-end",
                 homepage: "https://github.com/KeyPJ",
                 homepageURL: "https://github.com/KeyPJ/seelieEx",
-                updateURL: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/dist/index.user.js"
+                updateURL: "https://greasyfork.org/scripts/443664-genshinseelieex/code/genshinSeelieEx.user.js"
             },
             build: {
                 fileName: "index.user.js",
@@ -42,17 +43,17 @@ export default defineConfig({
                     react: [
                         'React',
                         (version) =>
-                            `https://cdn.jsdelivr.net/npm/react@${version}/umd/react.production.min.js`,
+                            `https://unpkg.zhimg.com/react@${version}/umd/react.production.min.js`,
                     ],
                     'react-dom': [
                         'ReactDOM',
                         (version) =>
-                            `https://cdn.jsdelivr.net/npm/react-dom@${version}/umd/react-dom.production.min.js`,
+                            `https://unpkg.zhimg.com/react-dom@${version}/umd/react-dom.production.min.js`,
                     ],
                     'react-draggable': [
                         'ReactDraggable',
                         (version) =>
-                            `https://cdn.jsdelivr.net/npm/react-draggable@${version}/build/web/react-draggable.min.js`,
+                            `https://unpkg.zhimg.com/react-draggable@${version}/build/web/react-draggable.min.js`,
                     ],
                 },
             },
