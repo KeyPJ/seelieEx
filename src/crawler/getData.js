@@ -60,10 +60,10 @@ const scrape = async () => {
 scrape().then((value) => {
     const {characters, weapons} = value
     const characterFilePath = path.join(__dirname, '../data/character.json')
-    fs.writeFileSync(characterFilePath, JSON.stringify(characters))
+    fs.writeFileSync(characterFilePath, JSON.stringify(characters,"","\t"))
 
     const weaponFilePath = path.join(__dirname, '../data/weapon.json')
-    fs.writeFileSync(weaponFilePath, JSON.stringify(weapons))
+    fs.writeFileSync(weaponFilePath, JSON.stringify(weapons,"","\t"))
 }).catch(
     // err => console.error(err)
 )
