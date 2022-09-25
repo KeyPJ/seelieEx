@@ -72,6 +72,10 @@
 		"name": "赤角石溃杵"
 	},
 	{
+		"id": "staff_of_the_scarlet_sands",
+		"name": "赤沙之杖"
+	},
+	{
 		"id": "slingshot",
 		"name": "弹弓"
 	},
@@ -118,6 +122,10 @@
 	{
 		"id": "windblume_ode",
 		"name": "风花之颂"
+	},
+	{
+		"id": "missive_windspear",
+		"name": "风信之锋"
 	},
 	{
 		"id": "aquila_favonia",
@@ -262,6 +270,10 @@
 	{
 		"id": "fading_twilight",
 		"name": "落霞"
+	},
+	{
+		"id": "makhaira_aquamarine",
+		"name": "玛海菈的水色"
 	},
 	{
 		"id": "mouuns_moon",
