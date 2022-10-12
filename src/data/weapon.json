@@ -248,6 +248,10 @@
 		"name": "猎人之径"
 	},
 	{
+		"id": "wandering_evenstar",
+		"name": "流浪的晚星"
+	},
+	{
 		"id": "the_widsith",
 		"name": "流浪乐章"
 	},
@@ -322,6 +326,10 @@
 	{
 		"id": "sharpshooters_oath",
 		"name": "神射手之誓"
+	},
+	{
+		"id": "key_of_khaj_nisut",
+		"name": "圣显之钥"
 	},
 	{
 		"id": "prototype_crescent",
@@ -426,6 +434,10 @@
 	{
 		"id": "favonius_lance",
 		"name": "西风长枪"
+	},
+	{
+		"id": "xiphos_moonlight",
+		"name": "西福斯的月光"
 	},
 	{
 		"id": "calamity_queller",
