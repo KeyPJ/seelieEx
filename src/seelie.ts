@@ -7,21 +7,49 @@ import {getCharacterId, getElementAttrName, getWeaponId} from "./query";
 import WeaponGoal = seelie.WeaponGoal;
 
 
-const getTotalGoal = () => {
-    // @ts-ignore
-    const goals: Goal[] = vue.goals;
-    return goals;
+const getAccount: () => string = () => localStorage.account || "main";
+
+const getTotalGoal: () => Goal[] = () =>
+    JSON.parse(
+        localStorage.getItem(`${getAccount()}-goals`) || "[]"
+    ) as Goal[];
+
+const getGoalInactive: () => string[] = () =>
+    Object.keys(JSON.parse(localStorage.getItem(`${getAccount()}-inactive`) || "{}"));
+
+const setGoals = (goals: any) => {
+    // console.log(`${getAccount()}-goals`)
+    // console.log(JSON.stringify(goals))
+    localStorage.setItem(`${getAccount()}-goals`, JSON.stringify(goals));
+    localStorage.setItem("last_update", new Date().toISOString());
 };
 
-const getGoalInactive: () => string[] = () => {
-    // @ts-ignore
-    return Object.keys(vue.inactive) || [];
-};
+const addGoal = (data: any) => {
+    let index: number = -1;
+    const goals = getTotalGoal();
 
-const addGoal = (goal: any) => {
-    // @ts-ignore
-    vue.addGoal(goal)
-}
+    if (data.character) {
+        index = goals.findIndex(
+            (g: any) => g.character === data.character && g.type === data.type
+        );
+    } else if (data.id) {
+        index = goals.findIndex((g: any) => g.id === data.id);
+    }
+
+    if (index >= 0) {
+        goals[index] = {...goals[index], ...data};
+    } else {
+        const lastId = goals
+            ?.map((g: any) => g.id)
+            ?.filter((id: any) => typeof id == "number")
+            ?.sort((a: number, b: number) => (a < b ? 1 : -1))[0];
+
+        data.id = (lastId || 0) + 1;
+        goals.push(data);
+        console.log(data);
+    }
+    setGoals(goals);
+};
 
 const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
     const totalGoal: Goal[] = getTotalGoal();
@@ -208,7 +236,7 @@ const updateTalent = (talent: TalentGoal, normalGoal = 9, skillGoal = 9, burstGo
     addGoal(talentNew)
 }
 
-export const batchUpdateTalent = (all:boolean, normal: number, skill: number, burst: number) => {
+export const batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number) => {
     getTotalGoal().filter(a => a.type == 'talent').filter(a => all || !getGoalInactive().includes(a.character as string))
         .map(a => updateTalent(a as TalentGoal, normal, skill, burst))
 }
@@ -229,9 +257,11 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
 export const batchUpdateCharacter = (all: boolean, characterStatusGoal: CharacterStatus,) => {
     getTotalGoal().filter(a => a.type == "character").filter(a => all || !getGoalInactive().includes(a.character as string))
         .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
+    location.reload()
 }
 
 export const batchUpdateWeapon = (all: boolean, characterStatusGoal: CharacterStatus,) => {
     getTotalGoal().filter(a => a.type == "weapon").filter(a => all || !getGoalInactive().includes(a.weapon as string))
         .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
+    location.reload()
 }

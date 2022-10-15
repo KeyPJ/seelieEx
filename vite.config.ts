@@ -29,8 +29,8 @@ export default defineConfig({
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
                 connect: ['api-takumi.mihoyo.com', 'api-os-takumi.mihoyo.com', 'sg-public-api.mihoyo.com'],
                 resource: {
-                    character: "https://seelie-ex.vercel.app/character.json",
-                    weapon: "https://seelie-ex.vercel.app/weapon.json"
+                    character: "https://raw.fastgit.org/KeyPJ/seelieEx/main/src/data/character.json",
+                    weapon: "https://raw.fastgit.org/KeyPJ/seelieEx/main/src/data/weapon.json"
                 },
                 "run-at": "document-end",
                 homepage: "https://github.com/KeyPJ",
