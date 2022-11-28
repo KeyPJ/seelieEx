@@ -17,7 +17,7 @@ async function getPageData(page, url, selector) {
         })
     })
 
-    await page.click('#main button.w-full')
+    await page.click('#main button')
 
     const list = await page.$$eval(selector, relativeList => relativeList.map(
         relative => {
