@@ -84,6 +84,10 @@
 		"name": "笛剑"
 	},
 	{
+		"id": "toukabou_shigure",
+		"name": "东花坊时雨"
+	},
+	{
 		"id": "brumal_star",
 		"name": "冬极白星"
 	},
@@ -402,6 +406,10 @@
 	{
 		"id": "ferrous_shadow",
 		"name": "铁影阔剑"
+	},
+	{
+		"id": "tulaytullahs_remembrance",
+		"name": "图莱杜拉的回忆"
 	},
 	{
 		"id": "mappa_mare",
