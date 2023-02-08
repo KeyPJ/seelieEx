@@ -2,7 +2,7 @@
 // @name             genshinSeelieEx
 // @name:zh          原神规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          3.4.0
+// @version          3.4.1
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -3987,8 +3987,9 @@
           return { character, ...characterData };
         }
       }
+    } else {
+      console.error(err);
     }
-    throw err ? err : new Error("角色详情获取失败");
   };
   const getDetailList = async (game_uid, region) => {
     let maxPageSize = Math.ceil(charactersNum / requestPageSize);
@@ -4000,7 +4001,9 @@
     const details = characters2.map((c) => getCharacterDetail(c, game_uid, region));
     const detailList = [];
     for await (let d of details) {
-      detailList.push(d);
+      if (!!d) {
+        detailList.push(d);
+      }
     }
     return detailList;
   };
