@@ -16,8 +16,8 @@
 // @resource         character  https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/character.json
 // @resource         weapon     https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/weapon.json
 // @connect          api-takumi.mihoyo.com
-// @connect          api-os-takumi.mihoyo.com
-// @connect          sg-public-api.mihoyo.com
+// @connect          api-os-takumi.hoyoverse.com
+// @connect          sg-public-api.hoyoverse.com
 // @grant            GM.xmlHttpRequest
 // @grant            GM_getResourceText
 // @grant            GM_openInTab
@@ -3904,14 +3904,18 @@
   const ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
   const CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list";
   const CHARACTERS_DETAIL_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail";
-  const BBS_URL_GLOBAL = "https://webstatic-sea.mihoyo.com/ys/event/e20210928review/index.html";
-  const ROLE_URL_GLOBAL = "https://api-os-takumi.mihoyo.com/binding/api/getUserGameRolesByLtoken?game_biz=hk4e_global";
-  const CHARACTERS_URL_GLOBAL = "https://sg-public-api.mihoyo.com/event/calculateos/sync/avatar/list";
-  const CHARACTERS_DETAIL_URL_GLOBAL = "https://sg-public-api.mihoyo.com/event/calculateos/sync/avatar/detail";
+  const BBS_URL_GLOBAL = "https://act.hoyoverse.com/ys/event/e20230205-firework-xm7wly/index.html?game_biz=hk4e_global";
+  const ROLE_URL_GLOBAL = "https://api-os-takumi.hoyoverse.com/binding/api/getUserGameRolesByLtoken?game_biz=hk4e_global";
+  const CHARACTERS_URL_GLOBAL = "https://sg-public-api.hoyoverse.com/event/calculateos/sync/avatar/list";
+  const CHARACTERS_DETAIL_URL_GLOBAL = "https://sg-public-api.hoyoverse.com/event/calculateos/sync/avatar/detail";
   axios.defaults.adapter = xhrAdapter;
   axios.defaults.withCredentials = true;
   const headers = {
     Referer: "https://webstatic.mihoyo.com/",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+  };
+  const headersGolbal = {
+    Referer: "https://act.hoyoverse.com/",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
   };
   const to = (promise) => promise.then((data2) => {
@@ -3923,7 +3927,7 @@
   const requestPageSize = 50;
   const getAccount = async () => {
     const [err, res] = await to(axios.get(isGlobal() ? ROLE_URL_GLOBAL : ROLE_URL, {
-      headers
+      headers: isGlobal() ? headersGolbal : headers
     }));
     if (!err) {
       const { status, data: resData } = await res;
@@ -3950,7 +3954,7 @@
       "region": region,
       "lang": "zh-cn"
     }), {
-      headers
+      headers: isGlobal() ? headersGolbal : headers
     }));
     if (!err) {
       const { status, data: resData } = await res;
@@ -3972,7 +3976,7 @@
     const params = `?avatar_id=${id}&uid=${uid}&region=${region}&lang=zh-cn`;
     let URL = isGlobal() ? CHARACTERS_DETAIL_URL_GLOBAL : CHARACTERS_DETAIL_URL;
     const [err, res] = await to(axios.get(URL + params, {
-      headers
+      headers: isGlobal() ? headersGolbal : headers
     }));
     if (!err) {
       const { status, data: resData } = await res;

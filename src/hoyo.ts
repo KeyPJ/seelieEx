@@ -9,10 +9,10 @@ const ROLE_URL = 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCo
 const CHARACTERS_URL = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list'
 const CHARACTERS_DETAIL_URL = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail'
 
-const BBS_URL_GLOBAL = 'https://webstatic-sea.mihoyo.com/ys/event/e20210928review/index.html'
-const ROLE_URL_GLOBAL = 'https://api-os-takumi.mihoyo.com/binding/api/getUserGameRolesByLtoken?game_biz=hk4e_global'
-const CHARACTERS_URL_GLOBAL = 'https://sg-public-api.mihoyo.com/event/calculateos/sync/avatar/list'
-const CHARACTERS_DETAIL_URL_GLOBAL = 'https://sg-public-api.mihoyo.com/event/calculateos/sync/avatar/detail'
+const BBS_URL_GLOBAL = 'https://act.hoyoverse.com/ys/event/e20230205-firework-xm7wly/index.html?game_biz=hk4e_global'
+const ROLE_URL_GLOBAL = 'https://api-os-takumi.hoyoverse.com/binding/api/getUserGameRolesByLtoken?game_biz=hk4e_global'
+const CHARACTERS_URL_GLOBAL = 'https://sg-public-api.hoyoverse.com/event/calculateos/sync/avatar/list'
+const CHARACTERS_DETAIL_URL_GLOBAL = 'https://sg-public-api.hoyoverse.com/event/calculateos/sync/avatar/detail'
 import adapter from "axios-userscript-adapter/dist/esm";
 import {charactersNum} from "./query";
 
@@ -25,6 +25,11 @@ axios.defaults.withCredentials = true;
 
 const headers = {
     Referer: "https://webstatic.mihoyo.com/",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+}
+
+const headersGolbal = {
+    Referer: "https://act.hoyoverse.com/",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
 }
 
@@ -41,7 +46,7 @@ const requestPageSize = 50;
 export const getAccount = async () => {
     // try {
     const [err, res] = await to(axios.get(isGlobal() ? ROLE_URL_GLOBAL : ROLE_URL, {
-        headers
+        headers: isGlobal() ? headersGolbal : headers
     }));
     if (!err) {
         const {status, data: resData} = await res;
@@ -70,7 +75,7 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
         "region": region,
         "lang": "zh-cn"
     }), {
-        headers
+        headers: isGlobal() ? headersGolbal : headers
     }));
     if (!err) {
         const {status, data: resData} = await res;
@@ -94,7 +99,7 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
     let URL = isGlobal() ? CHARACTERS_DETAIL_URL_GLOBAL : CHARACTERS_DETAIL_URL;
 
     const [err, res] = await to(axios.get(URL + params, {
-        headers
+        headers: isGlobal() ? headersGolbal : headers
     }));
     if (!err) {
         const {status, data: resData} = await res;
