@@ -23,6 +23,10 @@ axios.defaults.withCredentials = true;
 
 // (<any>window).GM.xmlHttpRequest = GM_xmlhttpRequest;
 
+const headers = {
+    Referer: "https://webstatic.mihoyo.com/",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+}
 
 const to = (promise: Promise<any>) => promise.then(data => {
     return [null, data];
@@ -36,7 +40,9 @@ const requestPageSize = 50;
 
 export const getAccount = async () => {
     // try {
-    const [err, res] = await to(axios.get(isGlobal() ? ROLE_URL_GLOBAL : ROLE_URL));
+    const [err, res] = await to(axios.get(isGlobal() ? ROLE_URL_GLOBAL : ROLE_URL, {
+        headers
+    }));
     if (!err) {
         const {status, data: resData} = await res;
         if (status == 200) {
@@ -63,7 +69,9 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
         "uid": uid,
         "region": region,
         "lang": "zh-cn"
-    })));
+    }), {
+        headers
+    }));
     if (!err) {
         const {status, data: resData} = await res;
         console.log(res)
@@ -85,7 +93,9 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
     const params = `?avatar_id=${id}&uid=${uid}&region=${region}&lang=zh-cn`
     let URL = isGlobal() ? CHARACTERS_DETAIL_URL_GLOBAL : CHARACTERS_DETAIL_URL;
 
-    const [err, res] = await to(axios.get(URL + params));
+    const [err, res] = await to(axios.get(URL + params, {
+        headers
+    }));
     if (!err) {
         const {status, data: resData} = await res;
         if (status == 200) {
