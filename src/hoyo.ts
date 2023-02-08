@@ -110,8 +110,9 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
                 return {character, ...characterData} as CharacterDataEx;
             }
         }
+    } else {
+        console.error(err)
     }
-    throw err ? err : new Error("角色详情获取失败");
 };
 
 export const getDetailList = async (game_uid: string, region: string) => {
@@ -127,7 +128,9 @@ export const getDetailList = async (game_uid: string, region: string) => {
     const details = characters.map(c => getCharacterDetail(c, game_uid, region));
     const detailList = [];
     for await (let d of details) {
-        detailList.push(d);
+        if (!!d) {
+            detailList.push(d);
+        }
     }
     return detailList;
 }
