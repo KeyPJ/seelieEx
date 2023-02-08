@@ -22,9 +22,9 @@
     "axios": "^0.27.2",
     "axios-userscript-adapter": "^0.2.0",
     "postcss": "8.4.12",
-    "tailwindcss": "^3.0.23",
-    "typescript": "^4.3.2",
-    "vite": "^2.6.4",
-    "vite-plugin-monkey": "^0.2.11"
+    "tailwindcss": "^3.0.24",
+    "typescript": "^4.6.3",
+    "vite": "^4.1.1",
+    "vite-plugin-monkey": "^2.11.1"
   }
 }

@@ -22,15 +22,15 @@ export default defineConfig({
                 version: pkg.version,
                 include: ['https://seelie.inmagi.com/*', "https://seelie.me/*"],
                 grant: ['unsafeWindow', 'GM_xmlhttpRequest', 'GM_openInTab', 'GM_getResourceText', "GM_registerMenuCommand"],
-                extra: [
+                $extra: [
                     ['copyright', '2021, KeyPJ https://github.com/KeyPJ'],
                 ],
                 license: 'MIT',
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
                 connect: ['api-takumi.mihoyo.com', 'api-os-takumi.mihoyo.com', 'sg-public-api.mihoyo.com'],
                 resource: {
-                    character: "https://raw.fastgit.org/KeyPJ/seelieEx/main/src/data/character.json",
-                    weapon: "https://raw.fastgit.org/KeyPJ/seelieEx/main/src/data/weapon.json"
+                    character: "https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/character.json",
+                    weapon: "https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/weapon.json"
                 },
                 "run-at": "document-end",
                 homepage: "https://github.com/KeyPJ",
@@ -49,11 +49,6 @@ export default defineConfig({
                         'ReactDOM',
                         (version) =>
                             `https://unpkg.zhimg.com/react-dom@${version}/umd/react-dom.production.min.js`,
-                    ],
-                    'react-draggable': [
-                        'ReactDraggable',
-                        (version) =>
-                            `https://unpkg.zhimg.com/react-draggable@${version}/build/web/react-draggable.min.js`,
                     ],
                 },
             },
