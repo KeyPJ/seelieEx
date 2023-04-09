@@ -12,6 +12,10 @@
 		"name": "暗铁剑"
 	},
 	{
+		"id": "wine_and_song",
+		"name": "暗巷的酒与诗"
+	},
+	{
 		"id": "alley_hunter",
 		"name": "暗巷猎手"
 	},
@@ -228,10 +232,6 @@
 		"name": "竭泽"
 	},
 	{
-		"id": "wine_and_song",
-		"name": "酒与歌"
-	},
-	{
 		"id": "deathmatch",
 		"name": "决斗之枪"
 	},
@@ -270,6 +270,10 @@
 	{
 		"id": "dragonspine_spear",
 		"name": "龙脊长枪"
+	},
+	{
+		"id": "cursed_blade",
+		"name": "笼钓瓶一心"
 	},
 	{
 		"id": "travelers_handy_sword",
@@ -498,10 +502,6 @@
 	{
 		"id": "raven_bow",
 		"name": "鸦羽弓"
-	},
-	{
-		"id": "cursed_blade",
-		"name": "妖刀"
 	},
 	{
 		"id": "debate_club",

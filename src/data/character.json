@@ -24,6 +24,10 @@
 		"name": "芭芭拉"
 	},
 	{
+		"id": "baizhu",
+		"name": "白术"
+	},
+	{
 		"id": "bennett",
 		"name": "班尼特"
 	},
@@ -66,10 +70,6 @@
 	{
 		"id": "ganyu",
 		"name": "甘雨"
-	},
-	{
-		"id": "hutao",
-		"name": "胡桃"
 	},
 	{
 		"id": "itto",
@@ -262,5 +262,9 @@
 	{
 		"id": "custom_male",
 		"name": "自定义"
+	},
+	{
+		"id": "hutao",
+		"name": "Hu Tao"
 	}
 ]
