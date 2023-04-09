@@ -10,13 +10,6 @@ async function getPageData(page, url, selector) {
     //等待加载完毕
     await page.waitForSelector("button.w-full")
 
-    //设置中文
-    await page.evaluate(() => {
-        [].slice.call(document.querySelector('.underline').parentNode.children).forEach(a => {
-            if (a.innerText === '中文') a.click()
-        })
-    })
-
     await page.click('#main button')
 
     const list = await page.$$eval(selector, relativeList => relativeList.map(
@@ -43,6 +36,17 @@ const scrape = async () => {
         Object.defineProperty(navigator, 'userAgent', {  //userAgent在无头模式下有headless字样，所以需覆写
             get: () => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36",
         })
+        //浏览器设置中文
+        Object.defineProperty(navigator, "language", {
+            get: function() {
+                return "zh-CN";
+            }
+        });
+        Object.defineProperty(navigator, "languages", {
+            get: function() {
+                return ["zh-CN", "zh"];
+            }
+        });
     })
     const charactersUrl = 'https://seelie.inmagi.com/characters'
     const selector = '.items-start>.relative'
