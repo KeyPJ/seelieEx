@@ -1,0 +1,126 @@
+[
+	{
+		"id": "arlan",
+		"name": "阿兰"
+	},
+	{
+		"id": "asta",
+		"name": "艾丝妲"
+	},
+	{
+		"id": "bailu",
+		"name": "白露"
+	},
+	{
+		"id": "bronya",
+		"name": "布洛妮娅"
+	},
+	{
+		"id": "dan_heng",
+		"name": "丹恒"
+	},
+	{
+		"id": "herta",
+		"name": "黑塔"
+	},
+	{
+		"id": "hook",
+		"name": "虎克"
+	},
+	{
+		"id": "himeko",
+		"name": "姬子"
+	},
+	{
+		"id": "gepard",
+		"name": "杰帕德"
+	},
+	{
+		"id": "jing_yuan",
+		"name": "景元"
+	},
+	{
+		"id": "kafka",
+		"name": "卡芙卡"
+	},
+	{
+		"id": "trailblazer_physical_male",
+		"name": "开拓者"
+	},
+	{
+		"id": "trailblazer_fire_male",
+		"name": "开拓者"
+	},
+	{
+		"id": "clara",
+		"name": "克拉拉"
+	},
+	{
+		"id": "luka",
+		"name": "卢卡"
+	},
+	{
+		"id": "luocha",
+		"name": "罗刹"
+	},
+	{
+		"id": "natasha",
+		"name": "娜塔莎"
+	},
+	{
+		"id": "pela",
+		"name": "佩拉"
+	},
+	{
+		"id": "qingque",
+		"name": "青雀"
+	},
+	{
+		"id": "blade_char",
+		"name": "刃"
+	},
+	{
+		"id": "march_7th",
+		"name": "三月七"
+	},
+	{
+		"id": "sampo",
+		"name": "桑博"
+	},
+	{
+		"id": "sushang",
+		"name": "素裳"
+	},
+	{
+		"id": "tingyun",
+		"name": "停云"
+	},
+	{
+		"id": "welt",
+		"name": "瓦尔特"
+	},
+	{
+		"id": "seele",
+		"name": "希儿"
+	},
+	{
+		"id": "serval",
+		"name": "希露瓦"
+	},
+	{
+		"id": "yanqing",
+		"name": "彦卿"
+	},
+	{
+		"id": "silver_wolf",
+		"name": "银狼"
+	},
+	{
+		"id": "yukong",
+		"name": "驭空"
+	},
+	{
+		"id": "custom_male",
+		"name": "Custom"
+	}
+]

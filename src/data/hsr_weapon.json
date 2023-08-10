@@ -1,0 +1,298 @@
+[
+	{
+		"id": "the_birth_of_the_self",
+		"name": "「我」的诞生"
+	},
+	{
+		"id": "make_the_world_clamor",
+		"name": "别让世界静下来"
+	},
+	{
+		"id": "river_flows_in_spring",
+		"name": "春水初生"
+	},
+	{
+		"id": "perfect_timing",
+		"name": "此时恰好"
+	},
+	{
+		"id": "but_the_battle_isnt_over",
+		"name": "但战斗还未结束"
+	},
+	{
+		"id": "the_unreachable_side",
+		"name": "到不了的彼岸"
+	},
+	{
+		"id": "quid_pro_quo",
+		"name": "等价交换"
+	},
+	{
+		"id": "subscribe_for_more",
+		"name": "点个关注吧！"
+	},
+	{
+		"id": "mediation",
+		"name": "调和"
+	},
+	{
+		"id": "multiplication",
+		"name": "蕃息"
+	},
+	{
+		"id": "arrows",
+		"name": "锋镝"
+	},
+	{
+		"id": "before_dawn",
+		"name": "拂晓之前"
+	},
+	{
+		"id": "echoes_of_the_coffin",
+		"name": "棺的回响"
+	},
+	{
+		"id": "past_and_future",
+		"name": "过往未来"
+	},
+	{
+		"id": "we_will_meet_again",
+		"name": "后会有期"
+	},
+	{
+		"id": "amber",
+		"name": "琥珀"
+	},
+	{
+		"id": "on_the_fall_of_an_aeon",
+		"name": "记一位星神的陨落"
+	},
+	{
+		"id": "texture_of_memories",
+		"name": "记忆的质料"
+	},
+	{
+		"id": "memories_of_the_past",
+		"name": "记忆中的模样"
+	},
+	{
+		"id": "fine_fruit",
+		"name": "嘉果"
+	},
+	{
+		"id": "today_is_another_peaceful_day",
+		"name": "今日亦是和平的一日"
+	},
+	{
+		"id": "mutual_demise",
+		"name": "俱殁"
+	},
+	{
+		"id": "resolution_shines_as_pearls_of_sweat",
+		"name": "决心如汗珠般闪耀"
+	},
+	{
+		"id": "pioneering",
+		"name": "开疆"
+	},
+	{
+		"id": "landaus_choice",
+		"name": "朗道的选择"
+	},
+	{
+		"id": "shattered_home",
+		"name": "乐圮"
+	},
+	{
+		"id": "darting_arrow",
+		"name": "离弦"
+	},
+	{
+		"id": "eyes_of_the_prey",
+		"name": "猎物的视线"
+	},
+	{
+		"id": "passkey",
+		"name": "灵钥"
+	},
+	{
+		"id": "carve_the_moon_weave_the_clouds",
+		"name": "镂月裁云之意"
+	},
+	{
+		"id": "meshing_cogs",
+		"name": "轮契"
+	},
+	{
+		"id": "swordplay",
+		"name": "论剑"
+	},
+	{
+		"id": "a_secret_vow",
+		"name": "秘密誓心"
+	},
+	{
+		"id": "hidden_shadow",
+		"name": "匿影"
+	},
+	{
+		"id": "warmth_shortens_cold_nights",
+		"name": "暖夜不会漫长"
+	},
+	{
+		"id": "chorus",
+		"name": "齐颂"
+	},
+	{
+		"id": "sleep_like_the_dead",
+		"name": "如泥酣眠"
+	},
+	{
+		"id": "sagacity",
+		"name": "睿见"
+	},
+	{
+		"id": "time_waits_for_no_one",
+		"name": "时节不居"
+	},
+	{
+		"id": "defense",
+		"name": "戍御"
+	},
+	{
+		"id": "geniuses_repose",
+		"name": "天才们的休憩"
+	},
+	{
+		"id": "collapsing_sky",
+		"name": "天倾"
+	},
+	{
+		"id": "shared_feeling",
+		"name": "同一种心情"
+	},
+	{
+		"id": "good_night_and_sleep_well",
+		"name": "晚安与睡颜"
+	},
+	{
+		"id": "woof_walk_time",
+		"name": "汪！散步时间！"
+	},
+	{
+		"id": "only_silence_remains",
+		"name": "唯有沉默"
+	},
+	{
+		"id": "we_are_wildfire",
+		"name": "我们是地火"
+	},
+	{
+		"id": "nowhere_to_run",
+		"name": "无处可逃"
+	},
+	{
+		"id": "something_irreplaceable",
+		"name": "无可取代的东西"
+	},
+	{
+		"id": "dance_dance_dance",
+		"name": "舞！舞！舞！"
+	},
+	{
+		"id": "cornucopia",
+		"name": "物穰"
+	},
+	{
+		"id": "adversarial",
+		"name": "相抗"
+	},
+	{
+		"id": "before_the_tutorial_mission_starts",
+		"name": "新手任务开始前"
+	},
+	{
+		"id": "cruising_in_the_stellar_sea",
+		"name": "星海巡航"
+	},
+	{
+		"id": "fermata",
+		"name": "延长记号"
+	},
+	{
+		"id": "the_moles_welcome_you",
+		"name": "鼹鼠党欢迎你"
+	},
+	{
+		"id": "postop_conversation",
+		"name": "一场术后对话"
+	},
+	{
+		"id": "in_the_name_of_the_world",
+		"name": "以世界之名"
+	},
+	{
+		"id": "night_on_the_milky_way",
+		"name": "银河铁道之夜"
+	},
+	{
+		"id": "void",
+		"name": "幽邃"
+	},
+	{
+		"id": "in_the_night",
+		"name": "于夜色中"
+	},
+	{
+		"id": "day_one_of_my_new_life",
+		"name": "余生的第一天"
+	},
+	{
+		"id": "planetary_rendezvous",
+		"name": "与行星相会"
+	},
+	{
+		"id": "trend_of_the_universal_market",
+		"name": "宇宙市场趋势"
+	},
+	{
+		"id": "incessant_rain",
+		"name": "雨一直下"
+	},
+	{
+		"id": "loop",
+		"name": "渊环"
+	},
+	{
+		"id": "under_the_blue_sky",
+		"name": "在蓝天下"
+	},
+	{
+		"id": "the_seriousness_of_breakfast",
+		"name": "早餐的仪式感"
+	},
+	{
+		"id": "this_is_me",
+		"name": "这就是我啦！"
+	},
+	{
+		"id": "patience_is_all_you_need",
+		"name": "只需等待"
+	},
+	{
+		"id": "moment_of_victory",
+		"name": "制胜的瞬间"
+	},
+	{
+		"id": "data_bank",
+		"name": "智库"
+	},
+	{
+		"id": "return_to_darkness",
+		"name": "重返幽冥"
+	},
+	{
+		"id": null,
+		"name": "Custom"
+	}
+]
