@@ -12,15 +12,13 @@ async function getPageData(page, url, selector) {
 
     await page.click('#main button')
 
-    const list = await page.$$eval(selector, relativeList => relativeList.map(
-        relative => {
-            const scr = relative.firstElementChild.firstElementChild.src
-            const match = scr.match(/(\/([\w-]*)\.png)/)
-            const id = match&&match[2]
-            const name = relative.innerText.replace("NEW", "").replace("SOON", "").replace("即将上线", "").replaceAll("\n", "")
-            return {id, name}
-        }
-    ))
+    const list = await page.$$eval(selector, relativeList => relativeList.map(relative => {
+        const scr = relative.firstElementChild.firstElementChild.src
+        const match = scr.match(/(\/([\w-]*)\.png)/)
+        const id = match && match[2]
+        const name = relative.innerText.replace("NEW", "").replace("SOON", "").replace("即将上线", "").replaceAll("\n", "")
+        return {id, name}
+    }))
 
     //排序
     return list.sort((a, b) => a.name.localeCompare(b.name, 'zh'))
@@ -38,15 +36,15 @@ const scrape = async () => {
         })
         //浏览器设置中文
         Object.defineProperty(navigator, "language", {
-            get: function() {
-                return "zh-CN";
+            get: function () {
+                return "zh-CN"
             }
-        });
+        })
         Object.defineProperty(navigator, "languages", {
-            get: function() {
-                return ["zh-CN", "zh"];
+            get: function () {
+                return ["zh-CN", "zh"]
             }
-        });
+        })
     })
     const charactersUrl = 'https://seelie.inmagi.com/characters'
     const selector = '.items-start>.relative'
@@ -57,17 +55,28 @@ const scrape = async () => {
     const weapons = await getPageData(page, weaponsUrl, selector)
     console.log(weapons)
 
+
+    const hsr_charactersUrl = 'https://hsr.seelie.me/characters'
+    const hsr_characters = await getPageData(page, hsr_charactersUrl, selector)
+    console.log(hsr_characters)
+
+    const hsr_weaponsUrl = 'https://hsr.seelie.me/cones'
+    const hsr_weapons = await getPageData(page, hsr_weaponsUrl, selector)
+    console.log(hsr_weapons)
+
     await browser.close()
-    return {characters, weapons}
+    return {characters, weapons, hsr_characters, hsr_weapons}
 }
 
 scrape().then((value) => {
     const {characters, weapons} = value
-    const characterFilePath = path.join(__dirname, '../data/character.json')
-    fs.writeFileSync(characterFilePath, JSON.stringify(characters,"","\t"))
+    fs.writeFileSync(path.join(__dirname, '../data/character.json'), JSON.stringify(characters, "", "\t"))
+    fs.writeFileSync(path.join(__dirname, '../data/weapon.json'), JSON.stringify(weapons, "", "\t"))
 
-    const weaponFilePath = path.join(__dirname, '../data/weapon.json')
-    fs.writeFileSync(weaponFilePath, JSON.stringify(weapons,"","\t"))
-}).catch(
-    // err => console.error(err)
+    const {hsr_characters, hsr_weapons} = value
+    fs.writeFileSync(path.join(__dirname, '../data/hsr_character.json'), JSON.stringify(hsr_characters, "", "\t"))
+    fs.writeFileSync(path.join(__dirname, '../data/hsr_weapon.json'), JSON.stringify(hsr_weapons, "", "\t"))
+
+
+}).catch(// err => console.error(err)
 )
