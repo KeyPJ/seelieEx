@@ -12,40 +12,50 @@ declare module seelie {
     }
 
     export interface Goal {
-        type: "character" | "talent" | "weapon";
+        type: "character"| "cone" | "trace";
         id: number;
         character?: string;
-        weapon?: string;
         current?: CharacterStatus;
         goal?: CharacterStatus;
-        normal?: SkillStatus;
         skill?: SkillStatus;
-        burst?: SkillStatus;
-        c3?: boolean;
-        c5?: boolean;
+        basic?: SkillStatus
+        ultimate?: SkillStatus
+        talent?: SkillStatus
+        bonus?: Bonus
+        cone?: string;
+        eidolon?: number
+    }
+
+    export interface Bonus {
+        [K: string]: BonusTrace
+    }
+
+    export interface BonusTrace {
+        type: string
+        done: boolean
+    }
+
+    export interface TraceGoal extends Goal {
+        character: string
+        basic: SkillStatus
+        skill: SkillStatus
+        ultimate: SkillStatus
+        talent: SkillStatus
+        bonus: Bonus
+    }
+
+    export interface ConeGoal extends Goal {
+        character: string;
+        cone: string;
+        current: CharacterStatus;
+        goal: CharacterStatus;
     }
 
     export interface CharacterGoal extends Goal {
         character: string;
         current: CharacterStatus;
         goal: CharacterStatus;
+        eidolon: number
     }
-
-    export interface WeaponGoal extends Goal {
-        character: string;
-        weapon: string;
-        current: CharacterStatus;
-        goal: CharacterStatus;
-    }
-
-    export interface TalentGoal extends Goal {
-        character: string;
-        normal: SkillStatus;
-        skill: SkillStatus;
-        burst: SkillStatus;
-        c3: boolean;
-        c5: boolean;
-    }
-
 }
 

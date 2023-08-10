@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {batchUpdateTalent} from "../../seelie";
+import {batchUpdateTrace} from "../../seelie";
 
 import ToggleSwitch from "../switch/ToggleSwitch";
 import ListboxSelect from "../select/ListboxSelect";
@@ -11,7 +11,8 @@ function TalentGoalTab() {
     const [talentGoalLevel, setTalentGoalLevel] = useState({
         normal: 1,
         skill: 6,
-        burst: 6
+        burst: 6,
+        t: 6
     });
 
     const talentLevels: number[] = [
@@ -21,9 +22,9 @@ function TalentGoalTab() {
     const batchSetCharacterTalentLevel = () => {
         console.log("批量设置角色目标天赋")
         console.log(talentGoalLevel)
-        const {normal, skill, burst} = talentGoalLevel;
+        const {normal, skill, burst, t} = talentGoalLevel;
         console.log(selectAllRoles)
-        batchUpdateTalent(!selectAllRoles, normal, skill, burst)
+        batchUpdateTrace(!selectAllRoles, normal, skill, burst, t)
         alert("角色目标天赋设置完毕")
     }
 
@@ -50,7 +51,7 @@ function TalentGoalTab() {
                     show={num => `${num}`}
                 />
             </div>
-            <div className='mt-10'>元素战技</div>
+            <div className='mt-10'>战技</div>
             <div>
                 <ListboxSelect
                     selected={talentGoalLevel.skill}
@@ -62,7 +63,7 @@ function TalentGoalTab() {
                     show={num => `${num}`}
                 />
             </div>
-            <div className='mt-10'>元素爆发</div>
+            <div className='mt-10'>终结技</div>
             <div>
                 <ListboxSelect
                     selected={talentGoalLevel.burst}
@@ -74,11 +75,23 @@ function TalentGoalTab() {
                     show={num => `${num}`}
                 />
             </div>
+            <div className='mt-10'>天赋</div>
+            <div>
+                <ListboxSelect
+                    selected={talentGoalLevel.t}
+                    setSelected={num => setTalentGoalLevel({
+                        ...talentGoalLevel,
+                        t: num
+                    })}
+                    optionList={talentLevels}
+                    show={num => `${num}`}
+                />
+            </div>
         </div>
         <div className="flex pt-2">
             <div className="w-full">
                 <button className="text-white bg-blue-500 px-4 py-2"
-                        onClick={batchSetCharacterTalentLevel}>批量设置角色目标天赋
+                        onClick={batchSetCharacterTalentLevel}>批量设置角色目标行迹
                 </button>
             </div>
         </div>

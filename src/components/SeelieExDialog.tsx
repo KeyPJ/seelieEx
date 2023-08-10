@@ -65,17 +65,18 @@ function ExDialog() {
             res => {
                 console.group('返回数据');
                 console.groupCollapsed('角色');
-                console.table(res.map(a => a.character))
+                console.table(res.map(a => a.avatar))
                 console.groupEnd();
-                console.groupCollapsed('武器');
-                console.table(res.map(a => a.weapon))
+                console.groupCollapsed('光锥');
+                console.table(res.map(a => a.equipment))
                 console.groupEnd();
-                console.groupCollapsed('角色天赋');
+                console.groupCollapsed('行迹');
                 res.forEach(
                     c => {
-                        const name = c.character.name;
+                        const name = c.avatar.item_name;
                         console.groupCollapsed(name);
-                        console.table(c.skill_list)
+                        console.table(c.skills)
+                        console.table(c.skills_other)
                         console.groupEnd();
                     }
                 )
@@ -121,18 +122,18 @@ function ExDialog() {
                                     />
                                 </Disclosure.Button>
                                 <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-white-500">
-                                    <div className="flex pt-4">
-                                        <div className="w-1/2 text-white-900">
-                                            区服选择:
-                                        </div>
-                                        <ToggleSwitch
-                                            className='w-1/2'
-                                            checked={gameBizSwitchEnabled}
-                                            onChange={onChangeGameBiz}
-                                            labelLeft={'国服'}
-                                            labelRight={'国际服'}
-                                        />
-                                    </div>
+                                    {/*<div className="flex pt-4">*/}
+                                    {/*    <div className="w-1/2 text-white-900">*/}
+                                    {/*        区服选择:*/}
+                                    {/*    </div>*/}
+                                    {/*    <ToggleSwitch*/}
+                                    {/*        className='w-1/2'*/}
+                                    {/*        checked={gameBizSwitchEnabled}*/}
+                                    {/*        onChange={onChangeGameBiz}*/}
+                                    {/*        labelLeft={'国服'}*/}
+                                    {/*        labelRight={'国际服'}*/}
+                                    {/*    />*/}
+                                    {/*</div>*/}
                                     <div className="flex pt-2">
                                         <div className="w-full">
                                             <button className="text-white bg-blue-500 px-4 py-2"
@@ -179,7 +180,7 @@ function ExDialog() {
                                 <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-white-500">
                                     <Tab.Group>
                                         <Tab.List className="flex p-1 space-x-1 bg-blue-900/20 rounded-xl">
-                                            {['角色目标等级', '天赋目标等级', '武器目标等级'].map((category) => (
+                                            {['角色目标等级', '行迹目标等级', '光锥目标等级'].map((category) => (
                                                 <Tab
                                                     key={category}
                                                     className={({selected}) =>
@@ -199,7 +200,7 @@ function ExDialog() {
                                         <Tab.Panels>
                                             <Tab.Panel><CharacterGoalTab showText={'角色'} batchUpdateCharacter={batchUpdateCharacter}/></Tab.Panel>
                                             <Tab.Panel><TalentGoalTab/></Tab.Panel>
-                                            <Tab.Panel><CharacterGoalTab showText={'武器'} batchUpdateCharacter={batchUpdateWeapon}/></Tab.Panel>
+                                            <Tab.Panel><CharacterGoalTab showText={'光锥'} batchUpdateCharacter={batchUpdateWeapon}/></Tab.Panel>
                                         </Tab.Panels>
                                     </Tab.Group>
                                 </Disclosure.Panel>

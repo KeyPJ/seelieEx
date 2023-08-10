@@ -1,20 +1,19 @@
 // ==UserScript==
-// @name             genshinSeelieEx
-// @name:zh          原神规划助手扩展
+// @name             hsrSeelieEx
+// @name:zh          星铁规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          3.4.1
+// @version          1.2.0
 // @author           KeyPJ
-// @description:zh   个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
+// @description:zh   个人想偷懒,不想手动在仙灵 - 星铁规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
 // @homepage         https://github.com/KeyPJ
 // @homepageURL      https://github.com/KeyPJ/seelieEx
-// @updateURL        https://greasyfork.org/scripts/443664-genshinseelieex/code/genshinSeelieEx.user.js
-// @include          https://seelie.inmagi.com/*
-// @include          https://seelie.me/*
+// @updateURL        https://openuserjs.org/meta/KeyPJ/hsrSeelieEx.meta.js
+// @include          https://hsr.seelie.me/*
 // @require          https://unpkg.zhimg.com/react@17.0.2/umd/react.production.min.js
 // @require          https://unpkg.zhimg.com/react-dom@17.0.2/umd/react-dom.production.min.js
-// @resource         character  https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/character.json
-// @resource         weapon     https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/weapon.json
+// @resource         character  https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/hsr_character.json
+// @resource         weapon     https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/hsr_weapon.json
 // @connect          api-takumi.mihoyo.com
 // @connect          api-os-takumi.hoyoverse.com
 // @connect          sg-public-api.hoyoverse.com
@@ -26,7 +25,7 @@
 // @grant            unsafeWindow
 // @run-at           document-end
 // @contributionURL  https://github.com/KeyPJ/seelieEx
-// @copyright        2021, KeyPJ https://github.com/KeyPJ
+// @copyright        2023, KeyPJ https://github.com/KeyPJ
 // ==/UserScript==
 
 (e=>{const t=document.createElement("style");t.dataset.source="vite-plugin-monkey",t.innerText=e,document.head.appendChild(t)})('*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input:-ms-input-placeholder,textarea:-ms-input-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}*,:before,:after{--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: }.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-\\[20\\%\\]{left:20%;right:20%}.inset-y-0{top:0px;bottom:0px}.top-10{top:2.5rem}.right-0{right:0px}.left-0{left:0px}.z-\\[1200\\]{z-index:1200}.mx-auto{margin-left:auto;margin-right:auto}.mt-2{margin-top:.5rem}.mt-1{margin-top:.25rem}.mt-10{margin-top:2.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-4{height:1rem}.max-h-60{max-height:15rem}.min-h-min{min-height:-moz-min-content;min-height:min-content}.w-full{width:100%}.w-5{width:1.25rem}.w-1\\/2{width:50%}.w-1\\/4{width:25%}.w-11{width:2.75rem}.w-4{width:1rem}.min-w-\\[50\\%\\]{min-width:50%}.max-w-md{max-width:28rem}.translate-x-6{--tw-translate-x: 1.5rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-1{--tw-translate-x: .25rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate: 180deg;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-default{cursor:default}.select-none{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.grid-flow-col{grid-auto-flow:column}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.flex-row{flex-direction:row}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:.5rem}.space-x-1>:not([hidden])~:not([hidden]){--tw-space-x-reverse: 0;margin-right:calc(.25rem * var(--tw-space-x-reverse));margin-left:calc(.25rem * calc(1 - var(--tw-space-x-reverse)))}.overflow-auto{overflow:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-md{border-radius:.375rem}.rounded-2xl{border-radius:1rem}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.rounded-full{border-radius:9999px}.bg-slate-700{--tw-bg-opacity: 1;background-color:rgb(51 65 85 / var(--tw-bg-opacity))}.bg-purple-100{--tw-bg-opacity: 1;background-color:rgb(243 232 255 / var(--tw-bg-opacity))}.bg-blue-500{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity))}.bg-blue-900\\/20{background-color:#1e3a8a33}.bg-white{--tw-bg-opacity: 1;background-color:rgb(255 255 255 / var(--tw-bg-opacity))}.bg-amber-100{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity))}.bg-blue-600{--tw-bg-opacity: 1;background-color:rgb(37 99 235 / var(--tw-bg-opacity))}.bg-gray-200{--tw-bg-opacity: 1;background-color:rgb(229 231 235 / var(--tw-bg-opacity))}.p-4{padding:1rem}.p-2{padding:.5rem}.p-1{padding:.25rem}.px-4{padding-left:1rem;padding-right:1rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\\.5{padding-top:.625rem;padding-bottom:.625rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.pt-4{padding-top:1rem}.pb-2{padding-bottom:.5rem}.pt-2{padding-top:.5rem}.pl-3{padding-left:.75rem}.pr-10{padding-right:2.5rem}.pr-2{padding-right:.5rem}.pl-10{padding-left:2.5rem}.pr-4{padding-right:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-base{font-size:1rem;line-height:1.5rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.leading-5{line-height:1.25rem}.text-white{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity))}.text-slate-900{--tw-text-opacity: 1;color:rgb(15 23 42 / var(--tw-text-opacity))}.text-purple-500{--tw-text-opacity: 1;color:rgb(168 85 247 / var(--tw-text-opacity))}.text-blue-700{--tw-text-opacity: 1;color:rgb(29 78 216 / var(--tw-text-opacity))}.text-blue-100{--tw-text-opacity: 1;color:rgb(219 234 254 / var(--tw-text-opacity))}.text-gray-900{--tw-text-opacity: 1;color:rgb(17 24 39 / var(--tw-text-opacity))}.text-gray-400{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity))}.text-amber-900{--tw-text-opacity: 1;color:rgb(120 53 15 / var(--tw-text-opacity))}.text-amber-600{--tw-text-opacity: 1;color:rgb(217 119 6 / var(--tw-text-opacity))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.opacity-75{opacity:.75}.opacity-100{opacity:1}.opacity-0{opacity:0}.shadow{--tw-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);--tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.ring-white{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity))}.ring-black{--tw-ring-opacity: 1;--tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity))}.ring-opacity-60{--tw-ring-opacity: .6}.ring-opacity-5{--tw-ring-opacity: .05}.ring-offset-2{--tw-ring-offset-width: 2px}.ring-offset-blue-400{--tw-ring-offset-color: #60a5fa}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-property:color,background-color,border-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-text-decoration-color,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-text-decoration-color,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-100{transition-duration:.1s}.ease-in{transition-timing-function:cubic-bezier(.4,0,1,1)}.hover\\:bg-purple-200:hover{--tw-bg-opacity: 1;background-color:rgb(233 213 255 / var(--tw-bg-opacity))}.hover\\:bg-white\\/\\[0\\.12\\]:hover{background-color:#ffffff1f}.hover\\:text-white:hover{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity))}.focus\\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\\:ring-2:focus{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\\:border-indigo-500:focus-visible{--tw-border-opacity: 1;border-color:rgb(99 102 241 / var(--tw-border-opacity))}.focus-visible\\:ring:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\\:ring-purple-500:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(168 85 247 / var(--tw-ring-opacity))}.focus-visible\\:ring-white:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity))}.focus-visible\\:ring-opacity-75:focus-visible{--tw-ring-opacity: .75}.focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px}.focus-visible\\:ring-offset-orange-300:focus-visible{--tw-ring-offset-color: #fdba74}@media (min-width: 640px){.sm\\:text-sm{font-size:.875rem;line-height:1.25rem}}');
@@ -75,25 +74,6 @@
     console.error(`getWeaponrId ${queryName} 查询失败`);
     return "";
   };
-  const elementAttrIds = [
-    { element_attr_id: 1, name: "pyro" },
-    { element_attr_id: 2, name: "anemo" },
-    { element_attr_id: 3, name: "geo" },
-    { element_attr_id: 4, name: "electro" },
-    { element_attr_id: 5, name: "hydro" },
-    { element_attr_id: 6, name: "cryo" },
-    { element_attr_id: 7, name: "dendro" }
-  ];
-  const getElementAttrName = (queryName) => {
-    for (let e of elementAttrIds) {
-      const { element_attr_id, name } = e;
-      if (queryName == element_attr_id) {
-        return name;
-      }
-    }
-    console.error(`getElementAttrName: ${queryName} 查询失败`);
-    return "";
-  };
   const getAccount$1 = () => localStorage.account || "main";
   const getTotalGoal = () => JSON.parse(
     localStorage.getItem(`${getAccount$1()}-goals`) || "[]"
@@ -124,52 +104,115 @@
     }
     setGoals(goals);
   };
-  const addTalentGoal = (talentCharacter, skill_list) => {
+  let initBonus = {
+    "bonus-trace-1-1": {
+      "type": "a4m",
+      "done": false
+    },
+    "bonus-trace-1-1-1": {
+      "type": "a4s",
+      "done": false
+    },
+    "bonus-trace-1-1-1-1": {
+      "type": "a5s",
+      "done": false
+    },
+    "bonus-trace-1-1-1-1-1": {
+      "type": "a5s",
+      "done": false
+    },
+    "bonus-trace-1-2": {
+      "type": "a2m",
+      "done": false
+    },
+    "bonus-trace-1-2-1": {
+      "type": "a2s",
+      "done": false
+    },
+    "bonus-trace-1-2-1-1": {
+      "type": "a3s",
+      "done": false
+    },
+    "bonus-trace-1-2-1-1-1": {
+      "type": "a3s",
+      "done": false
+    },
+    "bonus-trace-1-3": {
+      "type": "a6m",
+      "done": false
+    },
+    "bonus-trace-1-3-1": {
+      "type": "a6s",
+      "done": false
+    },
+    "bonus-trace-1-3-1-1": {
+      "type": "l75",
+      "done": false
+    },
+    "bonus-trace-1-3-1-2": {
+      "type": "l80",
+      "done": false
+    },
+    "bonus-trace-1-4": {
+      "type": "l1",
+      "done": false
+    }
+  };
+  const addTraceGoal = (talentCharacter, skill_list) => {
     const totalGoal = getTotalGoal();
     const ids = totalGoal.map((g2) => g2.id);
     const id = Math.max(...ids) + 1 || 1;
-    const talentIdx = totalGoal.findIndex((g2) => g2.type == "talent" && g2.character == talentCharacter);
-    const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter((a) => a.max_level == 10).sort().map((a) => a.level_current);
+    const talentIdx = totalGoal.findIndex((g2) => g2.type == "trace" && g2.character == talentCharacter);
+    skill_list.sort((a, b) => a.point_id > b.point_id ? 1 : 0);
+    const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = skill_list.map((a) => a.cur_level);
     let talentGoal;
     if (talentIdx < 0) {
       talentGoal = {
-        type: "talent",
+        type: "trace",
         character: talentCharacter,
-        c3: false,
-        c5: false,
-        normal: {
-          current: normalCurrent,
-          goal: normalCurrent
+        basic: {
+          current: baseCurrent,
+          goal: baseCurrent
         },
         skill: {
           current: skillCurrent,
           goal: skillCurrent
         },
-        burst: {
-          current: burstCurrent,
-          goal: burstCurrent
+        ultimate: {
+          current: ultimateCurrent,
+          goal: ultimateCurrent
         },
+        talent: {
+          current: talentCurrent,
+          goal: talentCurrent
+        },
+        bonus: initBonus,
         id
       };
     } else {
       const seelieGoal = totalGoal[talentIdx];
-      const { normal, skill, burst } = seelieGoal;
-      const { goal: normalGoal } = normal;
+      const { basic, skill, ultimate, talent, bonus } = seelieGoal;
+      const { goal: basicGoal } = basic;
       const { goal: skillGoal } = skill;
-      const { goal: burstGoal } = burst;
+      const { goal: ultimateGoal } = ultimate;
+      const { goal: talentGoal2 } = talent;
       talentGoal = {
         ...seelieGoal,
-        normal: {
-          current: normalCurrent,
-          goal: normalCurrent > normalGoal ? normalCurrent : normalGoal
+        basic: {
+          current: baseCurrent,
+          goal: baseCurrent > basicGoal ? baseCurrent : basicGoal
         },
         skill: {
           current: skillCurrent,
           goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
         },
-        burst: {
-          current: burstCurrent,
-          goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
+        ultimate: {
+          current: ultimateCurrent,
+          goal: ultimateCurrent > ultimateGoal ? ultimateCurrent : ultimateGoal
+        },
+        talent: {
+          current: talentCurrent,
+          goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
         }
       };
     }
@@ -180,7 +223,7 @@
     const ids = totalGoal.map((g2) => g2.id);
     const id = Math.max(...ids) + 1 || 1;
     let characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
-    let weaponPredicate = (g2) => g2.type == type && g2.weapon == nameEn;
+    let weaponPredicate = (g2) => g2.type == type && g2.cone == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
     const characterStatus = initCharacterStatus(level_current);
     let characterGoal;
@@ -190,14 +233,15 @@
         character: nameEn,
         current: characterStatus,
         goal: characterStatus,
-        id
+        id,
+        eidolon: 0
       };
     }
     function initWeaponGoal() {
       return {
         type,
         character: "",
-        weapon: nameEn,
+        cone: nameEn,
         current: characterStatus,
         goal: characterStatus,
         id
@@ -220,43 +264,38 @@
     addGoal(characterGoal);
   };
   function addCharacter(characterDataEx) {
-    const { character, skill_list, weapon } = characterDataEx;
-    const { name, element_attr_id } = character;
+    const { avatar: character, skills: skill_list, skills_other, equipment: weapon } = characterDataEx;
+    const { item_name: name } = character;
     if (weapon) {
-      const { name: name2, level_current: weaponLeveL } = weapon;
+      const { item_name: name2, cur_level: weaponLeveL } = weapon;
       const weaponId = getWeaponId(name2);
       if (weaponId) {
-        addCharacterGoal(weaponLeveL, weaponId, name2, "weapon");
+        addCharacterGoal(weaponLeveL, weaponId, name2, "cone");
       }
     }
-    const { level_current: characterLevel } = character;
+    const { cur_level: characterLevel } = character;
     const characterId = getCharacterId(name);
-    if (!characterId) {
+    if (!characterId || characterId.includes("trailblazer")) {
       return;
     }
     addCharacterGoal(characterLevel, characterId, name, "character");
-    let talentCharacter = characterId;
-    if (characterId == "traveler") {
-      const elementAttrName = getElementAttrName(element_attr_id);
-      talentCharacter = `traveler_${elementAttrName}`;
-    }
-    addTalentGoal(talentCharacter, skill_list);
+    addTraceGoal(characterId, skill_list);
   }
   const characterStatusList = [
     { level: 1, asc: 0, text: "1" },
     { level: 20, asc: 0, text: "20" },
     { level: 20, asc: 1, text: "20 A" },
-    { level: 40, asc: 1, text: "40" },
-    { level: 40, asc: 2, text: "40 A" },
-    { level: 50, asc: 2, text: "50" },
-    { level: 50, asc: 3, text: "50 A" },
-    { level: 60, asc: 3, text: "60" },
-    { level: 60, asc: 4, text: "60 A" },
-    { level: 70, asc: 4, text: "70" },
-    { level: 70, asc: 5, text: "70 A" },
-    { level: 80, asc: 5, text: "80" },
-    { level: 80, asc: 6, text: "80 A" },
-    { level: 90, asc: 6, text: "90" }
+    { level: 30, asc: 1, text: "30" },
+    { level: 30, asc: 2, text: "30 A" },
+    { level: 40, asc: 2, text: "40" },
+    { level: 40, asc: 3, text: "40 A" },
+    { level: 50, asc: 3, text: "50" },
+    { level: 50, asc: 4, text: "50 A" },
+    { level: 60, asc: 5, text: "60" },
+    { level: 60, asc: 5, text: "60 A" },
+    { level: 70, asc: 5, text: "70" },
+    { level: 70, asc: 6, text: "70 A" },
+    { level: 80, asc: 6, text: "80" }
   ];
   const initCharacterStatus = (level_current) => {
     let initCharacterStatus2 = characterStatusList[0];
@@ -275,27 +314,40 @@
     }
     return initCharacterStatus2;
   };
-  const updateTalent = (talent, normalGoal = 9, skillGoal = 9, burstGoal = 9) => {
-    const { normal: { current: normalCurrent }, skill: { current: skillCurrent }, burst: { current: burstCurrent } } = talent;
+  const updateTrace = (talent, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9) => {
+    const {
+      basic: { current: basicCurrent },
+      skill: { current: skillCurrent },
+      ultimate: { current: ultimateCurrent },
+      talent: { current: talentCurrent }
+    } = talent;
     const talentNew = {
       ...talent,
-      normal: {
-        current: normalCurrent,
-        goal: normalCurrent > normalGoal ? normalCurrent : normalGoal
+      basic: {
+        current: basicCurrent,
+        goal: basicCurrent > normalGoal ? basicCurrent : normalGoal
       },
       skill: {
         current: skillCurrent,
         goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
       },
-      burst: {
-        current: burstCurrent,
-        goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
+      ultimate: {
+        current: ultimateCurrent,
+        goal: ultimateCurrent > burstGoal ? ultimateCurrent : burstGoal
+      },
+      talent: {
+        current: talentCurrent,
+        goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
       }
     };
     addGoal(talentNew);
   };
-  const batchUpdateTalent = (all, normal, skill, burst) => {
-    getTotalGoal().filter((a) => a.type == "talent").filter((a) => all || !getGoalInactive().includes(a.character)).map((a) => updateTalent(a, normal, skill, burst));
+  const batchUpdateTrace = (all, normal, skill, burst, t) => {
+    if (normal > 6) {
+      normal = 6;
+    }
+    getTotalGoal().filter((a) => a.type == "trace").filter((a) => all || !getGoalInactive().includes(a.character)).map((a) => updateTrace(a, normal, skill, burst, t));
+    location.reload();
   };
   const updateCharacter = (character, characterStatusGoal) => {
     const { current } = character;
@@ -312,7 +364,7 @@
     location.reload();
   };
   const batchUpdateWeapon = (all, characterStatusGoal) => {
-    getTotalGoal().filter((a) => a.type == "weapon").filter((a) => all || !getGoalInactive().includes(a.weapon)).map((a) => updateCharacter(a, characterStatusGoal));
+    getTotalGoal().filter((a) => a.type == "cone").filter((a) => all || !getGoalInactive().includes(a.cone)).map((a) => updateCharacter(a, characterStatusGoal));
     location.reload();
   };
   function k() {
@@ -2358,7 +2410,8 @@
     const [talentGoalLevel, setTalentGoalLevel] = React2.useState({
       normal: 1,
       skill: 6,
-      burst: 6
+      burst: 6,
+      t: 6
     });
     const talentLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reverse();
     const batchSetCharacterTalentLevel = () => {
@@ -2367,10 +2420,11 @@
       const {
         normal,
         skill,
-        burst
+        burst,
+        t
       } = talentGoalLevel;
       console.log(selectAllRoles);
-      batchUpdateTalent(!selectAllRoles, normal, skill, burst);
+      batchUpdateTrace(!selectAllRoles, normal, skill, burst, t);
       alert("角色目标天赋设置完毕");
     };
     return /* @__PURE__ */ jsxs("div", {
@@ -2400,7 +2454,7 @@
           })
         }), /* @__PURE__ */ jsx("div", {
           className: "mt-10",
-          children: "元素战技"
+          children: "战技"
         }), /* @__PURE__ */ jsx("div", {
           children: /* @__PURE__ */ jsx(ListboxSelect, {
             selected: talentGoalLevel.skill,
@@ -2413,13 +2467,26 @@
           })
         }), /* @__PURE__ */ jsx("div", {
           className: "mt-10",
-          children: "元素爆发"
+          children: "终结技"
         }), /* @__PURE__ */ jsx("div", {
           children: /* @__PURE__ */ jsx(ListboxSelect, {
             selected: talentGoalLevel.burst,
             setSelected: (num) => setTalentGoalLevel({
               ...talentGoalLevel,
               burst: num
+            }),
+            optionList: talentLevels,
+            show: (num) => `${num}`
+          })
+        }), /* @__PURE__ */ jsx("div", {
+          className: "mt-10",
+          children: "天赋"
+        }), /* @__PURE__ */ jsx("div", {
+          children: /* @__PURE__ */ jsx(ListboxSelect, {
+            selected: talentGoalLevel.t,
+            setSelected: (num) => setTalentGoalLevel({
+              ...talentGoalLevel,
+              t: num
             }),
             optionList: talentLevels,
             show: (num) => `${num}`
@@ -2432,7 +2499,7 @@
           children: /* @__PURE__ */ jsx("button", {
             className: "text-white bg-blue-500 px-4 py-2",
             onClick: batchSetCharacterTalentLevel,
-            children: "批量设置角色目标天赋"
+            children: "批量设置角色目标行迹"
           })
         })
       })]
@@ -3900,10 +3967,10 @@
       }
     });
   }
-  const BBS_URL = "https://webstatic.mihoyo.com/ys/event/e20210928review/index.html";
-  const ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
-  const CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list";
-  const CHARACTERS_DETAIL_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail";
+  const BBS_URL = "https://www.miyoushe.com/sr/";
+  const ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hkrpg_cn";
+  const CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/rpgcalc/avatar/list";
+  const CHARACTERS_DETAIL_URL = "https://api-takumi.mihoyo.com/event/rpgcalc/avatar/detail";
   const BBS_URL_GLOBAL = "https://act.hoyoverse.com/ys/event/e20230205-firework-xm7wly/index.html?game_biz=hk4e_global";
   const ROLE_URL_GLOBAL = "https://api-os-takumi.hoyoverse.com/binding/api/getUserGameRolesByLtoken?game_biz=hk4e_global";
   const CHARACTERS_URL_GLOBAL = "https://sg-public-api.hoyoverse.com/event/calculateos/sync/avatar/list";
@@ -3911,7 +3978,7 @@
   axios.defaults.adapter = xhrAdapter;
   axios.defaults.withCredentials = true;
   const headers = {
-    Referer: "https://webstatic.mihoyo.com/",
+    Referer: "https://www.miyoushe.com/sr/",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
   };
   const headersGolbal = {
@@ -3922,13 +3989,18 @@
     return [null, data2];
   }).catch((err) => [err]);
   const isGlobal = () => {
-    return "hk4e_global" == localStorage.getItem("gameBiz");
+    let b = "hkrpg_global" == localStorage.getItem("gameBiz") || "hk4e_global" == localStorage.getItem("gameBiz");
+    if (b) {
+      alert("暂不支持国际服");
+    }
+    return b;
   };
   const requestPageSize = 50;
   const getAccount = async () => {
     const [err, res] = await to(axios.get(isGlobal() ? ROLE_URL_GLOBAL : ROLE_URL, {
       headers: isGlobal() ? headersGolbal : headers
     }));
+    debugger;
     if (!err) {
       const { status, data: resData } = await res;
       if (status == 200) {
@@ -3939,21 +4011,15 @@
         }
       }
     }
-    alert("请确认已登录活动页面且绑定原神账户!");
+    alert("请确认已登录活动页面且绑定星铁账户!");
     GM_openInTab(isGlobal() ? BBS_URL_GLOBAL : BBS_URL);
     throw err ? err : new Error("账户信息获取失败");
   };
   const getCharacters = async (uid, region, page = 1) => {
     let url = isGlobal() ? CHARACTERS_URL_GLOBAL : CHARACTERS_URL;
-    const [err, res] = await to(axios.post(url, JSON.stringify({
-      "element_attr_ids": [],
-      "weapon_cat_ids": [],
-      "page": page,
-      "size": requestPageSize,
-      "uid": uid,
-      "region": region,
-      "lang": "zh-cn"
-    }), {
+    let game = isGlobal() ? "" : "hkrpg";
+    let params = `?game=${game}&uid=${uid}&region=${region}&lang=zh-cn&tab_from=TabOwned&page=${page}&size=100`;
+    const [err, res] = await to(axios.get(url + params, {
       headers: isGlobal() ? headersGolbal : headers
     }));
     if (!err) {
@@ -3972,8 +4038,9 @@
     throw err ? err : new Error("角色列表获取失败");
   };
   const getCharacterDetail = async (character, uid, region) => {
-    const { id } = character;
-    const params = `?avatar_id=${id}&uid=${uid}&region=${region}&lang=zh-cn`;
+    const { item_id: id } = character;
+    let game = isGlobal() ? "" : "hkrpg";
+    const params = `?game=${game}&lang=zh-cn&item_id=${id}&tab_from=TabOwned&change_target_level=0&uid=${uid}&region=${region}`;
     let URL = isGlobal() ? CHARACTERS_DETAIL_URL_GLOBAL : CHARACTERS_DETAIL_URL;
     const [err, res] = await to(axios.get(URL + params, {
       headers: isGlobal() ? headersGolbal : headers
@@ -3984,7 +4051,7 @@
         const { retcode, data: data2 } = resData;
         if (retcode === 0) {
           const characterData = await data2;
-          return { character, ...characterData };
+          return characterData;
         }
       }
     } else {
@@ -4008,13 +4075,7 @@
     return detailList;
   };
   function ExDialog() {
-    const [gameBizSwitchEnabled, setGameBizSwitchEnabled] = React2.useState(() => isGlobal());
-    const onChangeGameBiz = (e) => {
-      setGameBizSwitchEnabled(e);
-      let gameBizNew = !e ? "hk4e_cn" : "hk4e_global";
-      console.log(gameBizNew);
-      localStorage.setItem("gameBiz", gameBizNew);
-    };
+    React2.useState(() => isGlobal());
     const [accountList, setAccountList] = React2.useState([]);
     const [currentAccount, setCurrentAccount] = React2.useState();
     const handleRoleSelectChange = (idx) => {
@@ -4052,16 +4113,17 @@
       getDetailList(game_uid, region).then((res) => {
         console.group("返回数据");
         console.groupCollapsed("角色");
-        console.table(res.map((a) => a.character));
+        console.table(res.map((a) => a.avatar));
         console.groupEnd();
-        console.groupCollapsed("武器");
-        console.table(res.map((a) => a.weapon));
+        console.groupCollapsed("光锥");
+        console.table(res.map((a) => a.equipment));
         console.groupEnd();
-        console.groupCollapsed("角色天赋");
+        console.groupCollapsed("行迹");
         res.forEach((c) => {
-          const name = c.character.name;
+          const name = c.avatar.item_name;
           console.groupCollapsed(name);
-          console.table(c.skill_list);
+          console.table(c.skills);
+          console.table(c.skills_other);
           console.groupEnd();
         });
         console.groupEnd();
@@ -4103,19 +4165,7 @@
                 })]
               }), /* @__PURE__ */ jsxs(Ye.Panel, {
                 className: "px-4 pt-4 pb-2 text-sm text-white-500",
-                children: [/* @__PURE__ */ jsxs("div", {
-                  className: "flex pt-4",
-                  children: [/* @__PURE__ */ jsx("div", {
-                    className: "w-1/2 text-white-900",
-                    children: "区服选择:"
-                  }), /* @__PURE__ */ jsx(ToggleSwitch, {
-                    className: "w-1/2",
-                    checked: gameBizSwitchEnabled,
-                    onChange: onChangeGameBiz,
-                    labelLeft: "国服",
-                    labelRight: "国际服"
-                  })]
-                }), /* @__PURE__ */ jsx("div", {
+                children: [/* @__PURE__ */ jsx("div", {
                   className: "flex pt-2",
                   children: /* @__PURE__ */ jsx("div", {
                     className: "w-full",
@@ -4170,7 +4220,7 @@
                 children: /* @__PURE__ */ jsxs(De.Group, {
                   children: [/* @__PURE__ */ jsx(De.List, {
                     className: "flex p-1 space-x-1 bg-blue-900/20 rounded-xl",
-                    children: ["角色目标等级", "天赋目标等级", "武器目标等级"].map((category) => /* @__PURE__ */ jsx(De, {
+                    children: ["角色目标等级", "行迹目标等级", "光锥目标等级"].map((category) => /* @__PURE__ */ jsx(De, {
                       className: ({
                         selected
                       }) => classNames("w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg", "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60", selected ? "bg-white shadow" : "text-blue-100 hover:bg-white/[0.12] hover:text-white"),
@@ -4186,7 +4236,7 @@
                       children: /* @__PURE__ */ jsx(TalentGoalTab, {})
                     }), /* @__PURE__ */ jsx(De.Panel, {
                       children: /* @__PURE__ */ jsx(CharacterGoalTab, {
-                        showText: "武器",
+                        showText: "光锥",
                         batchUpdateCharacter: batchUpdateWeapon
                       })
                     })]

@@ -71,4 +71,63 @@ declare namespace mihoyo {
         data: Data<T>;
     }
 
+    export interface HSRCharacterData {
+        avatar: Avatar
+        skills: HSRSkill[]
+        skills_other: SkillsOther[]
+        equipment: Equipment
+        is_login: boolean
+    }
+
+    export interface Avatar {
+        item_id: string
+        item_name: string
+        icon_url: string
+        damage_type: string
+        rarity: string
+        avatar_base_type: string
+        max_level: number
+        cur_level: number
+        target_level: number
+        vertical_icon_url: string
+    }
+
+    export interface HSRSkill {
+        point_id: string
+        pre_point: string
+        point_type: number
+        anchor: string
+        item_url: string
+        max_level: number
+        cur_level: number
+        target_level: number
+        progress: string
+        min_level_limit: number
+    }
+
+    export interface SkillsOther {
+        point_id: string
+        pre_point: string
+        point_type: number
+        anchor: string
+        item_url: string
+        max_level: number
+        cur_level: number
+        target_level: number
+        progress: string
+        min_level_limit: number
+    }
+
+    export interface Equipment {
+        item_id: string
+        item_name: string
+        item_url: string
+        avatar_base_type: string
+        rarity: string
+        max_level: number
+        cur_level: number
+        target_level: number
+    }
+
+
 }
