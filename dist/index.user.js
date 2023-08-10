@@ -10,8 +10,8 @@
 // @homepageURL      https://github.com/KeyPJ/seelieEx
 // @updateURL        https://openuserjs.org/meta/KeyPJ/hsrSeelieEx.meta.js
 // @include          https://hsr.seelie.me/*
-// @require          https://unpkg.zhimg.com/react@17.0.2/umd/react.production.min.js
-// @require          https://unpkg.zhimg.com/react-dom@17.0.2/umd/react-dom.production.min.js
+// @require          https://unpkg.com/react@17.0.2/umd/react.production.min.js
+// @require          https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js
 // @resource         character  https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/hsr_character.json
 // @resource         weapon     https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/hsr_weapon.json
 // @connect          api-takumi.mihoyo.com
