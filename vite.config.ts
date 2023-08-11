@@ -43,12 +43,12 @@ export default defineConfig({
                     react: [
                         'React',
                         (version) =>
-                            `https://unpkg.zhimg.com/react@${version}/umd/react.production.min.js`,
+                            `https://unpkg.com/react@${version}/umd/react.production.min.js`,
                     ],
                     'react-dom': [
                         'ReactDOM',
                         (version) =>
-                            `https://unpkg.zhimg.com/react-dom@${version}/umd/react-dom.production.min.js`,
+                            `https://unpkg.com/react-dom@${version}/umd/react-dom.production.min.js`,
                     ],
                 },
             },

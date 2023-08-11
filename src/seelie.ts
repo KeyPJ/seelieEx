@@ -53,58 +53,6 @@ const addGoal = (data: any) => {
     setGoals(goals);
 };
 let initBonus = {
-    "bonus-trace-1-1": {
-        "type": "a4m",
-        "done": false
-    },
-    "bonus-trace-1-1-1": {
-        "type": "a4s",
-        "done": false
-    },
-    "bonus-trace-1-1-1-1": {
-        "type": "a5s",
-        "done": false
-    },
-    "bonus-trace-1-1-1-1-1": {
-        "type": "a5s",
-        "done": false
-    },
-    "bonus-trace-1-2": {
-        "type": "a2m",
-        "done": false
-    },
-    "bonus-trace-1-2-1": {
-        "type": "a2s",
-        "done": false
-    },
-    "bonus-trace-1-2-1-1": {
-        "type": "a3s",
-        "done": false
-    },
-    "bonus-trace-1-2-1-1-1": {
-        "type": "a3s",
-        "done": false
-    },
-    "bonus-trace-1-3": {
-        "type": "a6m",
-        "done": false
-    },
-    "bonus-trace-1-3-1": {
-        "type": "a6s",
-        "done": false
-    },
-    "bonus-trace-1-3-1-1": {
-        "type": "l75",
-        "done": false
-    },
-    "bonus-trace-1-3-1-2": {
-        "type": "l80",
-        "done": false
-    },
-    "bonus-trace-1-4": {
-        "type": "l1",
-        "done": false
-    }
 } as Bonus
 
 const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.HSRSkill[]) => {

@@ -54,7 +54,6 @@ export const getAccount = async () => {
     const [err, res] = await to(axios.get(isGlobal() ? ROLE_URL_GLOBAL : ROLE_URL, {
         headers: isGlobal() ? headersGolbal : headers
     }));
-    debugger
     if (!err) {
         const {status, data: resData} = await res;
         if (status == 200) {

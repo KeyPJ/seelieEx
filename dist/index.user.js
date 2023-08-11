@@ -2,7 +2,7 @@
 // @name             hsrSeelieEx
 // @name:zh          星铁规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          1.2.0
+// @version          1.2.1
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 星铁规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -10,8 +10,8 @@
 // @homepageURL      https://github.com/KeyPJ/seelieEx
 // @updateURL        https://openuserjs.org/meta/KeyPJ/hsrSeelieEx.meta.js
 // @include          https://hsr.seelie.me/*
-// @require          https://unpkg.zhimg.com/react@17.0.2/umd/react.production.min.js
-// @require          https://unpkg.zhimg.com/react-dom@17.0.2/umd/react-dom.production.min.js
+// @require          https://unpkg.com/react@17.0.2/umd/react.production.min.js
+// @require          https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js
 // @resource         character  https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/hsr_character.json
 // @resource         weapon     https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/hsr_weapon.json
 // @connect          api-takumi.mihoyo.com
@@ -104,60 +104,7 @@
     }
     setGoals(goals);
   };
-  let initBonus = {
-    "bonus-trace-1-1": {
-      "type": "a4m",
-      "done": false
-    },
-    "bonus-trace-1-1-1": {
-      "type": "a4s",
-      "done": false
-    },
-    "bonus-trace-1-1-1-1": {
-      "type": "a5s",
-      "done": false
-    },
-    "bonus-trace-1-1-1-1-1": {
-      "type": "a5s",
-      "done": false
-    },
-    "bonus-trace-1-2": {
-      "type": "a2m",
-      "done": false
-    },
-    "bonus-trace-1-2-1": {
-      "type": "a2s",
-      "done": false
-    },
-    "bonus-trace-1-2-1-1": {
-      "type": "a3s",
-      "done": false
-    },
-    "bonus-trace-1-2-1-1-1": {
-      "type": "a3s",
-      "done": false
-    },
-    "bonus-trace-1-3": {
-      "type": "a6m",
-      "done": false
-    },
-    "bonus-trace-1-3-1": {
-      "type": "a6s",
-      "done": false
-    },
-    "bonus-trace-1-3-1-1": {
-      "type": "l75",
-      "done": false
-    },
-    "bonus-trace-1-3-1-2": {
-      "type": "l80",
-      "done": false
-    },
-    "bonus-trace-1-4": {
-      "type": "l1",
-      "done": false
-    }
-  };
+  let initBonus = {};
   const addTraceGoal = (talentCharacter, skill_list) => {
     const totalGoal = getTotalGoal();
     const ids = totalGoal.map((g2) => g2.id);
@@ -4000,7 +3947,6 @@
     const [err, res] = await to(axios.get(isGlobal() ? ROLE_URL_GLOBAL : ROLE_URL, {
       headers: isGlobal() ? headersGolbal : headers
     }));
-    debugger;
     if (!err) {
       const { status, data: resData } = await res;
       if (status == 200) {
