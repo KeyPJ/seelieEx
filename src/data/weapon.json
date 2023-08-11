@@ -88,6 +88,10 @@
 		"name": "赤沙之杖"
 	},
 	{
+		"id": "flowing_purity",
+		"name": "纯水流华"
+	},
+	{
 		"id": "slingshot",
 		"name": "弹弓"
 	},
@@ -160,6 +164,10 @@
 		"name": "弓藏"
 	},
 	{
+		"id": "rightful_reward",
+		"name": "公义的酬报"
+	},
+	{
 		"id": "vortex_vanquisher",
 		"name": "贯虹之槊"
 	},
@@ -170,6 +178,10 @@
 	{
 		"id": "katsuragis_slasher",
 		"name": "桂木斩长正"
+	},
+	{
+		"id": "finale_of_the_deep",
+		"name": "海渊终曲"
 	},
 	{
 		"id": "primordial_jade_winged_spear",
@@ -212,6 +224,10 @@
 		"name": "鹮穿之喙"
 	},
 	{
+		"id": "crossing_of_fleuve_cendre",
+		"name": "灰河渡手"
+	},
+	{
 		"id": "sacrificial_fragments",
 		"name": "祭礼残章"
 	},
@@ -240,6 +256,10 @@
 		"name": "竭泽"
 	},
 	{
+		"id": "song_of_stillness",
+		"name": "静谧之曲"
+	},
+	{
 		"id": "deathmatch",
 		"name": "决斗之枪"
 	},
@@ -252,12 +272,28 @@
 		"name": "狼的末路"
 	},
 	{
+		"id": "wolf_fang",
+		"name": "狼牙"
+	},
+	{
+		"id": "tidal_shadow",
+		"name": "浪影阔剑"
+	},
+	{
 		"id": "cool_steel",
 		"name": "冷刃"
 	},
 	{
 		"id": "harbinger_of_dawn",
 		"name": "黎明神剑"
+	},
+	{
+		"id": "talking_stick",
+		"name": "聊聊棒"
+	},
+	{
+		"id": "scion_of_the_blazing_sun",
+		"name": "烈阳之嗣"
 	},
 	{
 		"id": "hunters_path",
@@ -496,6 +532,10 @@
 		"name": "匣里日月"
 	},
 	{
+		"id": "ballad_of_the_fjords",
+		"name": "峡湾长歌"
+	},
+	{
 		"id": "luxurious_sea_lord",
 		"name": "衔珠海皇"
 	},
@@ -510,6 +550,10 @@
 	{
 		"id": "raven_bow",
 		"name": "鸦羽弓"
+	},
+	{
+		"id": "sacrificial_jade",
+		"name": "遗祀玉珑"
 	},
 	{
 		"id": "debate_club",
@@ -582,5 +626,9 @@
 	{
 		"id": "royal_longsword",
 		"name": "宗室长剑"
+	},
+	{
+		"id": "the_first_great_magic",
+		"name": "最初的大魔术"
 	}
 ]

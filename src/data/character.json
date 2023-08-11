@@ -72,6 +72,10 @@
 		"name": "甘雨"
 	},
 	{
+		"id": "hutao",
+		"name": "胡桃"
+	},
+	{
 		"id": "itto",
 		"name": "荒泷一斗"
 	},
@@ -124,6 +128,10 @@
 		"name": "丽莎"
 	},
 	{
+		"id": "lyney",
+		"name": "林尼"
+	},
+	{
 		"id": "wanderer",
 		"name": "流浪者"
 	},
@@ -132,8 +140,20 @@
 		"name": "鹿野院平藏"
 	},
 	{
-		"id": "traveler",
-		"name": "旅行者"
+		"id": "traveler_male",
+		"name": "旅行者 (草)"
+	},
+	{
+		"id": "traveler_male",
+		"name": "旅行者 (风元素)"
+	},
+	{
+		"id": "traveler_male",
+		"name": "旅行者 (雷)"
+	},
+	{
+		"id": "traveler_male",
+		"name": "旅行者 (岩)"
 	},
 	{
 		"id": "rosaria",
@@ -270,9 +290,5 @@
 	{
 		"id": "custom_male",
 		"name": "自定义"
-	},
-	{
-		"id": "hutao",
-		"name": "Hu Tao"
 	}
 ]
