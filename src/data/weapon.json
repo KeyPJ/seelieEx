@@ -44,6 +44,10 @@
 		"name": "碧落之珑"
 	},
 	{
+		"id": "portable_power_saw",
+		"name": "便携动力锯"
+	},
+	{
 		"id": "haran_geppaku_futsu",
 		"name": "波乱月白经津"
 	},
@@ -86,6 +90,10 @@
 	{
 		"id": "staff_of_the_scarlet_sands",
 		"name": "赤沙之杖"
+	},
+	{
+		"id": "the_dockhands_assistant",
+		"name": "船坞长剑"
 	},
 	{
 		"id": "flowing_purity",
@@ -472,6 +480,10 @@
 		"name": "万国诸海图谱"
 	},
 	{
+		"id": "tome_of_the_eternal_flow",
+		"name": "万世流涌大典"
+	},
+	{
 		"id": "kings_squire",
 		"name": "王下近侍"
 	},
@@ -482,6 +494,10 @@
 	{
 		"id": "the_unforged",
 		"name": "无工之剑"
+	},
+	{
+		"id": "ballad_of_the_boundless_blue",
+		"name": "无垠蔚蓝之歌"
 	},
 	{
 		"id": "mistsplitters_reflection",
