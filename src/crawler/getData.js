@@ -8,7 +8,7 @@ async function getPageData(page, url, selector) {
     })
 
     //等待加载完毕
-    await page.waitForSelector("button.w-full")
+    await page.waitForSelector('#main button')
 
     await page.click('#main button')
 
@@ -49,12 +49,12 @@ const scrape = async () => {
             }
         })
     })
-    const charactersUrl = 'https://seelie.inmagi.com/characters'
+    const charactersUrl = 'https://seelie.me/characters'
     const selector = '.items-start>.relative'
     const characters = await getPageData(page, charactersUrl, selector)
     console.log(characters)
 
-    const weaponsUrl = 'https://seelie.inmagi.com/weapons'
+    const weaponsUrl = 'https://seelie.me/weapons'
     const weapons = await getPageData(page, weaponsUrl, selector)
     console.log(weapons)
 
