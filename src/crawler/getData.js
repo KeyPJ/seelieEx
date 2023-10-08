@@ -13,15 +13,18 @@ async function getPageData(page, url, selector) {
     await page.click('#main button')
 
     const list = await page.$$eval(selector, relativeList => relativeList.map(relative => {
-        const scr = relative.firstElementChild.firstElementChild.src
-        const match = scr.match(/(\/([\w-]*)\.png)/)
+        const scr = relative?.firstElementChild?.firstElementChild?.src
+        const match = scr?.match(/(\/([\w-]*)\.png)/)
         const id = match && match[2]
         const name = relative.innerText.replace("NEW", "").replace("SOON", "").replace("即将上线", "").replaceAll("\n", "")
+        if (!id||!name){
+            return null;
+        }
         return {id, name}
     }))
 
     //排序
-    return list.sort((a, b) => a.name.localeCompare(b.name, 'zh'))
+    return list.filter(a => !!a).sort((a, b) => a.name.localeCompare(b.name, 'zh'))
 }
 
 const scrape = async () => {
