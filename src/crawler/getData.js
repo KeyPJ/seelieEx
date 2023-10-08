@@ -16,9 +16,15 @@ async function getPageData(page, url, selector) {
         const scr = relative?.firstElementChild?.firstElementChild?.src
         const match = scr?.match(/(\/([\w-]*)\.png)/)
         const id = match && match[2]
-        const name = relative.innerText.replace("NEW", "").replace("SOON", "").replace("即将上线", "").replaceAll("\n", "")
-        if (!id||!name){
-            return null;
+        const name = relative.innerText
+            .replace("NEW", "")
+            .replace("SOON", "")
+            .replace("Custom", "")
+            .replace("自定义", "")
+            .replace("即将上线", "")
+            .replaceAll("\n", "")
+        if (!id || !name) {
+            return null
         }
         return {id, name}
     }))
