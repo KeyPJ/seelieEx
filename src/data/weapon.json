@@ -68,6 +68,10 @@
 		"name": "苍古自由之誓"
 	},
 	{
+		"id": "range_gauge",
+		"name": "测距规"
+	},
+	{
 		"id": "memory_of_dust",
 		"name": "尘世之锁"
 	},
@@ -264,6 +268,10 @@
 		"name": "竭泽"
 	},
 	{
+		"id": "cashflow_supervision",
+		"name": "金流监督"
+	},
+	{
 		"id": "song_of_stillness",
 		"name": "静谧之曲"
 	},
@@ -274,6 +282,10 @@
 	{
 		"id": "the_stringless",
 		"name": "绝弦"
+	},
+	{
+		"id": "prospectors_drill",
+		"name": "勘探钻机"
 	},
 	{
 		"id": "wolfs_gravestone",
