@@ -32,6 +32,10 @@
 		"name": "桂乃芬"
 	},
 	{
+		"id": "hanya",
+		"name": "寒鸦"
+	},
+	{
 		"id": "herta",
 		"name": "黑塔"
 	},
@@ -142,6 +146,10 @@
 	{
 		"id": "silver_wolf",
 		"name": "银狼"
+	},
+	{
+		"id": "argenti",
+		"name": "银枝"
 	},
 	{
 		"id": "yukong",
