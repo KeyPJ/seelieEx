@@ -1,5 +1,9 @@
 [
 	{
+		"id": "ultimate_overlords_mega_magic_sword",
+		"name": "「究极霸王超级魔剑」"
+	},
+	{
 		"id": "the_catch",
 		"name": "「渔获」"
 	},
@@ -54,6 +58,10 @@
 	{
 		"id": "fumetsu_gekka",
 		"name": "不灭月华"
+	},
+	{
+		"id": "verdict",
+		"name": "裁断"
 	},
 	{
 		"id": "light_of_foliar_incision",
