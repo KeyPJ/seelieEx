@@ -108,6 +108,10 @@
 		"name": "刃"
 	},
 	{
+		"id": "ruan_mei",
+		"name": "阮•梅"
+	},
+	{
 		"id": "march_7th",
 		"name": "三月七"
 	},
@@ -138,6 +142,10 @@
 	{
 		"id": "serval",
 		"name": "希露瓦"
+	},
+	{
+		"id": "xueyi",
+		"name": "雪衣"
 	},
 	{
 		"id": "yanqing",
