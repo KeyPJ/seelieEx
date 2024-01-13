@@ -162,5 +162,9 @@
 	{
 		"id": "yukong",
 		"name": "驭空"
+	},
+	{
+		"id": "dr_ratio",
+		"name": "真理医生"
 	}
 ]
