@@ -76,6 +76,14 @@
 		"name": "过往未来"
 	},
 	{
+		"id": "its_showtime",
+		"name": "好戏开演"
+	},
+	{
+		"id": "what_is_real",
+		"name": "何物为真"
+	},
+	{
 		"id": "hey_over_here",
 		"name": "嘿，我在这儿"
 	},
@@ -160,8 +168,16 @@
 		"name": "论剑"
 	},
 	{
+		"id": "dreamville_adventure",
+		"name": "美梦小镇大冒险"
+	},
+	{
 		"id": "a_secret_vow",
 		"name": "秘密誓心"
+	},
+	{
+		"id": "indelible_promise",
+		"name": "铭记于心的约定"
 	},
 	{
 		"id": "hidden_shadow",
@@ -272,6 +288,10 @@
 		"name": "以世界之名"
 	},
 	{
+		"id": "the_day_the_cosmos_fell",
+		"name": "银河沦陷日"
+	},
+	{
 		"id": "night_on_the_milky_way",
 		"name": "银河铁道之夜"
 	},
@@ -304,6 +324,10 @@
 		"name": "渊环"
 	},
 	{
+		"id": "flames_afar",
+		"name": "在火的远处"
+	},
+	{
 		"id": "under_the_blue_sky",
 		"name": "在蓝天下"
 	},
@@ -314,6 +338,10 @@
 	{
 		"id": "this_is_me",
 		"name": "这就是我啦！"
+	},
+	{
+		"id": "destinys_threads_forewoven",
+		"name": "织造命运之线"
 	},
 	{
 		"id": "patience_is_all_you_need",
@@ -330,5 +358,13 @@
 	{
 		"id": "return_to_darkness",
 		"name": "重返幽冥"
+	},
+	{
+		"id": "reforged_remembrance",
+		"name": "重塑时光之忆"
+	},
+	{
+		"id": "final_victor",
+		"name": "最后的赢家"
 	}
 ]

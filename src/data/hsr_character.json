@@ -40,6 +40,10 @@
 		"name": "黑塔"
 	},
 	{
+		"id": "black_swan",
+		"name": "黑天鹅"
+	},
+	{
 		"id": "hook",
 		"name": "虎克"
 	},
@@ -90,6 +94,10 @@
 	{
 		"id": "luocha",
 		"name": "罗刹"
+	},
+	{
+		"id": "misha",
+		"name": "米沙"
 	},
 	{
 		"id": "natasha",
