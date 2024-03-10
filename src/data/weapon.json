@@ -416,6 +416,10 @@
 		"name": "森林王器"
 	},
 	{
+		"id": "dialogues_of_the_desert_sages",
+		"name": "沙中伟贤的对答"
+	},
+	{
 		"id": "kaguras_verity",
 		"name": "神乐之真意"
 	},
@@ -618,6 +622,10 @@
 	{
 		"id": "mitternachts_waltz",
 		"name": "幽夜华尔兹"
+	},
+	{
+		"id": "uraku_misugiri",
+		"name": "有乐御簾切"
 	},
 	{
 		"id": "rainslasher",
