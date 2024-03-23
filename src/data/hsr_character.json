@@ -52,12 +52,20 @@
 		"name": "花火"
 	},
 	{
+		"id": "acheron",
+		"name": "黃泉"
+	},
+	{
 		"id": "huohuo",
 		"name": "藿藿"
 	},
 	{
 		"id": "himeko",
 		"name": "姬子"
+	},
+	{
+		"id": "gallagher",
+		"name": "加拉赫"
 	},
 	{
 		"id": "gepard",
