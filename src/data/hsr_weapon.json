@@ -252,6 +252,10 @@
 		"name": "我们是地火"
 	},
 	{
+		"id": "boundless_choreo",
+		"name": "无边曼舞"
+	},
+	{
 		"id": "nowhere_to_run",
 		"name": "无处可逃"
 	},
@@ -290,6 +294,10 @@
 	{
 		"id": "the_moles_welcome_you",
 		"name": "鼹鼠党欢迎你"
+	},
+	{
+		"id": "flowing_nightglow",
+		"name": "夜色流光溢彩"
 	},
 	{
 		"id": "postop_conversation",
