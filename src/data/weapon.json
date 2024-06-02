@@ -424,6 +424,10 @@
 		"name": "沙中伟贤的对答"
 	},
 	{
+		"id": "absolution",
+		"name": "赦罪"
+	},
+	{
 		"id": "kaguras_verity",
 		"name": "神乐之真意"
 	},
@@ -658,6 +662,10 @@
 	{
 		"id": "the_bell",
 		"name": "钟剑"
+	},
+	{
+		"id": "cloudforged",
+		"name": "筑云"
 	},
 	{
 		"id": "summit_shaper",

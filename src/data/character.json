@@ -124,6 +124,10 @@
 		"name": "可莉"
 	},
 	{
+		"id": "clorinde",
+		"name": "克洛琳德"
+	},
+	{
 		"id": "keqing",
 		"name": "刻晴"
 	},
@@ -238,6 +242,10 @@
 	{
 		"id": "cyno",
 		"name": "赛诺"
+	},
+	{
+		"id": "sethos",
+		"name": "赛索斯"
 	},
 	{
 		"id": "sucrose",
