@@ -12,6 +12,10 @@
 		"name": "别让世界静下来"
 	},
 	{
+		"id": "eternal_calculus",
+		"name": "不息的演算"
+	},
+	{
 		"id": "river_flows_in_spring",
 		"name": "春水初生"
 	},
@@ -174,6 +178,10 @@
 	{
 		"id": "dreamville_adventure",
 		"name": "美梦小镇大冒险"
+	},
+	{
+		"id": "whereabouts_should_dreams_rest",
+		"name": "梦应归于何处"
 	},
 	{
 		"id": "a_secret_vow",
