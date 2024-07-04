@@ -204,6 +204,10 @@
 		"name": "暖夜不会漫长"
 	},
 	{
+		"id": "yet_hope_is_priceless",
+		"name": "偏偏希望无价"
+	},
+	{
 		"id": "an_instant_before_a_gaze",
 		"name": "片刻，留在眼底"
 	},
@@ -290,6 +294,10 @@
 	{
 		"id": "adversarial",
 		"name": "相抗"
+	},
+	{
+		"id": "after_the_charmony_fall",
+		"name": "谐乐静默之后"
 	},
 	{
 		"id": "before_the_tutorial_mission_starts",
