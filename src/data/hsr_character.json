@@ -152,6 +152,10 @@
 		"name": "三月七"
 	},
 	{
+		"id": "march_7th_imaginary",
+		"name": "三月七"
+	},
+	{
 		"id": "sampo",
 		"name": "桑博"
 	},
@@ -202,6 +206,10 @@
 	{
 		"id": "yukong",
 		"name": "驭空"
+	},
+	{
+		"id": "yunli",
+		"name": "云璃"
 	},
 	{
 		"id": "dr_ratio",

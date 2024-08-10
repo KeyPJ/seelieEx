@@ -60,6 +60,10 @@
 		"name": "烦恼着，幸福着"
 	},
 	{
+		"id": "poised_to_bloom",
+		"name": "芳华待灼"
+	},
+	{
 		"id": "arrows",
 		"name": "锋镝"
 	},
@@ -174,6 +178,10 @@
 	{
 		"id": "swordplay",
 		"name": "论剑"
+	},
+	{
+		"id": "dance_at_sunset",
+		"name": "落日时起舞"
 	},
 	{
 		"id": "dreamville_adventure",
