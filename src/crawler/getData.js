@@ -69,7 +69,7 @@ const scrape = async () => {
     const hsr_characters = await getPageData(page, hsr_charactersUrl, selector)
     console.log(hsr_characters)
 
-    const hsr_weaponsUrl = 'https://hsr.seelie.me/cones'
+    const hsr_weaponsUrl = 'https://hsr.seelie.me/weapons'
     const hsr_weapons = await getPageData(page, hsr_weaponsUrl, selector)
     console.log(hsr_weapons)
 
