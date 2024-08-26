@@ -80,6 +80,10 @@
 		"name": "苍古自由之誓"
 	},
 	{
+		"id": "ash_graven_drinking_horn",
+		"name": "苍纹角杯"
+	},
+	{
 		"id": "range_gauge",
 		"name": "测距规"
 	},
@@ -110,6 +114,10 @@
 	{
 		"id": "crimson_moons_semblance",
 		"name": "赤月之形"
+	},
+	{
+		"id": "surfs_up",
+		"name": "冲浪时光"
 	},
 	{
 		"id": "the_dockhands_assistant",
@@ -212,6 +220,10 @@
 		"name": "海渊终曲"
 	},
 	{
+		"id": "earth_shaker",
+		"name": "撼地者"
+	},
+	{
 		"id": "primordial_jade_winged_spear",
 		"name": "和璞鸢"
 	},
@@ -246,6 +258,10 @@
 	{
 		"id": "black_tassel",
 		"name": "黑缨枪"
+	},
+	{
+		"id": "footprint_of_the_rainbow",
+		"name": "虹的行迹"
 	},
 	{
 		"id": "staff_of_homa",
@@ -388,6 +404,10 @@
 		"name": "魔导绪论"
 	},
 	{
+		"id": "ring_of_yaxche",
+		"name": "木棉之环"
+	},
+	{
 		"id": "bloodtainted_greatsword",
 		"name": "沐浴龙血的剑"
 	},
@@ -484,6 +504,10 @@
 		"name": "松籁响起之时"
 	},
 	{
+		"id": "chain_breaker",
+		"name": "碎链"
+	},
+	{
 		"id": "thrilling_tales_of_dragon_slayers",
 		"name": "讨龙英杰谭"
 	},
@@ -578,6 +602,10 @@
 	{
 		"id": "xiphos_moonlight",
 		"name": "西福斯的月光"
+	},
+	{
+		"id": "flute_of_ezpitzal",
+		"name": "息燧之笛"
 	},
 	{
 		"id": "calamity_queller",
