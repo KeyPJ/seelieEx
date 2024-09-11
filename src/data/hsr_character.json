@@ -28,6 +28,10 @@
 		"name": "丹恒•饮月"
 	},
 	{
+		"id": "feixiao",
+		"name": "飞霄"
+	},
+	{
 		"id": "jade",
 		"name": "翡翠"
 	},
@@ -130,6 +134,10 @@
 	{
 		"id": "misha",
 		"name": "米沙"
+	},
+	{
+		"id": "moze",
+		"name": "貊泽"
 	},
 	{
 		"id": "natasha",
