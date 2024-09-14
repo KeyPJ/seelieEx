@@ -92,6 +92,10 @@
 		"name": "何物为真"
 	},
 	{
+		"id": "shadowed_by_night",
+		"name": "黑夜如影随行"
+	},
+	{
 		"id": "hey_over_here",
 		"name": "嘿，我在这儿"
 	},
@@ -274,6 +278,10 @@
 	{
 		"id": "only_silence_remains",
 		"name": "唯有沉默"
+	},
+	{
+		"id": "scent_alone_stays_true",
+		"name": "唯有香如故"
 	},
 	{
 		"id": "for_tomorrows_journey",
