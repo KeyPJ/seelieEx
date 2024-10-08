@@ -400,6 +400,10 @@
 		"name": "曚云之月"
 	},
 	{
+		"id": "sturdy_bone",
+		"name": "弥坚骨"
+	},
+	{
 		"id": "magic_guide",
 		"name": "魔导绪论"
 	},
@@ -498,6 +502,10 @@
 	{
 		"id": "sword_of_narzissenkreuz",
 		"name": "水仙十字之剑"
+	},
+	{
+		"id": "fruitful_hook",
+		"name": "硕果钩"
 	},
 	{
 		"id": "lost_prayer_to_the_sacred_winds",
@@ -652,6 +660,10 @@
 		"name": "鸦羽弓"
 	},
 	{
+		"id": "peak_patrol_song",
+		"name": "岩峰巡歌"
+	},
+	{
 		"id": "sacrificial_jade",
 		"name": "遗祀玉珑"
 	},
@@ -690,6 +702,10 @@
 	{
 		"id": "eye_of_perception",
 		"name": "昭心"
+	},
+	{
+		"id": "mountain_bracing_bolt",
+		"name": "镇山之钉"
 	},
 	{
 		"id": "oathsworn_eye",
