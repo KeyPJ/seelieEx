@@ -96,6 +96,10 @@
 		"name": "辰砂之纺锤"
 	},
 	{
+		"id": "waveriding_whirl",
+		"name": "乘浪的回旋"
+	},
+	{
 		"id": "fillet_blade",
 		"name": "吃虎鱼刀"
 	},
@@ -150,6 +154,10 @@
 	{
 		"id": "wavebreakers_fin",
 		"name": "断浪长鳍"
+	},
+	{
+		"id": "calamity_of_eshu",
+		"name": "厄水之祸"
 	},
 	{
 		"id": "akuoumaru",
@@ -652,6 +660,10 @@
 		"name": "信使"
 	},
 	{
+		"id": "astral_vultures_crimson_plumage",
+		"name": "星鹫赤羽"
+	},
+	{
 		"id": "snow_tombed_starsliver",
 		"name": "雪葬的星银"
 	},
@@ -722,6 +734,10 @@
 	{
 		"id": "cloudforged",
 		"name": "筑云"
+	},
+	{
+		"id": "flower_wreathed_feathers",
+		"name": "缀花之翎"
 	},
 	{
 		"id": "summit_shaper",
