@@ -200,12 +200,20 @@
 		"name": "瓦尔特"
 	},
 	{
+		"id": "fugue",
+		"name": "忘归人"
+	},
+	{
 		"id": "seele",
 		"name": "希儿"
 	},
 	{
 		"id": "serval",
 		"name": "希露瓦"
+	},
+	{
+		"id": "sunday",
+		"name": "星期日"
 	},
 	{
 		"id": "xueyi",

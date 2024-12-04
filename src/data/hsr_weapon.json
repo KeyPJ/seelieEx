@@ -108,6 +108,10 @@
 		"name": "琥珀"
 	},
 	{
+		"id": "a_grounded_ascent",
+		"name": "回到大地的飞行"
+	},
+	{
 		"id": "on_the_fall_of_an_aeon",
 		"name": "记一位星神的陨落"
 	},
@@ -418,6 +422,10 @@
 	{
 		"id": "the_seriousness_of_breakfast",
 		"name": "早餐的仪式感"
+	},
+	{
+		"id": "long_road_leads_home",
+		"name": "长路终有归途"
 	},
 	{
 		"id": "this_is_me",
