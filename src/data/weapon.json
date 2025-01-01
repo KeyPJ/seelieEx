@@ -184,6 +184,10 @@
 		"name": "翡玉法球"
 	},
 	{
+		"id": "a_thousand_blazing_suns",
+		"name": "焚曜千阳"
+	},
+	{
 		"id": "windblume_ode",
 		"name": "风花之颂"
 	},
@@ -298,6 +302,10 @@
 	{
 		"id": "sacrificial_sword",
 		"name": "祭礼剑"
+	},
+	{
+		"id": "starcallers_watch",
+		"name": "祭星者之望"
 	},
 	{
 		"id": "twin_nephrite",

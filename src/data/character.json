@@ -152,6 +152,10 @@
 		"name": "莱依拉"
 	},
 	{
+		"id": "lanyan",
+		"name": "蓝砚"
+	},
+	{
 		"id": "shogun",
 		"name": "雷电将军"
 	},
@@ -189,6 +193,10 @@
 	},
 	{
 		"id": "traveler_male",
+		"name": "旅行者 (火)"
+	},
+	{
+		"id": "traveler_male",
 		"name": "旅行者 (雷)"
 	},
 	{
@@ -206,6 +214,10 @@
 	{
 		"id": "mualani",
 		"name": "玛拉妮"
+	},
+	{
+		"id": "mavuika",
+		"name": "玛薇卡"
 	},
 	{
 		"id": "mika",
@@ -258,6 +270,10 @@
 	{
 		"id": "chiori",
 		"name": "千织"
+	},
+	{
+		"id": "citlali",
+		"name": "茜特菈莉"
 	},
 	{
 		"id": "jean",
