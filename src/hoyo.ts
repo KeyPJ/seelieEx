@@ -22,8 +22,18 @@ axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
 
 // (<any>window).GM.xmlHttpRequest = GM_xmlhttpRequest;
+function generate12CharString() {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 12; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters[randomIndex];
+    }
+    return result;
+}
 
 const headers = {
+    "x-rpc-device_fp": generate12CharString(),//TODO FP获取,暂时取随机字符串
     Referer: "https://webstatic.mihoyo.com/",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
 }
@@ -38,7 +48,8 @@ const to = (promise: Promise<any>) => promise.then(data => {
 }).catch(err => [err]);
 
 export const isGlobal = () => {
-    return "hk4e_global" == localStorage.getItem("gameBiz")
+    // return "hk4e_global" == localStorage.getItem("gameBiz")
+    return false;
 }
 
 const requestPageSize = 50;
@@ -75,6 +86,7 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
         "region": region,
         "lang": "zh-cn"
     }), {
+        timeout:5000,
         headers: isGlobal() ? headersGolbal : headers
     }));
     if (!err) {
@@ -94,25 +106,26 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
 };
 
 const getCharacterDetail = async (character: Character, uid: string, region: string) => {
-    const {id} = character;
-    const params = `?avatar_id=${id}&uid=${uid}&region=${region}&lang=zh-cn`
-    let URL = isGlobal() ? CHARACTERS_DETAIL_URL_GLOBAL : CHARACTERS_DETAIL_URL;
-
-    const [err, res] = await to(axios.get(URL + params, {
-        headers: isGlobal() ? headersGolbal : headers
-    }));
-    if (!err) {
-        const {status, data: resData} = await res;
-        if (status == 200) {
-            const {retcode, data} = resData;
-            if (retcode === 0) {
-                const characterData = await data as CharacterData;
-                return {character, ...characterData} as CharacterDataEx;
-            }
-        }
-    } else {
-        console.error(err)
-    }
+    // const {id} = character;
+    // const params = `?avatar_id=${id}&uid=${uid}&region=${region}&lang=zh-cn`
+    // let URL = isGlobal() ? CHARACTERS_DETAIL_URL_GLOBAL : CHARACTERS_DETAIL_URL;
+    // const [err, res] = await to(axios.get(URL + params, {
+    //     headers: isGlobal() ? headersGolbal : headers
+    // }));
+    // if (!err) {
+    //     const {status, data: resData} = await res;
+    //     if (status == 200) {
+    //         const {retcode, data} = resData;
+    //         if (retcode === 0) {
+    //             const characterData = await data as CharacterData;
+    //             return {character, ...characterData} as CharacterDataEx;
+    //         }
+    //     }
+    // } else {
+    //     console.error(err)
+    // }
+    // console.log(character);
+    return {character, ...character} as any as CharacterDataEx
 };
 
 export const getDetailList = async (game_uid: string, region: string) => {

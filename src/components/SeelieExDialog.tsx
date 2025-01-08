@@ -12,14 +12,14 @@ import Role = mihoyo.Role;
 
 function ExDialog() {
 
-    const [gameBizSwitchEnabled, setGameBizSwitchEnabled] = useState(() => isGlobal())
-
-    const onChangeGameBiz = (e: boolean) => {
-        setGameBizSwitchEnabled(e)
-        let gameBizNew = (!e) ? 'hk4e_cn' : 'hk4e_global';
-        console.log(gameBizNew)
-        localStorage.setItem("gameBiz", gameBizNew)
-    };
+    // const [gameBizSwitchEnabled, setGameBizSwitchEnabled] = useState(() => isGlobal())
+    //
+    // const onChangeGameBiz = (e: boolean) => {
+    //     setGameBizSwitchEnabled(e)
+    //     let gameBizNew = (!e) ? 'hk4e_cn' : 'hk4e_global';
+    //     console.log(gameBizNew)
+    //     localStorage.setItem("gameBiz", gameBizNew)
+    // };
 
     const [accountList, setAccountList] = useState<Role[]>([]);
 
@@ -121,18 +121,18 @@ function ExDialog() {
                                     />
                                 </Disclosure.Button>
                                 <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-white-500">
-                                    <div className="flex pt-4">
-                                        <div className="w-1/2 text-white-900">
-                                            区服选择:
-                                        </div>
-                                        <ToggleSwitch
-                                            className='w-1/2'
-                                            checked={gameBizSwitchEnabled}
-                                            onChange={onChangeGameBiz}
-                                            labelLeft={'国服'}
-                                            labelRight={'国际服'}
-                                        />
-                                    </div>
+                                    {/*<div className="flex pt-4">*/}
+                                    {/*    <div className="w-1/2 text-white-900">*/}
+                                    {/*        区服选择:*/}
+                                    {/*    </div>*/}
+                                    {/*    <ToggleSwitch*/}
+                                    {/*        className='w-1/2'*/}
+                                    {/*        checked={gameBizSwitchEnabled}*/}
+                                    {/*        onChange={onChangeGameBiz}*/}
+                                    {/*        labelLeft={'国服'}*/}
+                                    {/*        labelRight={'国际服'}*/}
+                                    {/*    />*/}
+                                    {/*</div>*/}
                                     <div className="flex pt-2">
                                         <div className="w-full">
                                             <button className="text-white bg-blue-500 px-4 py-2"

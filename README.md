@@ -19,6 +19,6 @@
 
 国服:周年纪念页[铭记之旅](https://webstatic.mihoyo.com/ys/event/e20210928review/index.html), 且确定已通过米游社已绑定原神账户
 
-国际服:周年纪念页[铭记之旅](https://webstatic-sea.mihoyo.com/ys/event/e20210928review/index.html), 且确定已通过hoyolab已绑定原神账户
+~~国际服:周年纪念页[铭记之旅](https://webstatic-sea.mihoyo.com/ys/event/e20210928review/index.html), 且确定已通过hoyolab已绑定原神账户~~(seelie官方支持)
 
 其他的主要信息也会在console输出,请自行查看
