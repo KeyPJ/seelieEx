@@ -2,7 +2,7 @@
 // @name             genshinSeelieEx
 // @name:zh          原神规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          3.4.1
+// @version          5.3.1
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -3903,31 +3903,30 @@
   const BBS_URL = "https://webstatic.mihoyo.com/ys/event/e20210928review/index.html";
   const ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
   const CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list";
-  const CHARACTERS_DETAIL_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail";
-  const BBS_URL_GLOBAL = "https://act.hoyoverse.com/ys/event/e20230205-firework-xm7wly/index.html?game_biz=hk4e_global";
-  const ROLE_URL_GLOBAL = "https://api-os-takumi.hoyoverse.com/binding/api/getUserGameRolesByLtoken?game_biz=hk4e_global";
-  const CHARACTERS_URL_GLOBAL = "https://sg-public-api.hoyoverse.com/event/calculateos/sync/avatar/list";
-  const CHARACTERS_DETAIL_URL_GLOBAL = "https://sg-public-api.hoyoverse.com/event/calculateos/sync/avatar/detail";
   axios.defaults.adapter = xhrAdapter;
   axios.defaults.withCredentials = true;
+  function generate12CharString() {
+    const characters2 = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < 12; i++) {
+      const randomIndex = Math.floor(Math.random() * characters2.length);
+      result += characters2[randomIndex];
+    }
+    return result;
+  }
   const headers = {
+    "x-rpc-device_fp": generate12CharString(),
+    //TODO FP获取,暂时取随机字符串
     Referer: "https://webstatic.mihoyo.com/",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
-  };
-  const headersGolbal = {
-    Referer: "https://act.hoyoverse.com/",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
   };
   const to = (promise) => promise.then((data2) => {
     return [null, data2];
   }).catch((err) => [err]);
-  const isGlobal = () => {
-    return "hk4e_global" == localStorage.getItem("gameBiz");
-  };
   const requestPageSize = 50;
   const getAccount = async () => {
-    const [err, res] = await to(axios.get(isGlobal() ? ROLE_URL_GLOBAL : ROLE_URL, {
-      headers: isGlobal() ? headersGolbal : headers
+    const [err, res] = await to(axios.get(ROLE_URL, {
+      headers
     }));
     if (!err) {
       const { status, data: resData } = await res;
@@ -3940,11 +3939,11 @@
       }
     }
     alert("请确认已登录活动页面且绑定原神账户!");
-    GM_openInTab(isGlobal() ? BBS_URL_GLOBAL : BBS_URL);
+    GM_openInTab(BBS_URL);
     throw err ? err : new Error("账户信息获取失败");
   };
   const getCharacters = async (uid, region, page = 1) => {
-    let url = isGlobal() ? CHARACTERS_URL_GLOBAL : CHARACTERS_URL;
+    let url = CHARACTERS_URL;
     const [err, res] = await to(axios.post(url, JSON.stringify({
       "element_attr_ids": [],
       "weapon_cat_ids": [],
@@ -3954,7 +3953,8 @@
       "region": region,
       "lang": "zh-cn"
     }), {
-      headers: isGlobal() ? headersGolbal : headers
+      timeout: 5e3,
+      headers
     }));
     if (!err) {
       const { status, data: resData } = await res;
@@ -3968,28 +3968,11 @@
       }
     }
     alert("请确认已登录活动页面且绑定原神账户!");
-    GM_openInTab(isGlobal() ? BBS_URL_GLOBAL : BBS_URL);
+    GM_openInTab(BBS_URL);
     throw err ? err : new Error("角色列表获取失败");
   };
   const getCharacterDetail = async (character, uid, region) => {
-    const { id } = character;
-    const params = `?avatar_id=${id}&uid=${uid}&region=${region}&lang=zh-cn`;
-    let URL = isGlobal() ? CHARACTERS_DETAIL_URL_GLOBAL : CHARACTERS_DETAIL_URL;
-    const [err, res] = await to(axios.get(URL + params, {
-      headers: isGlobal() ? headersGolbal : headers
-    }));
-    if (!err) {
-      const { status, data: resData } = await res;
-      if (status == 200) {
-        const { retcode, data: data2 } = resData;
-        if (retcode === 0) {
-          const characterData = await data2;
-          return { character, ...characterData };
-        }
-      }
-    } else {
-      console.error(err);
-    }
+    return { character, ...character };
   };
   const getDetailList = async (game_uid, region) => {
     let maxPageSize = Math.ceil(charactersNum / requestPageSize);
@@ -3998,7 +3981,7 @@
     for await (let i of idxs) {
       characters2.push.apply(characters2, await getCharacters(game_uid, region, i + 1));
     }
-    const details = characters2.map((c) => getCharacterDetail(c, game_uid, region));
+    const details = characters2.map((c) => getCharacterDetail(c));
     const detailList = [];
     for await (let d of details) {
       if (!!d) {
@@ -4008,13 +3991,6 @@
     return detailList;
   };
   function ExDialog() {
-    const [gameBizSwitchEnabled, setGameBizSwitchEnabled] = React2.useState(() => isGlobal());
-    const onChangeGameBiz = (e) => {
-      setGameBizSwitchEnabled(e);
-      let gameBizNew = !e ? "hk4e_cn" : "hk4e_global";
-      console.log(gameBizNew);
-      localStorage.setItem("gameBiz", gameBizNew);
-    };
     const [accountList, setAccountList] = React2.useState([]);
     const [currentAccount, setCurrentAccount] = React2.useState();
     const handleRoleSelectChange = (idx) => {
@@ -4103,19 +4079,7 @@
                 })]
               }), /* @__PURE__ */ jsxs(Ye.Panel, {
                 className: "px-4 pt-4 pb-2 text-sm text-white-500",
-                children: [/* @__PURE__ */ jsxs("div", {
-                  className: "flex pt-4",
-                  children: [/* @__PURE__ */ jsx("div", {
-                    className: "w-1/2 text-white-900",
-                    children: "区服选择:"
-                  }), /* @__PURE__ */ jsx(ToggleSwitch, {
-                    className: "w-1/2",
-                    checked: gameBizSwitchEnabled,
-                    onChange: onChangeGameBiz,
-                    labelLeft: "国服",
-                    labelRight: "国际服"
-                  })]
-                }), /* @__PURE__ */ jsx("div", {
+                children: [/* @__PURE__ */ jsx("div", {
                   className: "flex pt-2",
                   children: /* @__PURE__ */ jsx("div", {
                     className: "w-full",
