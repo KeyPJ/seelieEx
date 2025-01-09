@@ -16,8 +16,7 @@
 // @resource         character  https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/character.json
 // @resource         weapon     https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/weapon.json
 // @connect          api-takumi.mihoyo.com
-// @connect          api-os-takumi.hoyoverse.com
-// @connect          sg-public-api.hoyoverse.com
+// @connect          public-data-api.mihoyo.com
 // @grant            GM.xmlHttpRequest
 // @grant            GM_getResourceText
 // @grant            GM_openInTab
@@ -2642,7 +2641,7 @@
       return TypedArray && thing instanceof TypedArray;
     };
   }(typeof Uint8Array !== "undefined" && Object.getPrototypeOf(Uint8Array));
-  var utils$c = {
+  var utils$b = {
     isArray,
     isArrayBuffer,
     isBuffer,
@@ -2674,7 +2673,7 @@
     isTypedArray,
     isFileList
   };
-  var utils$b = utils$c;
+  var utils$a = utils$b;
   function encode(val) {
     return encodeURIComponent(val).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
   }
@@ -2685,23 +2684,23 @@
     var serializedParams;
     if (paramsSerializer) {
       serializedParams = paramsSerializer(params);
-    } else if (utils$b.isURLSearchParams(params)) {
+    } else if (utils$a.isURLSearchParams(params)) {
       serializedParams = params.toString();
     } else {
       var parts = [];
-      utils$b.forEach(params, function serialize(val, key) {
+      utils$a.forEach(params, function serialize(val, key) {
         if (val === null || typeof val === "undefined") {
           return;
         }
-        if (utils$b.isArray(val)) {
+        if (utils$a.isArray(val)) {
           key = key + "[]";
         } else {
           val = [val];
         }
-        utils$b.forEach(val, function parseValue(v) {
-          if (utils$b.isDate(v)) {
+        utils$a.forEach(val, function parseValue(v) {
+          if (utils$a.isDate(v)) {
             v = v.toISOString();
-          } else if (utils$b.isObject(v)) {
+          } else if (utils$a.isObject(v)) {
             v = JSON.stringify(v);
           }
           parts.push(encode(key) + "=" + encode(v));
@@ -2718,7 +2717,7 @@
     }
     return url;
   };
-  var utils$a = utils$c;
+  var utils$9 = utils$b;
   function InterceptorManager$1() {
     this.handlers = [];
   }
@@ -2737,23 +2736,23 @@
     }
   };
   InterceptorManager$1.prototype.forEach = function forEach2(fn) {
-    utils$a.forEach(this.handlers, function forEachHandler(h2) {
+    utils$9.forEach(this.handlers, function forEachHandler(h2) {
       if (h2 !== null) {
         fn(h2);
       }
     });
   };
   var InterceptorManager_1 = InterceptorManager$1;
-  var utils$9 = utils$c;
+  var utils$8 = utils$b;
   var normalizeHeaderName$1 = function normalizeHeaderName2(headers2, normalizedName) {
-    utils$9.forEach(headers2, function processHeader(value, name) {
+    utils$8.forEach(headers2, function processHeader(value, name) {
       if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
         headers2[normalizedName] = value;
         delete headers2[name];
       }
     });
   };
-  var utils$8 = utils$c;
+  var utils$7 = utils$b;
   function AxiosError$3(message, code, config, request, response) {
     Error.call(this);
     this.message = message;
@@ -2763,7 +2762,7 @@
     request && (this.request = request);
     response && (this.response = response);
   }
-  utils$8.inherits(AxiosError$3, Error, {
+  utils$7.inherits(AxiosError$3, Error, {
     toJSON: function toJSON() {
       return {
         // Standard
@@ -2805,7 +2804,7 @@
   Object.defineProperty(prototype, "isAxiosError", { value: true });
   AxiosError$3.from = function(error, code, config, request, response, customProps) {
     var axiosError = Object.create(prototype);
-    utils$8.toFlatObject(error, axiosError, function filter(obj) {
+    utils$7.toFlatObject(error, axiosError, function filter(obj) {
       return obj !== Error.prototype;
     });
     AxiosError$3.call(axiosError, error.message, code, config, request, response);
@@ -2819,53 +2818,61 @@
     forcedJSONParsing: true,
     clarifyTimeoutError: false
   };
-  var utils$7 = utils$c;
-  function toFormData$1(obj, formData) {
-    formData = formData || new FormData();
-    var stack = [];
-    function convertValue(value) {
-      if (value === null)
-        return "";
-      if (utils$7.isDate(value)) {
-        return value.toISOString();
-      }
-      if (utils$7.isArrayBuffer(value) || utils$7.isTypedArray(value)) {
-        return typeof Blob === "function" ? new Blob([value]) : Buffer.from(value);
-      }
-      return value;
-    }
-    function build(data2, parentKey) {
-      if (utils$7.isPlainObject(data2) || utils$7.isArray(data2)) {
-        if (stack.indexOf(data2) !== -1) {
-          throw Error("Circular reference detected in " + parentKey);
+  var toFormData_1;
+  var hasRequiredToFormData;
+  function requireToFormData() {
+    if (hasRequiredToFormData)
+      return toFormData_1;
+    hasRequiredToFormData = 1;
+    var utils2 = utils$b;
+    function toFormData2(obj, formData) {
+      formData = formData || new FormData();
+      var stack = [];
+      function convertValue(value) {
+        if (value === null)
+          return "";
+        if (utils2.isDate(value)) {
+          return value.toISOString();
         }
-        stack.push(data2);
-        utils$7.forEach(data2, function each(value, key) {
-          if (utils$7.isUndefined(value))
-            return;
-          var fullKey = parentKey ? parentKey + "." + key : key;
-          var arr;
-          if (value && !parentKey && typeof value === "object") {
-            if (utils$7.endsWith(key, "{}")) {
-              value = JSON.stringify(value);
-            } else if (utils$7.endsWith(key, "[]") && (arr = utils$7.toArray(value))) {
-              arr.forEach(function(el) {
-                !utils$7.isUndefined(el) && formData.append(fullKey, convertValue(el));
-              });
-              return;
-            }
-          }
-          build(value, fullKey);
-        });
-        stack.pop();
-      } else {
-        formData.append(parentKey, convertValue(data2));
+        if (utils2.isArrayBuffer(value) || utils2.isTypedArray(value)) {
+          return typeof Blob === "function" ? new Blob([value]) : Buffer.from(value);
+        }
+        return value;
       }
+      function build(data2, parentKey) {
+        if (utils2.isPlainObject(data2) || utils2.isArray(data2)) {
+          if (stack.indexOf(data2) !== -1) {
+            throw Error("Circular reference detected in " + parentKey);
+          }
+          stack.push(data2);
+          utils2.forEach(data2, function each(value, key) {
+            if (utils2.isUndefined(value))
+              return;
+            var fullKey = parentKey ? parentKey + "." + key : key;
+            var arr;
+            if (value && !parentKey && typeof value === "object") {
+              if (utils2.endsWith(key, "{}")) {
+                value = JSON.stringify(value);
+              } else if (utils2.endsWith(key, "[]") && (arr = utils2.toArray(value))) {
+                arr.forEach(function(el) {
+                  !utils2.isUndefined(el) && formData.append(fullKey, convertValue(el));
+                });
+                return;
+              }
+            }
+            build(value, fullKey);
+          });
+          stack.pop();
+        } else {
+          formData.append(parentKey, convertValue(data2));
+        }
+      }
+      build(obj);
+      return formData;
     }
-    build(obj);
-    return formData;
+    toFormData_1 = toFormData2;
+    return toFormData_1;
   }
-  var toFormData_1 = toFormData$1;
   var AxiosError$2 = AxiosError_1;
   var settle = function settle2(resolve, reject, response) {
     var validateStatus = response.config.validateStatus;
@@ -2887,7 +2894,7 @@
     if (hasRequiredCookies)
       return cookies;
     hasRequiredCookies = 1;
-    var utils2 = utils$c;
+    var utils2 = utils$b;
     cookies = utils2.isStandardBrowserEnv() ? (
       // Standard browser envs support document.cookie
       function standardBrowserEnv() {
@@ -2948,7 +2955,7 @@
     }
     return requestedURL;
   };
-  var utils$6 = utils$c;
+  var utils$6 = utils$b;
   var ignoreDuplicateOf = [
     "age",
     "authorization",
@@ -2999,7 +3006,7 @@
     if (hasRequiredIsURLSameOrigin)
       return isURLSameOrigin;
     hasRequiredIsURLSameOrigin = 1;
-    var utils2 = utils$c;
+    var utils2 = utils$b;
     isURLSameOrigin = utils2.isStandardBrowserEnv() ? (
       // Standard browser envs have full support of the APIs needed to test
       // whether the request URL is of the same origin as current location.
@@ -3048,7 +3055,7 @@
       return CanceledError_1;
     hasRequiredCanceledError = 1;
     var AxiosError2 = AxiosError_1;
-    var utils2 = utils$c;
+    var utils2 = utils$b;
     function CanceledError2(message) {
       AxiosError2.call(this, message == null ? "canceled" : message, AxiosError2.ERR_CANCELED);
       this.name = "CanceledError";
@@ -3077,7 +3084,7 @@
     if (hasRequiredXhr)
       return xhr;
     hasRequiredXhr = 1;
-    var utils2 = utils$c;
+    var utils2 = utils$b;
     var settle$1 = settle;
     var cookies2 = requireCookies();
     var buildURL2 = buildURL$1;
@@ -3238,11 +3245,11 @@
     _null = null;
     return _null;
   }
-  var utils$5 = utils$c;
+  var utils$5 = utils$b;
   var normalizeHeaderName = normalizeHeaderName$1;
   var AxiosError$1 = AxiosError_1;
   var transitionalDefaults = transitional;
-  var toFormData = toFormData_1;
+  var toFormData = requireToFormData();
   var DEFAULT_CONTENT_TYPE = {
     "Content-Type": "application/x-www-form-urlencoded"
   };
@@ -3348,7 +3355,7 @@
     defaults$3.headers[method] = utils$5.merge(DEFAULT_CONTENT_TYPE);
   });
   var defaults_1 = defaults$3;
-  var utils$4 = utils$c;
+  var utils$4 = utils$b;
   var defaults$2 = defaults_1;
   var transformData$1 = function transformData2(data2, headers2, fns) {
     var context = this || defaults$2;
@@ -3368,7 +3375,7 @@
     };
     return isCancel$1;
   }
-  var utils$3 = utils$c;
+  var utils$3 = utils$b;
   var transformData = transformData$1;
   var isCancel = requireIsCancel();
   var defaults$1 = defaults_1;
@@ -3426,7 +3433,7 @@
       return Promise.reject(reason);
     });
   };
-  var utils$2 = utils$c;
+  var utils$2 = utils$b;
   var mergeConfig$2 = function mergeConfig2(config1, config2) {
     config2 = config2 || {};
     var config = {};
@@ -3571,7 +3578,7 @@
     assertOptions,
     validators: validators$1
   };
-  var utils$1 = utils$c;
+  var utils$1 = utils$b;
   var buildURL = buildURL$1;
   var InterceptorManager = InterceptorManager_1;
   var dispatchRequest = dispatchRequest$1;
@@ -3787,13 +3794,13 @@
     if (hasRequiredIsAxiosError)
       return isAxiosError;
     hasRequiredIsAxiosError = 1;
-    var utils2 = utils$c;
+    var utils2 = utils$b;
     isAxiosError = function isAxiosError2(payload) {
       return utils2.isObject(payload) && payload.isAxiosError === true;
     };
     return isAxiosError;
   }
-  var utils = utils$c;
+  var utils = utils$b;
   var bind = bind$2;
   var Axios = Axios_1;
   var mergeConfig = mergeConfig$2;
@@ -3814,7 +3821,7 @@
   axios$1.CancelToken = requireCancelToken();
   axios$1.isCancel = requireIsCancel();
   axios$1.VERSION = requireData().version;
-  axios$1.toFormData = toFormData_1;
+  axios$1.toFormData = requireToFormData();
   axios$1.AxiosError = AxiosError_1;
   axios$1.Cancel = axios$1.CanceledError;
   axios$1.all = function all(promises) {
@@ -3832,7 +3839,7 @@
     return new Promise((resolve, reject) => {
       let requestData = config.data;
       const requestHeaders = config.headers ?? {};
-      if (utils$c.isFormData(requestData)) {
+      if (utils$b.isFormData(requestData)) {
         delete requestHeaders["Content-Type"];
       }
       if (config.auth) {
@@ -3846,7 +3853,7 @@
       const ontimeout = function handleTimeout() {
         reject(new axiosExports$1.AxiosError("timeout of " + config.timeout + "ms exceeded", axiosExports$1.AxiosError.ECONNABORTED, config));
       };
-      utils$c.forEach(requestHeaders, function setRequestHeader(val, key) {
+      utils$b.forEach(requestHeaders, function setRequestHeader(val, key) {
         if (typeof requestData === "undefined" && key.toLowerCase() === "content-type") {
           delete requestHeaders[key];
         }
@@ -3905,25 +3912,23 @@
   const CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list";
   axios.defaults.adapter = xhrAdapter;
   axios.defaults.withCredentials = true;
-  function generate12CharString() {
-    const characters2 = "abcdefghijklmnopqrstuvwxyz0123456789";
+  function generateCharString(number = 16) {
+    const characters2 = "abcdef0123456789";
     let result = "";
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < number; i++) {
       const randomIndex = Math.floor(Math.random() * characters2.length);
       result += characters2[randomIndex];
     }
     return result;
   }
   const headers = {
-    "x-rpc-device_fp": generate12CharString(),
-    //TODO FP获取,暂时取随机字符串
     Referer: "https://webstatic.mihoyo.com/",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
   };
   const to = (promise) => promise.then((data2) => {
     return [null, data2];
   }).catch((err) => [err]);
-  const requestPageSize = 50;
+  const requestPageSize = 200;
   const getAccount = async () => {
     const [err, res] = await to(axios.get(ROLE_URL, {
       headers
@@ -3943,6 +3948,13 @@
     throw err ? err : new Error("账户信息获取失败");
   };
   const getCharacters = async (uid, region, page = 1) => {
+    let fp = await getFp();
+    const headers2 = {
+      "x-rpc-device_fp": fp,
+      //TODO FP获取,暂时取随机字符串
+      Referer: "https://webstatic.mihoyo.com/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    };
     let url = CHARACTERS_URL;
     const [err, res] = await to(axios.post(url, JSON.stringify({
       "element_attr_ids": [],
@@ -3954,7 +3966,7 @@
       "lang": "zh-cn"
     }), {
       timeout: 5e3,
-      headers
+      headers: headers2
     }));
     if (!err) {
       const { status, data: resData } = await res;
@@ -3973,6 +3985,52 @@
   };
   const getCharacterDetail = async (character, uid, region) => {
     return { character, ...character };
+  };
+  function getGuid() {
+    function S4() {
+      return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
+    }
+    return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+  }
+  const getFp = async () => {
+    let fp = localStorage.getItem("fp");
+    let deviceId = localStorage.getItem("mysDeviceId");
+    if (!deviceId) {
+      deviceId = getGuid();
+      localStorage.setItem("mysDeviceId", deviceId);
+    }
+    if (!fp) {
+      let url = "https://public-data-api.mihoyo.com/device-fp/api/getFp";
+      const [err, res] = await to(axios.post(
+        url,
+        JSON.stringify({
+          seed_id: generateCharString(),
+          device_id: deviceId.toUpperCase(),
+          platform: "1",
+          seed_time: new Date().getTime() + "",
+          ext_fields: `{"proxyStatus":"0","accelerometer":"-0.159515x-0.830887x-0.682495","ramCapacity":"3746","IDFV":"${deviceId.toUpperCase()}","gyroscope":"-0.191951x-0.112927x0.632637","isJailBreak":"0","model":"iPhone12,5","ramRemain":"115","chargeStatus":"1","networkType":"WIFI","vendor":"--","osVersion":"17.0.2","batteryStatus":"50","screenSize":"414×896","cpuCores":"6","appMemory":"55","romCapacity":"488153","romRemain":"157348","cpuType":"CPU_TYPE_ARM64","magnetometer":"-84.426331x-89.708435x-37.117889"}`,
+          app_name: "bbs_cn",
+          device_fp: "38d7ee834d1e9"
+        }),
+        {
+          timeout: 5e3,
+          headers
+        }
+      ));
+      if (!err) {
+        const { status, data: resData } = await res;
+        console.log(res);
+        if (status == 200) {
+          const { retcode, data: data2 } = resData;
+          if (retcode === 0) {
+            console.log(data2);
+            return "38d7ee834d1e9";
+          }
+        }
+      }
+    } else {
+      return fp;
+    }
   };
   const getDetailList = async (game_uid, region) => {
     let maxPageSize = Math.ceil(charactersNum / requestPageSize);

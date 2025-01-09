@@ -27,7 +27,7 @@ export default defineConfig({
                 ],
                 license: 'MIT',
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
-                connect: ['api-takumi.mihoyo.com', 'api-os-takumi.hoyoverse.com', 'sg-public-api.hoyoverse.com'],
+                connect: ['api-takumi.mihoyo.com', 'public-data-api.mihoyo.com'],
                 resource: {
                     character: "https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/character.json",
                     weapon: "https://ghproxy.com/https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/weapon.json"
