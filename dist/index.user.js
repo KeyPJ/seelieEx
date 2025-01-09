@@ -2,7 +2,7 @@
 // @name             genshinSeelieEx
 // @name:zh          原神规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          5.3.1
+// @version          5.3.2
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -3951,7 +3951,6 @@
     let fp = await getFp();
     const headers2 = {
       "x-rpc-device_fp": fp,
-      //TODO FP获取,暂时取随机字符串
       Referer: "https://webstatic.mihoyo.com/",
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
     };
@@ -3979,6 +3978,7 @@
         }
       }
     }
+    localStorage.removeItem("fp");
     alert("请确认已登录活动页面且绑定原神账户!");
     GM_openInTab(BBS_URL);
     throw err ? err : new Error("角色列表获取失败");
@@ -4024,7 +4024,9 @@
           const { retcode, data: data2 } = resData;
           if (retcode === 0) {
             console.log(data2);
-            return "38d7ee834d1e9";
+            let resFp = data2["device_fp"];
+            localStorage.setItem("fp", resFp);
+            return resFp;
           }
         }
       }
