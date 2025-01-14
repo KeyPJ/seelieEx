@@ -52,6 +52,10 @@
 		"name": "调和"
 	},
 	{
+		"id": "sweat_now_cry_less",
+		"name": "多流汗，少流泪"
+	},
+	{
 		"id": "multiplication",
 		"name": "蕃息"
 	},
@@ -62,6 +66,10 @@
 	{
 		"id": "poised_to_bloom",
 		"name": "芳华待灼"
+	},
+	{
+		"id": "shadowburn",
+		"name": "焚影"
 	},
 	{
 		"id": "arrows",
@@ -126,6 +134,10 @@
 	{
 		"id": "fine_fruit",
 		"name": "嘉果"
+	},
+	{
+		"id": "time_woven_into_gold",
+		"name": "将光阴织成黄金"
 	},
 	{
 		"id": "today_is_another_peaceful_day",
@@ -256,6 +268,10 @@
 		"name": "睿见"
 	},
 	{
+		"id": "victory_in_a_blink",
+		"name": "胜利只在朝夕间"
+	},
+	{
 		"id": "time_waits_for_no_one",
 		"name": "时节不居"
 	},
@@ -268,8 +284,16 @@
 		"name": "戍御"
 	},
 	{
+		"id": "reminiscence",
+		"name": "溯忆"
+	},
+	{
 		"id": "she_already_shut_her_eyes",
 		"name": "她已闭上双眼"
+	},
+	{
+		"id": "geniuses_greetings",
+		"name": "天才们的问候"
 	},
 	{
 		"id": "geniuses_repose",
@@ -334,6 +358,10 @@
 	{
 		"id": "adversarial",
 		"name": "相抗"
+	},
+	{
+		"id": "into_the_unreachable_veil",
+		"name": "向着不可追问处"
 	},
 	{
 		"id": "after_the_charmony_fall",

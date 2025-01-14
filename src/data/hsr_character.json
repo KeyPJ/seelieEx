@@ -1,5 +1,9 @@
 [
 	{
+		"id": "aglaea",
+		"name": "阿格莱雅"
+	},
+	{
 		"id": "arlan",
 		"name": "阿兰"
 	},
@@ -18,6 +22,10 @@
 	{
 		"id": "bronya",
 		"name": "布洛妮娅"
+	},
+	{
+		"id": "the_herta",
+		"name": "大黑塔"
 	},
 	{
 		"id": "dan_heng",
@@ -98,6 +106,10 @@
 	{
 		"id": "kafka",
 		"name": "卡芙卡"
+	},
+	{
+		"id": "trailblazer_ice_male",
+		"name": "开拓者"
 	},
 	{
 		"id": "trailblazer_physical_male",
