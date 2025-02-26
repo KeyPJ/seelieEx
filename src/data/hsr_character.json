@@ -200,6 +200,10 @@
 		"name": "素裳"
 	},
 	{
+		"id": "tribbie",
+		"name": "缇宝"
+	},
+	{
 		"id": "tingyun",
 		"name": "停云"
 	},
@@ -210,6 +214,10 @@
 	{
 		"id": "welt",
 		"name": "瓦尔特"
+	},
+	{
+		"id": "mydei",
+		"name": "万敌"
 	},
 	{
 		"id": "fugue",

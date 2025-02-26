@@ -128,6 +128,10 @@
 		"name": "记忆的质料"
 	},
 	{
+		"id": "memorys_curtain_never_falls",
+		"name": "记忆永不落幕"
+	},
+	{
 		"id": "memories_of_the_past",
 		"name": "记忆中的模样"
 	},
@@ -260,6 +264,10 @@
 		"name": "忍事录•音律狩猎"
 	},
 	{
+		"id": "if_time_were_a_flower",
+		"name": "如果时间是一朵花"
+	},
+	{
 		"id": "sleep_like_the_dead",
 		"name": "如泥酣眠"
 	},
@@ -378,6 +386,10 @@
 	{
 		"id": "along_the_passing_shore",
 		"name": "行于流逝的岸"
+	},
+	{
+		"id": "flame_of_blood_blaze_my_path",
+		"name": "血火啊，燃烧前路"
 	},
 	{
 		"id": "fermata",
