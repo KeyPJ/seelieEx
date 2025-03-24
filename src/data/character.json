@@ -320,6 +320,10 @@
 		"name": "托马"
 	},
 	{
+		"id": "varesa",
+		"name": "瓦雷莎"
+	},
+	{
 		"id": "venti",
 		"name": "温迪"
 	},
@@ -378,6 +382,10 @@
 	{
 		"id": "yelan",
 		"name": "夜兰"
+	},
+	{
+		"id": "iansan",
+		"name": "伊安珊"
 	},
 	{
 		"id": "eula",
