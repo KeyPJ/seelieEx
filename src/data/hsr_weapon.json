@@ -256,6 +256,10 @@
 		"name": "齐颂"
 	},
 	{
+		"id": "make_farewells_more_beautiful",
+		"name": "让告别，更美一些"
+	},
+	{
 		"id": "dazzling_evilbreaker",
 		"name": "忍法帖•缭乱破魔"
 	},
@@ -274,6 +278,10 @@
 	{
 		"id": "sagacity",
 		"name": "睿见"
+	},
+	{
+		"id": "life_should_be_cast_to_flames",
+		"name": "生命当付之一炬"
 	},
 	{
 		"id": "victory_in_a_blink",
@@ -438,6 +446,10 @@
 	{
 		"id": "planetary_rendezvous",
 		"name": "与行星相会"
+	},
+	{
+		"id": "the_great_cosmic_enterprise",
+		"name": "宇宙大生意"
 	},
 	{
 		"id": "trend_of_the_universal_market",
