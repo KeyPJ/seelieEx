@@ -356,6 +356,10 @@
 		"name": "浪影阔剑"
 	},
 	{
+		"id": "sequence_of_solitude",
+		"name": "冷寂迸音"
+	},
+	{
 		"id": "cool_steel",
 		"name": "冷刃"
 	},
@@ -670,6 +674,10 @@
 	{
 		"id": "luxurious_sea_lord",
 		"name": "衔珠海皇"
+	},
+	{
+		"id": "symphonist_of_scents",
+		"name": "香韵奏者"
 	},
 	{
 		"id": "messenger",

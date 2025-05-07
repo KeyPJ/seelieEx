@@ -20,6 +20,10 @@
 		"name": "艾梅莉埃"
 	},
 	{
+		"id": "escoffier",
+		"name": "爱可菲"
+	},
+	{
 		"id": "amber",
 		"name": "安柏"
 	},
@@ -386,6 +390,10 @@
 	{
 		"id": "iansan",
 		"name": "伊安珊"
+	},
+	{
+		"id": "ifa",
+		"name": "伊法"
 	},
 	{
 		"id": "eula",
