@@ -116,6 +116,10 @@
 		"name": "琥珀"
 	},
 	{
+		"id": "lies_dance_on_the_breeze",
+		"name": "谎言在风中飘扬"
+	},
+	{
 		"id": "a_grounded_ascent",
 		"name": "回到大地的飞行"
 	},
@@ -462,6 +466,10 @@
 	{
 		"id": "loop",
 		"name": "渊环"
+	},
+	{
+		"id": "long_may_rainbows_adorn_the_sky",
+		"name": "愿虹光永驻天空"
 	},
 	{
 		"id": "flames_afar",

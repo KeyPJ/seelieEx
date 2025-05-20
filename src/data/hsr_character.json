@@ -44,6 +44,10 @@
 		"name": "翡翠"
 	},
 	{
+		"id": "hyacine",
+		"name": "风堇"
+	},
+	{
 		"id": "fu_xuan",
 		"name": "符玄"
 	},
@@ -182,6 +186,10 @@
 	{
 		"id": "ruan_mei",
 		"name": "阮•梅"
+	},
+	{
+		"id": "cipher",
+		"name": "赛飞儿"
 	},
 	{
 		"id": "march_7th",
