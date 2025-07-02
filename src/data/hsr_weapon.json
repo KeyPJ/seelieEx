@@ -84,6 +84,10 @@
 		"name": "孤独的疗愈"
 	},
 	{
+		"id": "the_storys_next_page",
+		"name": "故事的下一页"
+	},
+	{
 		"id": "echoes_of_the_coffin",
 		"name": "棺的回响"
 	},
@@ -116,6 +120,10 @@
 		"name": "琥珀"
 	},
 	{
+		"id": "the_flower_remembers",
+		"name": "花儿不会忘记"
+	},
+	{
 		"id": "lies_dance_on_the_breeze",
 		"name": "谎言在风中飘扬"
 	},
@@ -142,6 +150,10 @@
 	{
 		"id": "fine_fruit",
 		"name": "嘉果"
+	},
+	{
+		"id": "holiday_thermae_escapade",
+		"name": "假日浴场大冒险"
 	},
 	{
 		"id": "time_woven_into_gold",
@@ -184,6 +196,14 @@
 		"name": "离弦"
 	},
 	{
+		"id": "thus_burns_the_dawn",
+		"name": "黎明恰如此燃烧"
+	},
+	{
+		"id": "the_hell_where_ideals_burn",
+		"name": "理想燃烧的地狱"
+	},
+	{
 		"id": "concert_for_two",
 		"name": "两个人的演唱会"
 	},
@@ -210,6 +230,10 @@
 	{
 		"id": "dance_at_sunset",
 		"name": "落日时起舞"
+	},
+	{
+		"id": "a_thankless_coronation",
+		"name": "没有回报的加冕"
 	},
 	{
 		"id": "dreamville_adventure",
@@ -420,8 +444,16 @@
 		"name": "一场术后对话"
 	},
 	{
+		"id": "a_trail_of_bygone_blood",
+		"name": "一行往日的血"
+	},
+	{
 		"id": "in_the_name_of_the_world",
 		"name": "以世界之名"
+	},
+	{
+		"id": "a_dream_scented_in_wheat",
+		"name": "氤氲麦香的梦"
 	},
 	{
 		"id": "the_day_the_cosmos_fell",
@@ -438,6 +470,10 @@
 	{
 		"id": "earthly_escapade",
 		"name": "游戏尘寰"
+	},
+	{
+		"id": "see_you_at_the_end",
+		"name": "于那终点再见"
 	},
 	{
 		"id": "in_the_night",
@@ -472,6 +508,10 @@
 		"name": "愿虹光永驻天空"
 	},
 	{
+		"id": "journey_forever_peaceful",
+		"name": "愿旅途永远坦然"
+	},
+	{
 		"id": "flames_afar",
 		"name": "在火的远处"
 	},
@@ -496,6 +536,10 @@
 		"name": "织造命运之线"
 	},
 	{
+		"id": "unto_tomorrows_morrow",
+		"name": "直到明天的明天"
+	},
+	{
 		"id": "patience_is_all_you_need",
 		"name": "只需等待"
 	},
@@ -514,6 +558,10 @@
 	{
 		"id": "reforged_remembrance",
 		"name": "重塑时光之忆"
+	},
+	{
+		"id": "in_pursuit_of_the_wind",
+		"name": "追逐风的时候"
 	},
 	{
 		"id": "final_victor",

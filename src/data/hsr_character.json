@@ -12,6 +12,10 @@
 		"name": "艾丝妲"
 	},
 	{
+		"id": "phainon",
+		"name": "白厄"
+	},
+	{
 		"id": "bailu",
 		"name": "白露"
 	},
@@ -282,5 +286,13 @@
 	{
 		"id": "robin",
 		"name": "知更鸟"
+	},
+	{
+		"id": "archer",
+		"name": "Archer"
+	},
+	{
+		"id": "saber",
+		"name": "Saber"
 	}
 ]
