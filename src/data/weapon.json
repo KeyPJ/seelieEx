@@ -508,6 +508,10 @@
 		"name": "圣显之钥"
 	},
 	{
+		"id": "flame_forged_insight",
+		"name": "拾慧铸熔"
+	},
+	{
 		"id": "prototype_crescent",
 		"name": "试作澹月"
 	},
@@ -754,6 +758,10 @@
 	{
 		"id": "oathsworn_eye",
 		"name": "证誓之明瞳"
+	},
+	{
+		"id": "fractured_halo",
+		"name": "支离轮光"
 	},
 	{
 		"id": "elegy_for_the_end",
