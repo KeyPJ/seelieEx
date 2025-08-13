@@ -96,6 +96,10 @@
 		"name": "过往未来"
 	},
 	{
+		"id": "why_does_the_ocean_sing",
+		"name": "海洋为何而歌"
+	},
+	{
 		"id": "its_showtime",
 		"name": "好戏开演"
 	},
@@ -162,6 +166,10 @@
 	{
 		"id": "today_is_another_peaceful_day",
 		"name": "今日亦是和平的一日"
+	},
+	{
+		"id": "epoch_etched_in_golden_blood",
+		"name": "金血铭刻的时代"
 	},
 	{
 		"id": "night_of_fright",
@@ -462,6 +470,10 @@
 	{
 		"id": "night_on_the_milky_way",
 		"name": "银河铁道之夜"
+	},
+	{
+		"id": "the_forever_victual",
+		"name": "永远的迷境饭"
 	},
 	{
 		"id": "void",
