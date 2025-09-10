@@ -24,6 +24,10 @@
 		"name": "爱可菲"
 	},
 	{
+		"id": "aino",
+		"name": "爱诺"
+	},
+	{
 		"id": "amber",
 		"name": "安柏"
 	},
@@ -70,6 +74,10 @@
 	{
 		"id": "faruzan",
 		"name": "珐露珊"
+	},
+	{
+		"id": "flins",
+		"name": "菲林斯"
 	},
 	{
 		"id": "freminet",
@@ -146,6 +154,10 @@
 	{
 		"id": "keqing",
 		"name": "刻晴"
+	},
+	{
+		"id": "lauma",
+		"name": "菈乌玛"
 	},
 	{
 		"id": "wriothesley",

@@ -172,6 +172,10 @@
 		"name": "反曲弓"
 	},
 	{
+		"id": "nightweavers_looking_glass",
+		"name": "纺夜天镜"
+	},
+	{
 		"id": "thundering_pulse",
 		"name": "飞雷之弦振"
 	},
@@ -344,6 +348,10 @@
 		"name": "绝弦"
 	},
 	{
+		"id": "prospectors_shovel",
+		"name": "掘金之锹"
+	},
+	{
 		"id": "prospectors_drill",
 		"name": "勘探钻机"
 	},
@@ -412,6 +420,10 @@
 		"name": "掠食者"
 	},
 	{
+		"id": "snare_hook",
+		"name": "罗网勾针"
+	},
+	{
 		"id": "fading_twilight",
 		"name": "落霞"
 	},
@@ -426,6 +438,10 @@
 	{
 		"id": "sturdy_bone",
 		"name": "弥坚骨"
+	},
+	{
+		"id": "serenitys_call",
+		"name": "谧音吹哨"
 	},
 	{
 		"id": "magic_guide",
@@ -564,6 +580,10 @@
 		"name": "薙草之稻光"
 	},
 	{
+		"id": "etherlight_spindlelute",
+		"name": "天光的纺琴"
+	},
+	{
 		"id": "skyward_pride",
 		"name": "天空之傲"
 	},
@@ -604,6 +624,10 @@
 		"name": "万国诸海图谱"
 	},
 	{
+		"id": "master_key",
+		"name": "万能钥匙"
+	},
+	{
 		"id": "tome_of_the_eternal_flow",
 		"name": "万世流涌大典"
 	},
@@ -614,6 +638,10 @@
 	{
 		"id": "beacon_of_the_reed_sea",
 		"name": "苇海信标"
+	},
+	{
+		"id": "blackmarrow_lantern",
+		"name": "乌髓孑灯"
 	},
 	{
 		"id": "the_unforged",
@@ -700,6 +728,10 @@
 		"name": "雪葬的星银"
 	},
 	{
+		"id": "bloodsoaked_ruins",
+		"name": "血染荒城"
+	},
+	{
 		"id": "raven_bow",
 		"name": "鸦羽弓"
 	},
@@ -762,6 +794,10 @@
 	{
 		"id": "fractured_halo",
 		"name": "支离轮光"
+	},
+	{
+		"id": "moonweavers_dawn",
+		"name": "织月者的曙色"
 	},
 	{
 		"id": "elegy_for_the_end",
