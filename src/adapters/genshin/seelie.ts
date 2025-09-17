@@ -236,7 +236,7 @@ const updateTalent = (talent: TalentGoal, normalGoal = 9, skillGoal = 9, burstGo
     addGoal(talentNew)
 }
 
-export const batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number) => {
+export const batchUpdateTalent: (all: boolean, normal: number, skill: number, burst: number) => void = (all: boolean, normal: number, skill: number, burst: number) => {
     getTotalGoal().filter(a => a.type == 'talent').filter(a => all || !getGoalInactive().includes(a.character as string))
         .map(a => updateTalent(a as TalentGoal, normal, skill, burst))
 }
@@ -254,13 +254,13 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
     addGoal(characterGoalNew)
 }
 
-export const batchUpdateCharacter = (all: boolean, characterStatusGoal: CharacterStatus,) => {
+export const batchUpdateCharacter: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = (all: boolean, characterStatusGoal: CharacterStatus,) => {
     getTotalGoal().filter(a => a.type == "character").filter(a => all || !getGoalInactive().includes(a.character as string))
         .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
     location.reload()
 }
 
-export const batchUpdateWeapon = (all: boolean, characterStatusGoal: CharacterStatus,) => {
+export const batchUpdateWeapon: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = (all: boolean, characterStatusGoal: CharacterStatus,) => {
     getTotalGoal().filter(a => a.type == "weapon").filter(a => all || !getGoalInactive().includes(a.weapon as string))
         .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
     location.reload()

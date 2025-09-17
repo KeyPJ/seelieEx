@@ -1,10 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useState, useRef, useEffect} from "react";
 import ListboxSelect from "./select/ListboxSelect";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
-import { batchUpdateCharacter, batchUpdateWeapon } from "../seelie";
+import {AdapterManager} from '../adapters/adapterManager';
 
-function ExDialog() {
+interface IProps {
+    onClose: () => void
+}
+
+function ExDialog(props: IProps) {
+    const {onClose} = props;
+
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    // 页面加载时自动显示当前游戏名称
+    useEffect(() => {
+        console.log(`当前游戏：${currentAdapter.getGameName()}`);
+    }, [currentAdapter]);
+
     const [accountList, setAccountList] = useState<mihoyo.Role[]>([]);
     const [currentAccount, setCurrentAccount] = useState<mihoyo.Role>();
     const [isFirstPanelOpen, setIsFirstPanelOpen] = useState(false);
@@ -47,19 +59,19 @@ function ExDialog() {
     };
 
     const getAccountList = () => {
-        import("../hoyo").then(({ getAccount }) => {
-            getAccount()
-                .then((res) => {
-                    const roles: mihoyo.Role[] = res;
-                    setAccountList(roles);
-                    roles.length > 0 && setCurrentAccount(roles[0]);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    console.error("账户信息获取失败");
-                    alert("账户信息获取失败");
-                });
-        });
+        // import("../adapters/genshin/hoyo").then(({ getAccount }) => {
+        currentAdapter.getAccounts()
+            .then((res) => {
+                const roles: mihoyo.Role[] = res;
+                setAccountList(roles);
+                roles.length > 0 && setCurrentAccount(roles[0]);
+            })
+            .catch((err) => {
+                console.error(err);
+                console.error("账户信息获取失败");
+                alert("账户信息获取失败");
+            });
+        // });
     };
 
     const syncCharacterInfo = () => {
@@ -70,49 +82,52 @@ function ExDialog() {
         }
         console.log("开始同步角色信息");
 
-        const { game_uid, region } = currentAccount;
-        import("../hoyo").then(({ getDetailList }) => {
-            getDetailList(game_uid, region)
-                .then((res) => {
-                    console.group("返回数据");
-                    console.groupCollapsed("角色");
-                    console.table(res.map((a) => a.character));
+        const {game_uid, region} = currentAccount;
+        currentAdapter.getCharacterDetails(game_uid, region)
+            .then((res) => {
+                console.group("返回数据");
+                console.groupCollapsed("角色");
+                console.table(res.map((a) => a.character));
+                console.groupEnd();
+                console.groupCollapsed("武器");
+                console.table(res.map((a) => a.weapon));
+                console.groupEnd();
+                console.groupCollapsed("角色天赋");
+                res.forEach((c) => {
+                    const name = c.character.name;
+                    console.groupCollapsed(name);
+                    console.table(c.skill_list);
                     console.groupEnd();
-                    console.groupCollapsed("武器");
-                    console.table(res.map((a) => a.weapon));
-                    console.groupEnd();
-                    console.groupCollapsed("角色天赋");
-                    res.forEach((c) => {
-                        const name = c.character.name;
-                        console.groupCollapsed(name);
-                        console.table(c.skill_list);
-                        console.groupEnd();
-                    });
-                    console.groupEnd();
-                    console.groupEnd();
-                    res.forEach((v) => {
-                        import("../seelie").then(({ addCharacter }) => {
-                            addCharacter(v);
-                        });
-                    });
-                    console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
-                    console.log("角色信息同步完毕");
-                    alert("角色信息同步完毕");
-                    location.reload();
-                })
-                .catch((err) => {
-                    console.error("同步失败:", err);
-                    alert("角色信息同步失败");
                 });
-        });
+                console.groupEnd();
+                console.groupEnd();
+                currentAdapter.syncCharacters(res);
+                console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
+                console.log("角色信息同步完毕");
+                alert("角色信息同步完毕");
+                location.reload();
+            })
+            .catch((err) => {
+                console.error("同步失败:", err);
+                alert("角色信息同步失败");
+            });
     };
 
     function classNames(...classes: string[]) {
         return classes.filter(Boolean).join(" ");
     }
 
+    // 添加鼠标移出事件处理函数
+    const handleMouseLeave = () => {
+        setIsFirstPanelOpen(false);
+        setIsSecondPanelOpen(false);
+        onClose()
+    };
+
     return (
-        <div className="fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl">
+        <div
+            className="fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl"
+            onMouseLeave={handleMouseLeave}>
             <h1 className="text-3xl font-bold underline pt-4 text-white">SeelieEX</h1>
             <div className="w-full p-4">
                 <div className="w-full max-w-md p-2 mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
@@ -231,14 +246,17 @@ function ExDialog() {
                                         {activeTab === 0 && (
                                             <CharacterGoalTab
                                                 showText={"角色"}
-                                                batchUpdateCharacter={batchUpdateCharacter}
+                                                batchUpdateCharacter={currentAdapter.batchUpdateCharacter}
+                                                characterStatusList={currentAdapter.getCharacterStatusList()}
                                             />
                                         )}
-                                        {activeTab === 1 && <TalentGoalTab />}
+                                        {activeTab === 1 &&
+                                            <TalentGoalTab batchUpdateTalent={currentAdapter.batchUpdateTalent}/>}
                                         {activeTab === 2 && (
                                             <CharacterGoalTab
                                                 showText={"武器"}
-                                                batchUpdateCharacter={batchUpdateWeapon}
+                                                batchUpdateCharacter={currentAdapter.batchUpdateWeapon}
+                                                characterStatusList={currentAdapter.getCharacterStatusList()}
                                             />
                                         )}
                                     </div>

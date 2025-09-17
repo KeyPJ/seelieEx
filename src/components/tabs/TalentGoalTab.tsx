@@ -1,10 +1,15 @@
 import React, {useState} from "react";
-import {batchUpdateTalent} from "../../seelie";
 
 import ToggleSwitch from "../switch/ToggleSwitch";
 import ListboxSelect from "../select/ListboxSelect";
 
-function TalentGoalTab() {
+interface IProps {
+    batchUpdateTalent: Function
+}
+
+function TalentGoalTab(props: IProps) {
+
+    const {batchUpdateTalent} = props
 
     const [selectAllRoles, setSelectAllRoles] = useState<boolean>(() => true);
 

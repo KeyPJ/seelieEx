@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {characterStatusList} from "../../seelie";
 import CharacterStatus = seelie.CharacterStatus;
 
 import ToggleSwitch from "../switch/ToggleSwitch";
@@ -8,11 +7,12 @@ import ListboxSelect from "../select/ListboxSelect";
 interface IProps {
     showText: string,
     batchUpdateCharacter: Function
+    characterStatusList: CharacterStatus[]
 }
 
 function CharacterGoalTab(props: IProps) {
 
-    const {showText, batchUpdateCharacter} = props
+    const {showText, batchUpdateCharacter, characterStatusList} = props
 
     const [selectAllRoles, setSelectAllRoles] = useState<boolean>(() => true);
 

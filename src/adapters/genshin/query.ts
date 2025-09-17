@@ -6,7 +6,7 @@ interface queryName {
 const characters = JSON.parse(GM_getResourceText("character")) as queryName[];
 const weapons = JSON.parse(GM_getResourceText("weapon")) as queryName[];
 
-export const charactersNum=characters.length;
+export const charactersNum = characters.length;
 
 export const getCharacterId = (queryName: string) => {
     for (let e of characters) {
