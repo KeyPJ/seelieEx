@@ -1,211 +1,251 @@
-import React, {useState} from "react";
+import React, { useState, useRef, useEffect } from "react";
+import ListboxSelect from "./select/ListboxSelect";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
-import {addCharacter, batchUpdateCharacter, batchUpdateWeapon} from "../seelie";
-import {getAccount, getDetailList, isGlobal} from "../hoyo";
-import {Disclosure, Tab} from "@headlessui/react";
-import {ChevronUpIcon} from '@heroicons/react/solid'
-import ToggleSwitch from "./switch/ToggleSwitch";
-import ListboxSelect from "./select/ListboxSelect";
-import Role = mihoyo.Role;
-
+import { batchUpdateCharacter, batchUpdateWeapon } from "../seelie";
 
 function ExDialog() {
+    const [accountList, setAccountList] = useState<mihoyo.Role[]>([]);
+    const [currentAccount, setCurrentAccount] = useState<mihoyo.Role>();
+    const [isFirstPanelOpen, setIsFirstPanelOpen] = useState(false);
+    const [isSecondPanelOpen, setIsSecondPanelOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(0);
+    const panelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
 
-    // const [gameBizSwitchEnabled, setGameBizSwitchEnabled] = useState(() => isGlobal())
-    //
-    // const onChangeGameBiz = (e: boolean) => {
-    //     setGameBizSwitchEnabled(e)
-    //     let gameBizNew = (!e) ? 'hk4e_cn' : 'hk4e_global';
-    //     console.log(gameBizNew)
-    //     localStorage.setItem("gameBiz", gameBizNew)
-    // };
-
-    const [accountList, setAccountList] = useState<Role[]>([]);
-
-    const [currentAccount, setCurrentAccount] = useState<Role>();
+    // 点击外部关闭面板
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                panelRefs[0].current &&
+                !panelRefs[0].current.contains(e.target as Node) &&
+                isFirstPanelOpen
+            ) {
+                setIsFirstPanelOpen(false);
+            }
+            if (
+                panelRefs[1].current &&
+                !panelRefs[1].current.contains(e.target as Node) &&
+                isSecondPanelOpen
+            ) {
+                setIsSecondPanelOpen(false);
+            }
+        };
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
+    }, [isFirstPanelOpen, isSecondPanelOpen]);
 
     const handleRoleSelectChange = (idx: number) => {
-        setCurrentAccount(accountList[idx])
-    }
+        setCurrentAccount(accountList[idx]);
+    };
 
     const accountShow = (idx: number) => {
-        if (!accountList || !(accountList[idx])) {
-            return '';
+        if (!accountList || !accountList[idx]) {
+            return "";
         }
         const role = accountList[idx];
-        return `${role.game_uid}(${role.region})`
-    }
+        return `${role.game_uid}(${role.region})`;
+    };
 
     const getAccountList = () => {
-        getAccount().then(
-            res => {
-                const roles: mihoyo.Role[] = res;
-                setAccountList(roles)
-                roles.length > 0 && setCurrentAccount(roles[0])
-            }
-        ).catch(
-            err => {
-                console.error(err)
-                console.error("账户信息获取失败")
-                alert("账户信息获取失败")
-            }
-        )
+        import("../hoyo").then(({ getAccount }) => {
+            getAccount()
+                .then((res) => {
+                    const roles: mihoyo.Role[] = res;
+                    setAccountList(roles);
+                    roles.length > 0 && setCurrentAccount(roles[0]);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    console.error("账户信息获取失败");
+                    alert("账户信息获取失败");
+                });
+        });
     };
 
     const syncCharacterInfo = () => {
         if (!currentAccount) {
-            console.error("账户信息获取失败")
-            alert("账户信息获取失败")
-            return
+            console.error("账户信息获取失败");
+            alert("账户信息获取失败");
+            return;
         }
-        console.log("开始同步角色信息")
-        const {game_uid, region} = currentAccount;
-        getDetailList(game_uid, region).then(
-            res => {
-                console.group('返回数据');
-                console.groupCollapsed('角色');
-                console.table(res.map(a => a.character))
-                console.groupEnd();
-                console.groupCollapsed('武器');
-                console.table(res.map(a => a.weapon))
-                console.groupEnd();
-                console.groupCollapsed('角色天赋');
-                res.forEach(
-                    c => {
+        console.log("开始同步角色信息");
+
+        const { game_uid, region } = currentAccount;
+        import("../hoyo").then(({ getDetailList }) => {
+            getDetailList(game_uid, region)
+                .then((res) => {
+                    console.group("返回数据");
+                    console.groupCollapsed("角色");
+                    console.table(res.map((a) => a.character));
+                    console.groupEnd();
+                    console.groupCollapsed("武器");
+                    console.table(res.map((a) => a.weapon));
+                    console.groupEnd();
+                    console.groupCollapsed("角色天赋");
+                    res.forEach((c) => {
                         const name = c.character.name;
                         console.groupCollapsed(name);
-                        console.table(c.skill_list)
+                        console.table(c.skill_list);
                         console.groupEnd();
-                    }
-                )
-                console.groupEnd();
-                console.groupEnd();
-                res.forEach(
-                    v => {
-                        addCharacter(v)
-                    }
-                )
-                console.log(`米游社数据无法判断是否突破,请自行比较整数等级是否已突破`)
-                console.log(`角色信息同步完毕`)
-                alert("角色信息同步完毕")
-                location.reload();
-            }
-        )
-    }
+                    });
+                    console.groupEnd();
+                    console.groupEnd();
+                    res.forEach((v) => {
+                        import("../seelie").then(({ addCharacter }) => {
+                            addCharacter(v);
+                        });
+                    });
+                    console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
+                    console.log("角色信息同步完毕");
+                    alert("角色信息同步完毕");
+                    location.reload();
+                })
+                .catch((err) => {
+                    console.error("同步失败:", err);
+                    alert("角色信息同步失败");
+                });
+        });
+    };
 
     function classNames(...classes: string[]) {
-        return classes.filter(Boolean).join(' ')
+        return classes.filter(Boolean).join(" ");
     }
 
     return (
-        <div className="fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-700 opacity-75 text-white text-center z-[1200]">
-            <h1 className="text-3xl font-bold underline pt-4">
-                SeelieEX
-            </h1>
-            <h2 className="text-xl font-bold underline pt-4">
-                本脚本与原网页样式冲突,不使用时可以临时禁用脚本
-            </h2>
+        <div className="fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl">
+            <h1 className="text-3xl font-bold underline pt-4 text-white">SeelieEX</h1>
             <div className="w-full p-4">
-                <div className="w-full max-w-md p-2 mx-auto bg-purple rounded-2xl">
-                    <Disclosure>
-                        {({open}) => (
-                            <>
-                                <Disclosure.Button
-                                    className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-slate-900 bg-purple-100 rounded-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
-                                    <span>角色信息同步</span>
-                                    <ChevronUpIcon
-                                        className={`${
-                                            open ? 'transform rotate-180' : ''
-                                        } w-5 h-5 text-purple-500`}
-                                    />
-                                </Disclosure.Button>
-                                <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-white-500">
-                                    {/*<div className="flex pt-4">*/}
-                                    {/*    <div className="w-1/2 text-white-900">*/}
-                                    {/*        区服选择:*/}
-                                    {/*    </div>*/}
-                                    {/*    <ToggleSwitch*/}
-                                    {/*        className='w-1/2'*/}
-                                    {/*        checked={gameBizSwitchEnabled}*/}
-                                    {/*        onChange={onChangeGameBiz}*/}
-                                    {/*        labelLeft={'国服'}*/}
-                                    {/*        labelRight={'国际服'}*/}
-                                    {/*    />*/}
-                                    {/*</div>*/}
-                                    <div className="flex pt-2">
-                                        <div className="w-full">
-                                            <button className="text-white bg-blue-500 px-4 py-2"
-                                                    onClick={getAccountList}>获取账户信息
-                                            </button>
-                                        </div>
+                <div className="w-full max-w-md p-2 mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
+                    {/* 第一个折叠面板 - 角色信息同步 */}
+                    <div ref={panelRefs[0]} className="mt-2 border border-gray-700 rounded-lg bg-slate-700/50">
+                        <button
+                            className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors"
+                            onClick={() => setIsFirstPanelOpen(!isFirstPanelOpen)}
+                        >
+                            <span>角色信息同步</span>
+                            <svg
+                                className={`w-5 h-5 text-purple-300 transition-transform ${
+                                    isFirstPanelOpen ? "transform rotate-180" : ""
+                                }`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 9l-7 7-7-7"
+                                />
+                            </svg>
+                        </button>
+
+                        {isFirstPanelOpen && (
+                            <div className="px-4 pt-4 pb-2 text-sm text-gray-100">
+                                <div className="flex pt-2">
+                                    <div className="w-full">
+                                        <button
+                                            className="text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded transition-colors"
+                                            onClick={getAccountList}
+                                        >
+                                            获取账户信息
+                                        </button>
                                     </div>
-                                    <div className="flex pt-4">
-                                        <div className="w-1/2 text-white-900">
-                                            账户选择:
-                                        </div>
-                                        <div className="w-1/2">
-                                            <ListboxSelect
-                                                selected={currentAccount ? accountList.indexOf(currentAccount) : 0}
-                                                setSelected={handleRoleSelectChange}
-                                                optionList={accountList.map((_, idx) => idx)}
-                                                show={accountShow}
-                                            />
-                                        </div>
+                                </div>
+
+                                <div className="flex pt-4">
+                                    <div className="w-1/2 text-gray-200">
+                                        账户选择:
                                     </div>
-                                    <div className="flex pt-2">
-                                        <div className="w-full">
-                                            <button className="text-white bg-blue-500 px-4 py-2"
-                                                    onClick={syncCharacterInfo}>同步mihoyo角色信息
-                                            </button>
-                                        </div>
+                                    <div className="w-1/2">
+                                        <ListboxSelect
+                                            selected={currentAccount ? accountList.indexOf(currentAccount) : 0}
+                                            setSelected={handleRoleSelectChange}
+                                            optionList={accountList.map((_, idx) => idx)}
+                                            show={accountShow}
+                                        />
                                     </div>
-                                </Disclosure.Panel>
-                            </>
+                                </div>
+                                <div className="flex pt-2">
+                                    <div className="w-full">
+                                        <button
+                                            className="text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded transition-colors"
+                                            onClick={syncCharacterInfo}
+                                        >
+                                            同步mihoyo角色信息
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         )}
-                    </Disclosure>
-                    <Disclosure as="div" className="mt-2">
-                        {({open}) => (
-                            <>
-                                <Disclosure.Button
-                                    className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-slate-900 bg-purple-100 rounded-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
-                                    <span>规划批量操作</span>
-                                    <ChevronUpIcon
-                                        className={`${
-                                            open ? 'transform rotate-180' : ''
-                                        } w-5 h-5 text-purple-500`}
-                                    />
-                                </Disclosure.Button>
-                                <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-white-500">
-                                    <Tab.Group>
-                                        <Tab.List className="flex p-1 space-x-1 bg-blue-900/20 rounded-xl">
-                                            {['角色目标等级', '天赋目标等级', '武器目标等级'].map((category) => (
-                                                <Tab
-                                                    key={category}
-                                                    className={({selected}) =>
-                                                        classNames(
-                                                            'w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg',
-                                                            'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60',
-                                                            selected
-                                                                ? 'bg-white shadow'
-                                                                : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
-                                                        )
-                                                    }
+                    </div>
+
+                    {/* 第二个折叠面板 - 规划批量操作 */}
+                    <div ref={panelRefs[1]} className="mt-2 border border-gray-700 rounded-lg bg-slate-700/50">
+                        <button
+                            className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors"
+                            onClick={() => setIsSecondPanelOpen(!isSecondPanelOpen)}
+                        >
+                            <span>规划批量操作</span>
+                            <svg
+                                className={`w-5 h-5 text-purple-300 transition-transform ${
+                                    isSecondPanelOpen ? "transform rotate-180" : ""
+                                }`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 9l-7 7-7-7"
+                                />
+                            </svg>
+                        </button>
+
+                        {isSecondPanelOpen && (
+                            <div className="px-4 pt-4 pb-2 text-sm text-gray-100">
+                                {/* 标签页切换 */}
+                                <div className="mt-4">
+                                    <div className="flex border-b border-gray-600">
+                                        {["角色目标等级", "天赋目标等级", "武器目标等级"].map(
+                                            (title, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    className={classNames(
+                                                        "px-4 py-2 focus:outline-none transition-colors",
+                                                        activeTab === idx
+                                                            ? "border-b-2 border-blue-400 text-blue-300 font-medium"
+                                                            : "text-gray-300 hover:text-white"
+                                                    )}
+                                                    onClick={() => setActiveTab(idx)}
                                                 >
-                                                    {category}
-                                                </Tab>
-                                            ))}
-                                        </Tab.List>
-                                        <Tab.Panels>
-                                            <Tab.Panel><CharacterGoalTab showText={'角色'} batchUpdateCharacter={batchUpdateCharacter}/></Tab.Panel>
-                                            <Tab.Panel><TalentGoalTab/></Tab.Panel>
-                                            <Tab.Panel><CharacterGoalTab showText={'武器'} batchUpdateCharacter={batchUpdateWeapon}/></Tab.Panel>
-                                        </Tab.Panels>
-                                    </Tab.Group>
-                                </Disclosure.Panel>
-                            </>
+                                                    {title}
+                                                </button>
+                                            )
+                                        )}
+                                    </div>
+
+                                    <div className="p-4">
+                                        {activeTab === 0 && (
+                                            <CharacterGoalTab
+                                                showText={"角色"}
+                                                batchUpdateCharacter={batchUpdateCharacter}
+                                            />
+                                        )}
+                                        {activeTab === 1 && <TalentGoalTab />}
+                                        {activeTab === 2 && (
+                                            <CharacterGoalTab
+                                                showText={"武器"}
+                                                batchUpdateCharacter={batchUpdateWeapon}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
                         )}
-                    </Disclosure>
+                    </div>
                 </div>
             </div>
         </div>
