@@ -1,10 +1,10 @@
-import Goal = seelie.Goal;
+import Goal = seelie.GIGoal;
 import CharacterDataEx = mihoyo.CharacterDataEx;
 import CharacterStatus = seelie.CharacterStatus;
-import CharacterGoal = seelie.CharacterGoal;
-import TalentGoal = seelie.TalentGoal;
+import CharacterGoal = seelie.GICharacterGoal;
+import TalentGoal = seelie.GITalentGoal;
+import WeaponGoal = seelie.GIWeaponGoal;
 import {getCharacterId, getElementAttrName, getWeaponId} from "./query";
-import WeaponGoal = seelie.WeaponGoal;
 
 
 const getAccount: () => string = () => localStorage.account || "main";
@@ -18,8 +18,6 @@ const getGoalInactive: () => string[] = () =>
     Object.keys(JSON.parse(localStorage.getItem(`${getAccount()}-inactive`) || "{}"));
 
 const setGoals = (goals: any) => {
-    // console.log(`${getAccount()}-goals`)
-    // console.log(JSON.stringify(goals))
     localStorage.setItem(`${getAccount()}-goals`, JSON.stringify(goals));
     localStorage.setItem("last_update", new Date().toISOString());
 };
@@ -46,7 +44,6 @@ const addGoal = (data: any) => {
 
         data.id = (lastId || 0) + 1;
         goals.push(data);
-        console.log(data);
     }
     setGoals(goals);
 };

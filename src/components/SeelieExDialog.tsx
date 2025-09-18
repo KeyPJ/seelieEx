@@ -3,6 +3,8 @@ import ListboxSelect from "./select/ListboxSelect";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {AdapterManager} from '../adapters/adapterManager';
+import {GameType} from "../adapters/game";
+import TarceGoalTab from "./tabs/TarceGoalTab";
 
 interface IProps {
     onClose: () => void
@@ -59,7 +61,7 @@ function ExDialog(props: IProps) {
     };
 
     const getAccountList = () => {
-        // import("../adapters/genshin/hoyo").then(({ getAccount }) => {
+        console.log("获取%s账户列表",currentAdapter.getGameName())
         currentAdapter.getAccounts()
             .then((res) => {
                 const roles: mihoyo.Role[] = res;
@@ -71,7 +73,6 @@ function ExDialog(props: IProps) {
                 console.error("账户信息获取失败");
                 alert("账户信息获取失败");
             });
-        // });
     };
 
     const syncCharacterInfo = () => {
@@ -85,22 +86,6 @@ function ExDialog(props: IProps) {
         const {game_uid, region} = currentAccount;
         currentAdapter.getCharacterDetails(game_uid, region)
             .then((res) => {
-                console.group("返回数据");
-                console.groupCollapsed("角色");
-                console.table(res.map((a) => a.character));
-                console.groupEnd();
-                console.groupCollapsed("武器");
-                console.table(res.map((a) => a.weapon));
-                console.groupEnd();
-                console.groupCollapsed("角色天赋");
-                res.forEach((c) => {
-                    const name = c.character.name;
-                    console.groupCollapsed(name);
-                    console.table(c.skill_list);
-                    console.groupEnd();
-                });
-                console.groupEnd();
-                console.groupEnd();
                 currentAdapter.syncCharacters(res);
                 console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
                 console.log("角色信息同步完毕");
@@ -250,8 +235,10 @@ function ExDialog(props: IProps) {
                                                 characterStatusList={currentAdapter.getCharacterStatusList()}
                                             />
                                         )}
-                                        {activeTab === 1 &&
+                                        {activeTab === 1 && currentAdapter.getGameName() === GameType.GENSHIN &&
                                             <TalentGoalTab batchUpdateTalent={currentAdapter.batchUpdateTalent}/>}
+                                        {activeTab === 1 && currentAdapter.getGameName() === GameType.HSR &&
+                                            <TarceGoalTab/>}
                                         {activeTab === 2 && (
                                             <CharacterGoalTab
                                                 showText={"武器"}

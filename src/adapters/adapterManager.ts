@@ -1,8 +1,7 @@
 // src/adapters/adapterManager.ts
 import {GameType, GameAdapter, GameDomainMap} from './game';
 import {GenshinAdapter} from './genshin/genshinAdapter';
-
-// import { HsrAdapter } from './hsrAdapter';
+import {HsrAdapter} from "./hsr/hsrAdapter";
 
 export class AdapterManager {
     private static adapters: Map<GameType, GameAdapter> = new Map();
@@ -11,7 +10,7 @@ export class AdapterManager {
     static init() {
         // 注册所有适配器
         this.adapters.set(GameType.GENSHIN, new GenshinAdapter());
-        // this.adapters.set(GameType.HSR, new HsrAdapter());
+        this.adapters.set(GameType.HSR, new HsrAdapter());
 
         this.detectCurrentGame();
     }
@@ -19,6 +18,7 @@ export class AdapterManager {
     // 新增：根据域名检测当前游戏
     private static detectCurrentGame() {
         const hostname = window.location.hostname;
+        console.log("当前域名: %s", hostname);
         // 从域名映射中查找匹配的游戏类型
         for (const [domain, gameType] of Object.entries(GameDomainMap)) {
             if (hostname.includes(domain)) {

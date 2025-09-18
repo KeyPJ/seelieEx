@@ -10,10 +10,8 @@ export enum GameType {
 
 // 新增域名映射配置
 export const GameDomainMap: Record<string, GameType> = {
-    'seelie.me': GameType.GENSHIN,
     'hsr.seelie.me': GameType.HSR,
     'zzz.seelie.me': GameType.ZZZ,
-    'seelie.inmagi.com': GameType.GENSHIN // 保留原有域名
 };
 
 export interface GameAdapter {
@@ -43,8 +41,6 @@ export interface GameAdapter {
         roleUrl: string;
         charactersUrl: string;
         charactersDetailUrl: string;
-        characterIdUrl: string;
-        weaponIdUrl: string;
     };
 
 
