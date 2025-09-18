@@ -1,91 +1,112 @@
-const puppeteer = require('puppeteer')
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
+const puppeteer = require('puppeteer'); // 添加缺失的导入
 
+// 优化getPageData函数，移除未使用的getIdName函数
 async function getPageData(page, url, selector) {
     await page.goto(url, {
         waitUntil: 'domcontentloaded'
-    })
+    });
 
     //等待加载完毕
-    await page.waitForSelector('#main button')
+    await page.waitForSelector('#main button');
+    await page.click('#main button');
 
-    await page.click('#main button')
+    // 第一尝试获取数据
+    let list = await page.$$eval(selector, relativeList => {
+        // 提取ID和名称的通用函数
+        const extractData = (relative, useParent = false) => {
+            const scr = useParent
+                ? relative?.querySelector('.item-image').firstChild?.src
+                : relative?.firstElementChild?.firstElementChild?.src;
+            const match = scr?.match(/(\/([\w-]*)\.png)/);
+            const id = match && match[2];
+            const name = (useParent ? relative.parentElement.innerText : relative.innerText)
+                .replace("NEW", "")
+                .replace("SOON", "")
+                .replace("Custom", "")
+                .replace("CUSTOM", "")
+                .replace("自定义", "")
+                .replace("即将上线", "")
+                .replaceAll("\n", "");
 
-    const list = await page.$$eval(selector, relativeList => relativeList.map(relative => {
-        const scr = relative?.firstElementChild?.firstElementChild?.src
-        const match = scr?.match(/(\/([\w-]*)\.png)/)
-        const id = match && match[2]
-        const name = relative.innerText
-            .replace("NEW", "")
-            .replace("SOON", "")
-            .replace("Custom", "")
-            .replace("自定义", "")
-            .replace("即将上线", "")
-            .replaceAll("\n", "")
-        if (!id || !name) {
-            return null
+            if (!id || !name) return null;
+            return {id, name};
+        };
+
+        // 尝试第一种方式
+        let result = relativeList.map(relative => extractData(relative));
+
+        // 如果第一种方式没有获取到数据，尝试第二种方式
+        if (!result || result.filter(a => !!a).length === 0) {
+            result = relativeList.map(relative => extractData(relative, true));
         }
-        return {id, name}
-    }))
+
+        return result;
+    });
 
     //排序
-    return list.filter(a => !!a).sort((a, b) => a.name.localeCompare(b.name, 'zh'))
+    return list.filter(a => !!a).sort((a, b) => a.name.localeCompare(b.name, 'zh'));
 }
+
+// 配置化数据抓取目标 - 修正键名为单数形式
+const scrapeTargets = [
+    { game: '', type: 'character', url: 'https://seelie.me/characters', selector: '.items-start>.relative' },
+    { game: '', type: 'weapon', url: 'https://seelie.me/weapons', selector: '.items-start>.relative' },
+    { game: 'hsr_', type: 'character', url: 'https://hsr.seelie.me/characters', selector: '.items-start>.relative' },
+    { game: 'hsr_', type: 'weapon', url: 'https://hsr.seelie.me/weapons', selector: '.items-start>.relative' },
+    { game: 'zzz_', type: 'character', url: 'https://zzz.seelie.me/characters', selector: '.item-container' },
+    { game: 'zzz_', type: 'weapon', url: 'https://zzz.seelie.me/weapons', selector: '.item-container' }
+];
 
 const scrape = async () => {
-    const browser = await puppeteer.launch({headless: true, devtools: false})
-    const page = await browser.newPage()
-    await page.evaluateOnNewDocument(() => { //在每个新页面打开前执行以下脚本
-        const newProto = navigator.__proto__
-        delete newProto.webdriver  //删除navigator.webdriver字段
-        navigator.__proto__ = newProto
-        Object.defineProperty(navigator, 'userAgent', {  //userAgent在无头模式下有headless字样，所以需覆写
+    const browser = await puppeteer.launch({headless: true, devtools: false});
+    const page = await browser.newPage();
+
+    // 浏览器环境配置
+    await page.evaluateOnNewDocument(() => {
+        const newProto = navigator.__proto__;
+        delete newProto.webdriver;
+        navigator.__proto__ = newProto;
+
+        Object.defineProperty(navigator, 'userAgent', {
             get: () => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36",
-        })
-        //浏览器设置中文
+        });
+
         Object.defineProperty(navigator, "language", {
-            get: function () {
-                return "zh-CN"
-            }
-        })
+            get: function () { return "zh-CN"; }
+        });
+
         Object.defineProperty(navigator, "languages", {
-            get: function () {
-                return ["zh-CN", "zh"]
-            }
-        })
-    })
-    const charactersUrl = 'https://seelie.me/characters'
-    const selector = '.items-start>.relative'
-    const characters = await getPageData(page, charactersUrl, selector)
-    console.log(characters)
+            get: function () { return ["zh-CN", "zh"]; }
+        });
+    });
 
-    const weaponsUrl = 'https://seelie.me/weapons'
-    const weapons = await getPageData(page, weaponsUrl, selector)
-    console.log(weapons)
+    // 批量抓取所有数据
+    const results = {};
+    for (const target of scrapeTargets) {
+        const key = (target.game ? target.game : '') + target.type;
+        results[key] = await getPageData(page, target.url, target.selector);
+        console.log(results[key]);
+    }
 
+    await browser.close();
+    return results;
+};
 
-    const hsr_charactersUrl = 'https://hsr.seelie.me/characters'
-    const hsr_characters = await getPageData(page, hsr_charactersUrl, selector)
-    console.log(hsr_characters)
-
-    const hsr_weaponsUrl = 'https://hsr.seelie.me/weapons'
-    const hsr_weapons = await getPageData(page, hsr_weaponsUrl, selector)
-    console.log(hsr_weapons)
-
-    await browser.close()
-    return {characters, weapons, hsr_characters, hsr_weapons}
+// 通用的文件写入函数
+function writeDataToFile(data, gamePrefix, type) {
+    const filename = path.join(__dirname, `../data/${gamePrefix}${type}.json`);
+    fs.writeFileSync(filename, JSON.stringify(data, "", "\t"));
 }
 
-scrape().then((value) => {
-    const {characters, weapons} = value
-    fs.writeFileSync(path.join(__dirname, '../data/character.json'), JSON.stringify(characters, "", "\t"))
-    fs.writeFileSync(path.join(__dirname, '../data/weapon.json'), JSON.stringify(weapons, "", "\t"))
-
-    const {hsr_characters, hsr_weapons} = value
-    fs.writeFileSync(path.join(__dirname, '../data/hsr_character.json'), JSON.stringify(hsr_characters, "", "\t"))
-    fs.writeFileSync(path.join(__dirname, '../data/hsr_weapon.json'), JSON.stringify(hsr_weapons, "", "\t"))
-
-
-}).catch(// err => console.error(err)
-)
+scrape().then((results) => {
+    // 使用循环写入所有文件，减少重复代码
+    Object.keys(results).forEach(key => {
+        const match = key.match(/^(hsr_|zzz_)?(character|weapon)$/);
+        if (match) {
+            const [, gamePrefix = '', type] = match;
+            writeDataToFile(results[key], gamePrefix, type);
+        }
+    });
+}).catch(err => console.error('抓取数据失败:', err));
