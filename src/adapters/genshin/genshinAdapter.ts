@@ -1,7 +1,8 @@
 // src/adapters/genshinAdapter.ts
 import {GameAdapter, GameType} from '../game';
-import {getAccount as getGenshinAccount, getDetailList as getGenshinDetailList} from './hoyo';
+import {getDetailList as getGenshinDetailList} from './hoyo';
 import {addCharacter, batchUpdateCharacter, batchUpdateTalent, batchUpdateWeapon, characterStatusList} from './seelie';
+import {getAccount} from "../common";
 
 
 export class GenshinAdapter implements GameAdapter {
@@ -11,15 +12,14 @@ export class GenshinAdapter implements GameAdapter {
 
     getApiConfig() {
         return {
-            bbsUrl: 'https://webstatic.mihoyo.com/ys/event/e20210928review/index.html',
-            roleUrl: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn',
-            charactersUrl: 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list',
-            charactersDetailUrl: 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail',
+            BBS_URL: 'https://act.mihoyo.com/ys/event/calculator/index.html',
+            ROLE_URL: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn'
         };
     }
 
     async getAccounts() {
-        return getGenshinAccount();
+        const {BBS_URL, ROLE_URL} = this.getApiConfig();
+        return await getAccount(ROLE_URL, BBS_URL, this.getGameName());
     }
 
     async getCharacterDetails(uid: string, region: string) {

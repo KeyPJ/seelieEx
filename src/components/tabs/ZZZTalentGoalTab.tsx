@@ -2,26 +2,33 @@ import React, {useState} from "react";
 
 import ToggleSwitch from "../switch/ToggleSwitch";
 import ListboxSelect from "../select/ListboxSelect";
-import {batchUpdateTrace} from "../../adapters/hsr/seelie";
 
-function TarceGoalTab() {
+interface IProps {
+    batchUpdateTalent: Function
+}
+
+function TalentGoalTab(props: IProps) {
+
+    const {batchUpdateTalent} = props
 
     const [selectAllRoles, setSelectAllRoles] = useState<boolean>(() => true);
 
     const [talentGoalLevel, setTalentGoalLevel] = useState({
-        normal: 6,
-        skill: 9,
-        burst: 9,
-        t: 9
+        basic: 11,
+        dodge: 11,
+        assist: 11,
+        special: 11,
+        chain: 11,
+        core: 6,
     });
 
     const talentLevels: number[] = [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
     ].reverse();
 
     const batchSetCharacterTalentLevel = () => {
-        const {normal, skill, burst, t} = talentGoalLevel;
-        batchUpdateTrace(!selectAllRoles, normal, skill, burst, t)
+        const {basic, dodge, assist, special, chain, core} = talentGoalLevel;
+        batchUpdateTalent(!selectAllRoles, basic, dodge, assist, special, chain, core)
     }
 
     return <div>
@@ -38,60 +45,85 @@ function TarceGoalTab() {
             <div className='mt-10'>普通攻击</div>
             <div>
                 <ListboxSelect
-                    selected={talentGoalLevel.normal}
+                    selected={talentGoalLevel.basic}
                     setSelected={num => setTalentGoalLevel({
                         ...talentGoalLevel,
-                        normal: num
+                        basic: num
                     })}
                     optionList={talentLevels}
                     show={num => `${num}`}
                 />
             </div>
-            <div className='mt-10'>战技</div>
+            <div className='mt-10'>闪避技</div>
             <div>
                 <ListboxSelect
-                    selected={talentGoalLevel.skill}
+                    selected={talentGoalLevel.dodge}
                     setSelected={num => setTalentGoalLevel({
                         ...talentGoalLevel,
-                        skill: num
+                        dodge: num
                     })}
                     optionList={talentLevels}
                     show={num => `${num}`}
                 />
             </div>
-            <div className='mt-10'>终结技</div>
+            <div className='mt-10'>支援技</div>
             <div>
                 <ListboxSelect
-                    selected={talentGoalLevel.burst}
+                    selected={talentGoalLevel.assist}
                     setSelected={num => setTalentGoalLevel({
                         ...talentGoalLevel,
-                        burst: num
+                        assist: num
                     })}
                     optionList={talentLevels}
                     show={num => `${num}`}
                 />
             </div>
-            <div className='mt-10'>天赋</div>
+            <div className='mt-10'>特殊技</div>
             <div>
                 <ListboxSelect
-                    selected={talentGoalLevel.t}
+                    selected={talentGoalLevel.special}
                     setSelected={num => setTalentGoalLevel({
                         ...talentGoalLevel,
-                        t: num
+                        special: num
+                    })}
+                    optionList={talentLevels}
+                    show={num => `${num}`}
+                />
+            </div>
+            <div className='mt-10'>连携技</div>
+            <div>
+                <ListboxSelect
+                    selected={talentGoalLevel.chain}
+                    setSelected={num => setTalentGoalLevel({
+                        ...talentGoalLevel,
+                        chain: num
+                    })}
+                    optionList={talentLevels}
+                    show={num => `${num}`}
+                />
+            </div>
+            <div className='mt-10'>核心被动</div>
+            <div>
+                <ListboxSelect
+                    selected={talentGoalLevel.core}
+                    setSelected={num => setTalentGoalLevel({
+                        ...talentGoalLevel,
+                        core: num
                     })}
                     optionList={talentLevels}
                     show={num => `${num}`}
                 />
             </div>
         </div>
+
         <div className="flex pt-2">
             <div className="w-full">
                 <button className="text-white bg-blue-500 px-4 py-2"
-                        onClick={batchSetCharacterTalentLevel}>批量设置角色目标行迹
+                        onClick={batchSetCharacterTalentLevel}>批量设置角色目标技能
                 </button>
             </div>
         </div>
     </div>
 }
 
-export default TarceGoalTab;
+export default TalentGoalTab;

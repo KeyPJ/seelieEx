@@ -3,8 +3,8 @@ interface queryName {
     name: string
 }
 
-const characters = JSON.parse(GM_getResourceText("hsr_character")) as queryName[];
-const weapons = JSON.parse(GM_getResourceText("hsr_weapon")) as queryName[];
+const characters = JSON.parse(GM_getResourceText("zzz_character")) as queryName[];
+const weapons = JSON.parse(GM_getResourceText("zzz_weapon")) as queryName[];
 
 export const charactersNum = characters.length;
 

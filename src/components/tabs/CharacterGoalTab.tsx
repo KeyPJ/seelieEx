@@ -21,11 +21,7 @@ function CharacterGoalTab(props: IProps) {
     const [characterLevelGoal, setCharacterLevelGoal] = useState<CharacterStatus>(() => optionList[0]);
 
     const batchSetCharacterGoalLevel = () => {
-        console.log(`批量设置${showText}目标等级`)
-        console.log(selectAllRoles)
-        console.log(characterLevelGoal)
         batchUpdateCharacter(!selectAllRoles, characterLevelGoal)
-        alert(`${showText}目标等级设置完毕`)
     }
 
     return <div>

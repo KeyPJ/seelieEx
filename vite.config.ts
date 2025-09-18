@@ -13,14 +13,14 @@ export default defineConfig({
                 author: 'KeyPJ',
                 name: {
                     '': pkg.name,
-                    'zh': '原神规划助手扩展',
+                    'zh': '原神、崩坏：星穹铁道、绝区零规划助手扩展',
                 },
                 description: {
-                    'zh': '个人想偷懒,不想手动在仙灵 - 原神规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie'
+                    'zh': '个人想偷懒,不想手动在仙灵 - 规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie'
                 },
                 namespace: 'https://github.com/KeyPJ/seelieEx',
                 version: pkg.version,
-                include: ['https://seelie.inmagi.com/*', "https://seelie.me/*","https://hsr.seelie.me/*"],
+                include: ["https://seelie.me/*", "https://hsr.seelie.me/*", "https://zzz.seelie.me/*"],
                 grant: ['unsafeWindow', 'GM_xmlhttpRequest', 'GM_openInTab', 'GM_getResourceText', "GM_registerMenuCommand"],
                 $extra: [
                     ['copyright', '2021, KeyPJ https://github.com/KeyPJ'],
@@ -29,8 +29,12 @@ export default defineConfig({
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
                 connect: ['api-takumi.mihoyo.com', 'public-data-api.mihoyo.com'],
                 resource: {
-                    character: "https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/character.json",
-                    weapon: "https://raw.githubusercontent.com/KeyPJ/seelieEx/main/src/data/weapon.json"
+                    character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json",
+                    weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/weapon.json",
+                    hsr_character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_character.json",
+                    hsr_weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_weapon.json",
+                    zzz_character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/zzz_character.json",
+                    zzz_weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/zzz_weapon.json",
                 },
                 "run-at": "document-end",
                 homepage: "https://github.com/KeyPJ",

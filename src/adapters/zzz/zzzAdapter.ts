@@ -1,19 +1,18 @@
-// src/adapters/hsr/hsrAdapter.ts
 import {GameAdapter, GameType} from '../game';
-import {getDetailList as getHsrDetailList} from './hoyo';
+import {getDetailList as getZzzDetailList} from './hoyo';
 import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon, characterStatusList} from './seelie';
 import CharacterStatus = seelie.CharacterStatus;
 import {getAccount} from "../common";
 
-export class HsrAdapter implements GameAdapter {
+export class ZzzAdapter implements GameAdapter {
     getGameName(): string {
-        return GameType.HSR;
+        return GameType.ZZZ;
     }
 
     getApiConfig() {
         return {
-            BBS_URL: 'https://act.mihoyo.com/sr/event/cultivation-tool/index.html',
-            ROLE_URL: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hkrpg_cn'
+            BBS_URL: 'https://act.mihoyo.com/zzz/gt/character-builder-h/index.html',
+            ROLE_URL: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookieToken?game_biz=nap_cn'
         };
     }
 
@@ -23,7 +22,7 @@ export class HsrAdapter implements GameAdapter {
     }
 
     async getCharacterDetails(uid: string, region: string) {
-        return getHsrDetailList(uid, region);
+        return getZzzDetailList(uid, region);
     }
 
     syncCharacters(res: any[]) {
@@ -64,8 +63,8 @@ export class HsrAdapter implements GameAdapter {
         batchUpdateWeapon(all, characterStatusGoal);
     }
 
-    batchUpdateTalent(all: boolean, normal: number, skill: number, burst: number, t: number): void {
-        batchUpdateTrace(all, normal, skill, burst, t);
+    batchUpdateTalent(all: boolean, basicGoal: number, dodgeGoal: number, assistGoal: number, specialGoal: number, chainGoal: number, coreGoal: number): void {
+        batchUpdateTrace(all, basicGoal, dodgeGoal, assistGoal, specialGoal, chainGoal, coreGoal);
     }
 
     getCharacterStatusList() {

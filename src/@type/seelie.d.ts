@@ -100,5 +100,79 @@ declare module seelie {
 
     //hsr end
 
+    //zzz start
+    export interface ZZZGoal extends Goal {
+        type: "character" | "weapon" | "talent";
+        id: number;
+        character?: string;
+        weapon?: string;
+    }
+
+    export interface ZZZCharacterGoal extends ZZZGoal {
+        type: "character";
+        character: string;
+        cons: number;
+        current: {
+            level: number;
+            asc: number;
+        };
+        goal: {
+            level: number;
+            asc: number;
+        };
+        id: number;
+    }
+
+    /**
+     * 天赋培养目标
+     */
+    export interface ZZZTalentGoal extends ZZZGoal {
+        type: "talent";
+        character: string;
+        basic: {
+            current: number;
+            goal: number;
+        };
+        dodge: {
+            current: number;
+            goal: number;
+        };
+        assist: {
+            current: number;
+            goal: number;
+        };
+        special: {
+            current: number;
+            goal: number;
+        };
+        chain: {
+            current: number;
+            goal: number;
+        };
+        core: {
+            current: number;
+            goal: number;
+        };
+        id: number;
+    }
+
+    export interface ZZZWeaponGoal extends ZZZGoal {
+        type: "weapon";
+        id: number;
+        weapon: string;
+        current: {
+            level: number;
+            asc: number;
+            craft: number;
+        };
+        goal: {
+            level: number;
+            asc: number;
+            craft: number;
+        };
+    }
+
+    //zzz end
+
 }
 

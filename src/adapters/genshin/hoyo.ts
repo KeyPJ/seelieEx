@@ -1,67 +1,25 @@
-import Role = mihoyo.Role;
 import Data = mihoyo.Data;
 import Character = mihoyo.Character;
 import CharacterDataEx = mihoyo.CharacterDataEx;
 import adapter from "axios-userscript-adapter/dist/esm";
 import {charactersNum} from "./query";
 import axios, {AxiosAdapter, AxiosRequestHeaders} from "axios";
+import {getFp, headers, to} from "../common";
 
 axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
 
 
-const BBS_URL = 'https://webstatic.mihoyo.com/ys/event/e20210928review/index.html'
-const ROLE_URL = 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn'
 const CHARACTERS_URL = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list'
 
-
-// (<any>window).GM.xmlHttpRequest = GM_xmlhttpRequest;
-function generateCharString(number = 16) {
-    const characters = 'abcdef0123456789';
-    let result = '';
-    for (let i = 0; i < number; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        result += characters[randomIndex];
-    }
-    return result;
-}
-
-const headers = {
-    Referer: "https://webstatic.mihoyo.com/",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
-}
-const to = (promise: Promise<any>) => promise.then(data => {
-    return [null, data];
-}).catch(err => [err]);
 const requestPageSize = 200;
-
-export const getAccount = async () => {
-    // try {
-    const [err, res] = await to(axios.get(ROLE_URL, {
-        headers: headers
-    }));
-    if (!err) {
-        const {status, data: resData} = await res;
-        if (status == 200) {
-            const {retcode, data} = resData;
-            if (retcode === 0) {
-                const {list: accountList} = await data as Data<Role>;
-                return accountList;
-            }
-        }
-    }
-    alert("请确认已登录活动页面且绑定原神账户!")
-    GM_openInTab(BBS_URL)
-    throw err ? err : new Error("账户信息获取失败");
-};
 
 const getCharacters = async (uid: string, region: string, page = 1) => {
 
     let fp = await getFp();
-    const headers = {
+    const genshinHeaders = {
         "x-rpc-device_fp": fp,
-        Referer: "https://webstatic.mihoyo.com/",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+        ...headers,
     }
     const [err, res] = await to(axios.post(CHARACTERS_URL, JSON.stringify({
         "element_attr_ids": [],
@@ -73,7 +31,7 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
         "lang": "zh-cn"
     }), {
         timeout: 5000,
-        headers: headers as unknown as AxiosRequestHeaders
+        headers: genshinHeaders as unknown as AxiosRequestHeaders
     }));
     if (!err) {
         const {status, data: resData} = await res;
@@ -86,8 +44,6 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
         }
     }
     localStorage.removeItem("fp")
-    alert("请确认已登录活动页面且绑定原神账户!")
-    GM_openInTab(BBS_URL)
     throw err ? err : new Error("角色列表获取失败");
 };
 
@@ -95,51 +51,6 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
     return {character, ...character} as any as CharacterDataEx
 };
 
-function getGuid() {
-    function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
-    }
-
-    return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
-}
-
-const getFp = async () => {
-    let fp = localStorage.getItem("fp");
-    let deviceId = localStorage.getItem("mysDeviceId");
-    if (!deviceId) {
-        deviceId = getGuid()
-        localStorage.setItem("mysDeviceId", deviceId);
-    }
-    if (!fp) {
-        let url = "https://public-data-api.mihoyo.com/device-fp/api/getFp";
-        const [err, res] = await to(axios.post(url,
-            JSON.stringify({
-                seed_id: generateCharString(),
-                device_id: deviceId.toUpperCase(),
-                platform: '1',
-                seed_time: new Date().getTime() + '',
-                ext_fields: `{"proxyStatus":"0","accelerometer":"-0.159515x-0.830887x-0.682495","ramCapacity":"3746","IDFV":"${deviceId.toUpperCase()}","gyroscope":"-0.191951x-0.112927x0.632637","isJailBreak":"0","model":"iPhone12,5","ramRemain":"115","chargeStatus":"1","networkType":"WIFI","vendor":"--","osVersion":"17.0.2","batteryStatus":"50","screenSize":"414×896","cpuCores":"6","appMemory":"55","romCapacity":"488153","romRemain":"157348","cpuType":"CPU_TYPE_ARM64","magnetometer":"-84.426331x-89.708435x-37.117889"}`,
-                app_name: 'bbs_cn',
-                device_fp: '38d7ee834d1e9'
-            }), {
-                timeout: 5000,
-                headers: headers as unknown as AxiosRequestHeaders
-            }));
-        if (!err) {
-            const {status, data: resData} = await res;
-            if (status == 200) {
-                const {retcode, data} = resData;
-                if (retcode === 0) {
-                    let resFp = data["device_fp"];
-                    localStorage.setItem("fp", resFp);
-                    return resFp;
-                }
-            }
-        }
-    } else {
-        return fp;
-    }
-};
 
 export const getDetailList = async (game_uid: string, region: string) => {
 

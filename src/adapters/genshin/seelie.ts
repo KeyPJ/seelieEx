@@ -5,6 +5,7 @@ import CharacterGoal = seelie.GICharacterGoal;
 import TalentGoal = seelie.GITalentGoal;
 import WeaponGoal = seelie.GIWeaponGoal;
 import {getCharacterId, getElementAttrName, getWeaponId} from "./query";
+import {refreshPage} from "../common";
 
 
 const getAccount: () => string = () => localStorage.account || "main";
@@ -254,11 +255,11 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
 export const batchUpdateCharacter: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = (all: boolean, characterStatusGoal: CharacterStatus,) => {
     getTotalGoal().filter(a => a.type == "character").filter(a => all || !getGoalInactive().includes(a.character as string))
         .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    location.reload()
+    refreshPage()
 }
 
 export const batchUpdateWeapon: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = (all: boolean, characterStatusGoal: CharacterStatus,) => {
     getTotalGoal().filter(a => a.type == "weapon").filter(a => all || !getGoalInactive().includes(a.weapon as string))
         .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    location.reload()
+    refreshPage()
 }

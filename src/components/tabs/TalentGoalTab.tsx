@@ -14,9 +14,9 @@ function TalentGoalTab(props: IProps) {
     const [selectAllRoles, setSelectAllRoles] = useState<boolean>(() => true);
 
     const [talentGoalLevel, setTalentGoalLevel] = useState({
-        normal: 1,
-        skill: 6,
-        burst: 6
+        normal: 9,
+        skill: 9,
+        burst: 9
     });
 
     const talentLevels: number[] = [
@@ -24,12 +24,8 @@ function TalentGoalTab(props: IProps) {
     ].reverse();
 
     const batchSetCharacterTalentLevel = () => {
-        console.log("批量设置角色目标天赋")
-        console.log(talentGoalLevel)
         const {normal, skill, burst} = talentGoalLevel;
-        console.log(selectAllRoles)
         batchUpdateTalent(!selectAllRoles, normal, skill, burst)
-        alert("角色目标天赋设置完毕")
     }
 
     return <div>

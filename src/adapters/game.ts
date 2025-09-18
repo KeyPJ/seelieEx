@@ -1,6 +1,4 @@
 // src/types/game.ts
-import CharacterDataEx = mihoyo.CharacterDataEx;
-import CharacterStatus = seelie.CharacterStatus;
 
 export enum GameType {
     GENSHIN = 'genshin',
@@ -37,10 +35,8 @@ export interface GameAdapter {
 
     // 获取游戏相关API配置
     getApiConfig: () => {
-        bbsUrl: string;
-        roleUrl: string;
-        charactersUrl: string;
-        charactersDetailUrl: string;
+        BBS_URL: string;
+        ROLE_URL: string;
     };
 
 

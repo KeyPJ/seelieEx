@@ -2,6 +2,7 @@
 import {GameType, GameAdapter, GameDomainMap} from './game';
 import {GenshinAdapter} from './genshin/genshinAdapter';
 import {HsrAdapter} from "./hsr/hsrAdapter";
+import {ZzzAdapter} from "./zzz/zzzAdapter";
 
 export class AdapterManager {
     private static adapters: Map<GameType, GameAdapter> = new Map();
@@ -11,6 +12,7 @@ export class AdapterManager {
         // 注册所有适配器
         this.adapters.set(GameType.GENSHIN, new GenshinAdapter());
         this.adapters.set(GameType.HSR, new HsrAdapter());
+        this.adapters.set(GameType.ZZZ, new ZzzAdapter());
 
         this.detectCurrentGame();
     }

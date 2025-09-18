@@ -5,6 +5,8 @@ import TalentGoalTab from "./tabs/TalentGoalTab";
 import {AdapterManager} from '../adapters/adapterManager';
 import {GameType} from "../adapters/game";
 import TarceGoalTab from "./tabs/TarceGoalTab";
+import {refreshPage} from "../adapters/common";
+import ZZZTalentGoalTab from "./tabs/ZZZTalentGoalTab";
 
 interface IProps {
     onClose: () => void
@@ -24,6 +26,7 @@ function ExDialog(props: IProps) {
     const [isFirstPanelOpen, setIsFirstPanelOpen] = useState(false);
     const [isSecondPanelOpen, setIsSecondPanelOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
+    const [isSyncing, setIsSyncing] = useState(false); // 添加 loading 状态
     const panelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
 
     // 点击外部关闭面板
@@ -61,7 +64,6 @@ function ExDialog(props: IProps) {
     };
 
     const getAccountList = () => {
-        console.log("获取%s账户列表",currentAdapter.getGameName())
         currentAdapter.getAccounts()
             .then((res) => {
                 const roles: mihoyo.Role[] = res;
@@ -82,19 +84,21 @@ function ExDialog(props: IProps) {
             return;
         }
         console.log("开始同步角色信息");
-
+        setIsSyncing(true); // 开始同步时设置 loading 状态
         const {game_uid, region} = currentAccount;
         currentAdapter.getCharacterDetails(game_uid, region)
             .then((res) => {
                 currentAdapter.syncCharacters(res);
                 console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
                 console.log("角色信息同步完毕");
-                alert("角色信息同步完毕");
-                location.reload();
+                refreshPage()
             })
             .catch((err) => {
                 console.error("同步失败:", err);
-                alert("角色信息同步失败");
+                GM_openInTab(currentAdapter.getApiConfig().BBS_URL)
+            })
+            .finally(() => {
+                setIsSyncing(false); // 同步完成后设置 loading 状态为 false
             });
     };
 
@@ -171,9 +175,16 @@ function ExDialog(props: IProps) {
                                         <button
                                             className="text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded transition-colors"
                                             onClick={syncCharacterInfo}
+                                            disabled={isSyncing} // 禁用按钮当 loading 为 true
                                         >
-                                            同步mihoyo角色信息
+                                            {isSyncing ? '同步中...' : '同步mihoyo角色信息'}
                                         </button>
+                                        {/* 添加 loading 状态显示 */}
+                                        {isSyncing && (
+                                            <div className="mt-2 text-blue-300">
+                                                正在同步角色信息，请稍候...
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -239,6 +250,8 @@ function ExDialog(props: IProps) {
                                             <TalentGoalTab batchUpdateTalent={currentAdapter.batchUpdateTalent}/>}
                                         {activeTab === 1 && currentAdapter.getGameName() === GameType.HSR &&
                                             <TarceGoalTab/>}
+                                        {activeTab === 1 && currentAdapter.getGameName() === GameType.ZZZ &&
+                                            <ZZZTalentGoalTab batchUpdateTalent={currentAdapter.batchUpdateTalent}/>}
                                         {activeTab === 2 && (
                                             <CharacterGoalTab
                                                 showText={"武器"}

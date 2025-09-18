@@ -7,6 +7,7 @@ import HSRCharacterData = mihoyo.HSRCharacterData;
 import ConeGoal = seelie.HSRConeGoal;
 import TraceGoal = seelie.HSRTraceGoal;
 import Bonus = seelie.Bonus;
+import {refreshPage} from "../common";
 
 const getAccount: () => string = () => localStorage.account || "main";
 
@@ -354,7 +355,7 @@ export const batchUpdateTrace = (all: boolean, normal: number, skill: number, bu
     }
     getTotalGoal().filter(a => a.type == 'trace').filter(a => all || !getGoalInactive().includes(a.character as string))
         .map(a => updateTrace(a as TraceGoal, normal, skill, burst, t))
-    location.reload()
+    refreshPage()
 }
 
 
@@ -373,11 +374,11 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
 export const batchUpdateCharacter = (all: boolean, characterStatusGoal: CharacterStatus,) => {
     getTotalGoal().filter(a => a.type == "character").filter(a => all || !getGoalInactive().includes(a.character as string))
         .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    location.reload()
+    refreshPage()
 }
 
 export const batchUpdateWeapon = (all: boolean, characterStatusGoal: CharacterStatus,) => {
     getTotalGoal().filter(a => a.type == "cone").filter(a => all || !getGoalInactive().includes(a.cone as string))
         .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    location.reload()
+    refreshPage()
 }

@@ -6,47 +6,15 @@ import {charactersNum} from "./query";
 import axios, {AxiosAdapter} from "axios";
 import Avatar = mihoyo.Avatar;
 import HSRCharacterData = mihoyo.HSRCharacterData;
+import {headers, to} from "../common";
 
 axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
 
-// (<any>window).GM.xmlHttpRequest = GM_xmlhttpRequest;
-
-const BBS_URL = 'https://www.miyoushe.com/sr/'
-const ROLE_URL = 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hkrpg_cn'
 const CHARACTERS_URL = 'https://api-takumi.mihoyo.com/event/rpgcalc/avatar/list'
 const CHARACTERS_DETAIL_URL = 'https://api-takumi.mihoyo.com/event/rpgcalc/avatar/detail'
 
-
-const headers = {
-    Referer: "https://www.miyoushe.com/sr/",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
-}
-const to = (promise: Promise<any>) => promise.then(data => {
-    return [null, data];
-}).catch(err => [err]);
-
 const requestPageSize = 50;
-
-export const getAccount = async () => {
-    // try {
-    const [err, res] = await to(axios.get(ROLE_URL, {
-        headers: headers
-    }));
-    if (!err) {
-        const {status, data: resData} = await res;
-        if (status == 200) {
-            const {retcode, data} = resData;
-            if (retcode === 0) {
-                const {list: accountList} = await data as Data<Role>;
-                return accountList;
-            }
-        }
-    }
-    alert("请确认已登录活动页面且绑定星铁账户!")
-    GM_openInTab(BBS_URL)
-    throw err ? err : new Error("账户信息获取失败");
-};
 
 const getCharacters = async (uid: string, region: string, page = 1) => {
 
@@ -66,8 +34,6 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
             }
         }
     }
-    alert("请确认已登录活动页面且绑定原神账户!")
-    GM_openInTab(BBS_URL)
     throw err ? err : new Error("角色列表获取失败");
 };
 
