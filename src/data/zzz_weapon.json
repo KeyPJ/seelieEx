@@ -1,0 +1,298 @@
+[
+	{
+		"id": "reverb_mark_i",
+		"name": "「残响」-Ⅰ型"
+	},
+	{
+		"id": "reverb_mark_ii",
+		"name": "「残响」-Ⅱ型"
+	},
+	{
+		"id": "reverb_mark_iii",
+		"name": "「残响」-Ⅲ型"
+	},
+	{
+		"id": "magnetic_storm_bravo",
+		"name": "「电磁暴」-贰式"
+	},
+	{
+		"id": "magnetic_storm_charlie",
+		"name": "「电磁暴」-叁式"
+	},
+	{
+		"id": "magnetic_storm_alpha",
+		"name": "「电磁暴」-壹式"
+	},
+	{
+		"id": "identity_base",
+		"name": "「恒等式」-本格"
+	},
+	{
+		"id": "identity_inflection",
+		"name": "「恒等式」-变格"
+	},
+	{
+		"id": "cinder_cobalt",
+		"name": "「灰烬」-钴蓝"
+	},
+	{
+		"id": "vortex_revolver",
+		"name": "「湍流」-铳型"
+	},
+	{
+		"id": "vortex_hatchet",
+		"name": "「湍流」-斧型"
+	},
+	{
+		"id": "vortex_arrow",
+		"name": "「湍流」-矢型"
+	},
+	{
+		"id": "lunar_decrescent",
+		"name": "「月相」-晦"
+	},
+	{
+		"id": "lunar_noviluna",
+		"name": "「月相」-朔"
+	},
+	{
+		"id": "lunar_pleniluna",
+		"name": "「月相」-望"
+	},
+	{
+		"id": "tusks_of_fury",
+		"name": "奔袭獠牙"
+	},
+	{
+		"id": "big_cylinder",
+		"name": "比格气缸"
+	},
+	{
+		"id": "box_cutter",
+		"name": "裁纸刀"
+	},
+	{
+		"id": "zanshin_herb_case",
+		"name": "残心青囊"
+	},
+	{
+		"id": "electro_lip_gloss",
+		"name": "触电唇彩"
+	},
+	{
+		"id": "weeping_cradle",
+		"name": "啜泣摇篮"
+	},
+	{
+		"id": "spring_embrace",
+		"name": "春日融融"
+	},
+	{
+		"id": "sharpened_stinger",
+		"name": "淬锋钳刺"
+	},
+	{
+		"id": "demara_battery_mark_ii",
+		"name": "德玛拉电池Ⅱ型"
+	},
+	{
+		"id": "radiowave_journey",
+		"name": "电波漫步"
+	},
+	{
+		"id": "riot_suppressor_mark_vi",
+		"name": "防暴者Ⅵ型"
+	},
+	{
+		"id": "starlight_engine_replica",
+		"name": "仿制星徽引擎"
+	},
+	{
+		"id": "flight_of_fancy",
+		"name": "飞鸟星梦"
+	},
+	{
+		"id": "roaring_fur_nace",
+		"name": "福虓炉炉"
+	},
+	{
+		"id": "steel_cushion",
+		"name": "钢铁肉垫"
+	},
+	{
+		"id": "reel_projector",
+		"name": "光影刻刀"
+	},
+	{
+		"id": "precious_fossilized_core",
+		"name": "贵重骨核"
+	},
+	{
+		"id": "bashful_demon",
+		"name": "含羞恶面"
+	},
+	{
+		"id": "kaboom_the_cannon",
+		"name": "好斗的阿炮"
+	},
+	{
+		"id": "roaring_ride",
+		"name": "轰鸣座驾"
+	},
+	{
+		"id": "puzzle_sphere",
+		"name": "幻变魔方"
+	},
+	{
+		"id": "cordis_germina",
+		"name": "机巧心种"
+	},
+	{
+		"id": "cannon_rotor",
+		"name": "加农转子"
+	},
+	{
+		"id": "housekeeper",
+		"name": "家政员"
+	},
+	{
+		"id": "street_superstar",
+		"name": "街头巨星"
+	},
+	{
+		"id": "the_restrained",
+		"name": "拘缚者"
+	},
+	{
+		"id": "the_vault",
+		"name": "聚宝箱"
+	},
+	{
+		"id": "metanukimorphosis",
+		"name": "狸法七变化"
+	},
+	{
+		"id": "elegant_vanity",
+		"name": "玲珑妆匣"
+	},
+	{
+		"id": "the_brimstone",
+		"name": "硫磺石"
+	},
+	{
+		"id": "gilded_blossom",
+		"name": "鎏金花信"
+	},
+	{
+		"id": "myriad_eclipse",
+		"name": "千面日陨"
+	},
+	{
+		"id": "fusion_compiler",
+		"name": "嵌合编译器"
+	},
+	{
+		"id": "marcato_desire",
+		"name": "强音热望"
+	},
+	{
+		"id": "qingming_birdcage",
+		"name": "青溟笼舍"
+	},
+	{
+		"id": "hellfire_gears",
+		"name": "燃狱齿轮"
+	},
+	{
+		"id": "steam_oven",
+		"name": "人为刀俎"
+	},
+	{
+		"id": "deep_sea_visitor",
+		"name": "深海访客"
+	},
+	{
+		"id": "practiced_perfection",
+		"name": "十方锻星"
+	},
+	{
+		"id": "slice_of_time",
+		"name": "时光切片"
+	},
+	{
+		"id": "timeweaver",
+		"name": "时流贤者"
+	},
+	{
+		"id": "weeping_gemini",
+		"name": "双生泣星"
+	},
+	{
+		"id": "spectral_gaze",
+		"name": "索魂影眸"
+	},
+	{
+		"id": "bunny_band",
+		"name": "兔能环"
+	},
+	{
+		"id": "peacekeeper_specialized",
+		"name": "维序者-特化型"
+	},
+	{
+		"id": "severed_innocence",
+		"name": "牺牲洁纯"
+	},
+	{
+		"id": "hailstorm_shrine",
+		"name": "霰落星殿"
+	},
+	{
+		"id": "unfettered_game_ball",
+		"name": "逍遥游球"
+	},
+	{
+		"id": "bellicose_blaze",
+		"name": "嚣枪喧焰"
+	},
+	{
+		"id": "heartstring_nocturne",
+		"name": "心弦夜响"
+	},
+	{
+		"id": "starlight_engine",
+		"name": "星徽引擎"
+	},
+	{
+		"id": "drill_rig_red_axis",
+		"name": "旋钻机-赤轴"
+	},
+	{
+		"id": "blazing_laurel",
+		"name": "焰心桂冠"
+	},
+	{
+		"id": "rainforest_gourmet",
+		"name": "雨林饕客"
+	},
+	{
+		"id": "ice_jade_teapot",
+		"name": "玉壶青冰"
+	},
+	{
+		"id": "tremor_trigram_vessel",
+		"name": "震元奇枢"
+	},
+	{
+		"id": "original_transmorpher",
+		"name": "正版变身器"
+	},
+	{
+		"id": "flamemaker_shaker",
+		"name": "灼心摇壶"
+	},
+	{
+		"id": "six_shooter",
+		"name": "左轮转子"
+	}
+]
