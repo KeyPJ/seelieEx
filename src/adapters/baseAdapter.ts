@@ -1,5 +1,5 @@
 import {getAccount} from "./common";
-import {GameAdapter, GameType} from "./game";
+import {GameAdapter, GoalTypeConfig} from "./game";
 
 export abstract class BaseAdapter implements GameAdapter {
     abstract getGameName(): string;
@@ -17,16 +17,16 @@ export abstract class BaseAdapter implements GameAdapter {
     }
 
     // 公共实现：批量更新角色
-    batchUpdateCharacter(all: boolean, status: seelie.CharacterStatus): void {
+    batchUpdateCharacter = (all: boolean, status: seelie.CharacterStatus): void => {
         const {batchUpdateCharacter} = this.importSeelieMethods();
         batchUpdateCharacter(all, status);
-    }
+    };
 
     // 公共实现：批量更新武器
-    batchUpdateWeapon(all: boolean, status: seelie.CharacterStatus): void {
+    batchUpdateWeapon = (all: boolean, status: seelie.CharacterStatus): void => {
         const {batchUpdateWeapon} = this.importSeelieMethods();
         batchUpdateWeapon(all, status);
-    }
+    };
 
     // 抽象方法：导入游戏特定的seelie方法
     protected abstract importSeelieMethods(): {
@@ -38,4 +38,7 @@ export abstract class BaseAdapter implements GameAdapter {
     abstract batchUpdateTalent: Function;
 
     abstract getCharacterDetails(uid: string, region: string): Promise<any[]>;
+
+    abstract getInactiveConfig: () => GoalTypeConfig[];
+
 }

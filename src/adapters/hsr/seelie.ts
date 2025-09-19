@@ -7,7 +7,12 @@ import HSRCharacterData = mihoyo.HSRCharacterData;
 import ConeGoal = seelie.HSRConeGoal;
 import TraceGoal = seelie.HSRTraceGoal;
 import Bonus = seelie.Bonus;
-import {batchUpdateGoals, getNextId, getTotalGoal, setGoals} from "../common";
+import {
+    batchUpdateGoals,
+    getNextId,
+    getTotalGoal,
+    setGoals
+} from "../common";
 
 const addGoal = (data: any) => {
     let index: number = -1;

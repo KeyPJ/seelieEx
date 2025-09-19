@@ -1,7 +1,13 @@
 // src/adapters/genshinAdapter.ts
-import {GameAdapter, GameType} from '../game';
+import {GameAdapter, GameType, GoalTypeConfig} from '../game';
 import {getDetailList as getGenshinDetailList} from './hoyo';
-import {addCharacter, batchUpdateCharacter, batchUpdateTalent, batchUpdateWeapon, characterStatusList} from './seelie';
+import {
+    addCharacter,
+    batchUpdateCharacter,
+    batchUpdateTalent,
+    batchUpdateWeapon,
+    characterStatusList,
+} from './seelie';
 import {BaseAdapter} from "../baseAdapter";
 
 
@@ -55,5 +61,19 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
 
     getCharacterStatusList() {
         return characterStatusList;
+    }
+
+    getInactiveConfig: () => GoalTypeConfig[] = () => {
+        const GENSHIN_INACTIVE_CONFIG: GoalTypeConfig[] = [
+            { type: "character", identifierKey: "character" }, // 角色目标（标识字段：character）
+            {
+                type: "talent",
+                identifierKey: "character",
+                isTalent: true,
+                talentKeys: ['normal', 'skill', 'burst'] // 原神天赋类型：普通攻击/元素战技/元素爆发
+            }, // 天赋目标（标识字段：character）
+            { type: "weapon", identifierKey: "id" } // 武器目标（标识字段：weapon）
+        ];
+        return GENSHIN_INACTIVE_CONFIG;
     }
 }

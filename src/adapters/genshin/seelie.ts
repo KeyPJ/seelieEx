@@ -5,7 +5,12 @@ import CharacterGoal = seelie.GICharacterGoal;
 import TalentGoal = seelie.GITalentGoal;
 import WeaponGoal = seelie.GIWeaponGoal;
 import {getCharacterId, getElementAttrName, getWeaponId} from "./query";
-import {batchUpdateGoals, getNextId, getTotalGoal, setGoals} from "../common";
+import {
+    batchUpdateGoals,
+    getNextId,
+    getTotalGoal,
+    setGoals
+} from "../common";
 
 const addGoal = (data: any) => {
     let index: number = -1;

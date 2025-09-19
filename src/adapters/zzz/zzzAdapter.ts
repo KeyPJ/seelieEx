@@ -1,6 +1,12 @@
-import {GameAdapter, GameType} from '../game';
+import {GameAdapter, GameType, GoalTypeConfig} from '../game';
 import {getDetailList as getZzzDetailList} from './hoyo';
-import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon, characterStatusList} from './seelie';
+import {
+    addCharacter,
+    batchUpdateCharacter,
+    batchUpdateTrace,
+    batchUpdateWeapon,
+    characterStatusList,
+} from './seelie';
 import {BaseAdapter} from "../baseAdapter";
 
 export class ZzzAdapter extends BaseAdapter implements GameAdapter {
@@ -60,4 +66,19 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
     getCharacterStatusList() {
         return characterStatusList;
     }
+
+    getInactiveConfig: () => GoalTypeConfig[] = () => {
+        const ZZZ_INACTIVE_CONFIG: GoalTypeConfig[] = [
+            {type: "character", identifierKey: "character"}, // 角色目标
+            {
+                type: "talent",
+                identifierKey: "character",
+                isTalent: true,
+                talentKeys: ['basic', 'dodge', 'assist', 'special', 'chain', 'core']
+            }, // 天赋目标
+            {type: "weapon", identifierKey: "id"} // 武器目标（标识键为 id）
+        ];
+        return ZZZ_INACTIVE_CONFIG;
+    }
+
 }

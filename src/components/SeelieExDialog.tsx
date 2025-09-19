@@ -3,7 +3,7 @@ import ListboxSelect from "./select/ListboxSelect";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {AdapterManager} from '../adapters/adapterManager';
-import {refreshPage} from "../adapters/common";
+import {refreshPage, setInactive} from "../adapters/common";
 
 interface IProps {
     onClose: () => void
@@ -110,6 +110,9 @@ function ExDialog(props: IProps) {
         onClose()
     };
 
+    const batchInActive = () => {
+        setInactive(currentAdapter.getInactiveConfig())
+    };
     return (
         <div
             className="fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl"
@@ -214,6 +217,14 @@ function ExDialog(props: IProps) {
 
                         {isSecondPanelOpen && (
                             <div className="px-4 pt-4 pb-2 text-sm text-gray-100">
+                                <div className="mb-4">
+                                    <button
+                                        className="w-full text-white bg-blue-500 py-2 px-4 rounded transition-colors"
+                                        onClick={batchInActive}
+                                    >
+                                        一键激活/取消未达标目标
+                                    </button>
+                                </div>
                                 {/* 标签页切换 */}
                                 <div className="mt-4">
                                     <div className="flex border-b border-gray-600">

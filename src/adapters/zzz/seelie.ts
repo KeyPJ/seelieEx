@@ -5,7 +5,12 @@ import {getCharacterId, getWeaponId} from "./query";
 import HSRCharacterData = mihoyo.ZZZCharacterData;
 import WeaponGoal = seelie.ZZZWeaponGoal;
 import TalentGoal = seelie.ZZZTalentGoal;
-import {batchUpdateGoals, getNextId, getTotalGoal, setGoals} from "../common";
+import {
+    batchUpdateGoals,
+    getNextId,
+    getTotalGoal,
+    setGoals
+} from "../common";
 
 const addGoal = (data: any) => {
     let index: number = -1;

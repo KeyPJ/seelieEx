@@ -1,5 +1,4 @@
 // src/types/game.ts
-
 export enum GameType {
     GENSHIN = 'genshin',
     HSR = 'hsr', // 崩坏：星穹铁道
@@ -10,6 +9,13 @@ export enum GameType {
 export const GameDomainMap: Record<string, GameType> = {
     'hsr.seelie.me': GameType.HSR,
     'zzz.seelie.me': GameType.ZZZ,
+};
+
+export type GoalTypeConfig = {
+    type: 'character' | 'weapon' | 'talent' | 'cone' | 'trace'; // 目标类型（如 'character'/'weapon'/'trace'）
+    identifierKey: 'character' | 'id'; // 标识字段（如 ）
+    isTalent?: boolean; // 是否为天赋类目标（需多字段达标判断）
+    talentKeys?: string[]; // 天赋子类型键名（如 ['basic','skill',...]）
 };
 
 export interface GameAdapter {
@@ -39,5 +45,6 @@ export interface GameAdapter {
         ROLE_URL: string;
     };
 
+    getInactiveConfig: () => GoalTypeConfig[];
 
 }
