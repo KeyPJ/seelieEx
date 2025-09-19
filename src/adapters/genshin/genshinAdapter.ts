@@ -2,10 +2,10 @@
 import {GameAdapter, GameType} from '../game';
 import {getDetailList as getGenshinDetailList} from './hoyo';
 import {addCharacter, batchUpdateCharacter, batchUpdateTalent, batchUpdateWeapon, characterStatusList} from './seelie';
-import {getAccount} from "../common";
+import {BaseAdapter} from "../baseAdapter";
 
 
-export class GenshinAdapter implements GameAdapter {
+export class GenshinAdapter extends BaseAdapter implements GameAdapter {
     getGameName(): string {
         return GameType.GENSHIN;
     }
@@ -17,10 +17,6 @@ export class GenshinAdapter implements GameAdapter {
         };
     }
 
-    async getAccounts() {
-        const {BBS_URL, ROLE_URL} = this.getApiConfig();
-        return await getAccount(ROLE_URL, BBS_URL, this.getGameName());
-    }
 
     async getCharacterDetails(uid: string, region: string) {
         return getGenshinDetailList(uid, region);
@@ -48,17 +44,14 @@ export class GenshinAdapter implements GameAdapter {
         res.forEach(v => addCharacter(v));
     }
 
-    batchUpdateCharacter(all: boolean, characterStatusGoal: seelie.CharacterStatus): void {
-        batchUpdateCharacter(all, characterStatusGoal)
+    protected importSeelieMethods() {
+        return {batchUpdateCharacter, batchUpdateWeapon};
     }
 
-    batchUpdateWeapon(all: boolean, characterStatusGoal: seelie.CharacterStatus): void {
-        batchUpdateWeapon(all, characterStatusGoal)
-    }
 
-    batchUpdateTalent(all: boolean, normal: number, skill: number, burst: number): void {
-        batchUpdateTalent(all, normal, skill, burst)
-    }
+    batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number): void => {
+        batchUpdateTalent(all, normal, skill, burst);
+    };
 
     getCharacterStatusList() {
         return characterStatusList;

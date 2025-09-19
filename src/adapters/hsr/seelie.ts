@@ -7,26 +7,11 @@ import HSRCharacterData = mihoyo.HSRCharacterData;
 import ConeGoal = seelie.HSRConeGoal;
 import TraceGoal = seelie.HSRTraceGoal;
 import Bonus = seelie.Bonus;
-import {refreshPage} from "../common";
-
-const getAccount: () => string = () => localStorage.account || "main";
-
-const getTotalGoal: () => Goal[] = () =>
-    JSON.parse(
-        localStorage.getItem(`${getAccount()}-goals`) || "[]"
-    ) as Goal[];
-
-const getGoalInactive: () => string[] = () =>
-    Object.keys(JSON.parse(localStorage.getItem(`${getAccount()}-inactive`) || "{}"));
-
-const setGoals = (goals: any) => {
-    localStorage.setItem(`${getAccount()}-goals`, JSON.stringify(goals));
-    localStorage.setItem("last_update", new Date().toISOString());
-};
+import {batchUpdateGoals, getNextId, getTotalGoal, setGoals} from "../common";
 
 const addGoal = (data: any) => {
     let index: number = -1;
-    const goals = getTotalGoal();
+    const goals = getTotalGoal() as Goal[];
 
     if (data.character) {
         index = goals.findIndex(
@@ -52,9 +37,7 @@ const addGoal = (data: any) => {
 let initBonus = {} as Bonus
 
 const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.HSRSkill[], skills_servant: mihoyo.HSRSkill[]) => {
-    const totalGoal: Goal[] = getTotalGoal();
-    const ids = totalGoal.map(g => g.id);
-    const id = Math.max(...ids) + 1 || 1;
+    const totalGoal = getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "trace" && g.character == talentCharacter);
     skill_list.sort((a, b) => a.point_id > b.point_id ? 1 : 0);
     const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = skill_list.map(a => a.cur_level);
@@ -65,6 +48,7 @@ const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.HSRSkill[], sk
     }
     let talentGoal: TraceGoal;
     if (talentIdx < 0) {
+        const id = getNextId();
         talentGoal = {
             type: "trace",
             character: talentCharacter,
@@ -133,17 +117,15 @@ const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.HSRSkill[], sk
 };
 
 export const addCharacterGoal = (level_current: number, nameEn: String, name: string, type: string) => {
-    let totalGoal: Goal[] = getTotalGoal();
-    const ids = totalGoal.map(g => g.id);
-    const id = Math.max(...ids) + 1 || 1;
+    const totalGoal = getTotalGoal() as Goal[];
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     let weaponPredicate = (g: Goal) => g.type == type && g.cone == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
     const characterStatus: CharacterStatus = initCharacterStatus(level_current);
-
     let characterGoal: Goal
 
-    function initCharacterGoal() {
+    function initCharacterGoal(id: number) {
+
         return {
             type,
             character: nameEn,
@@ -154,7 +136,8 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
         } as CharacterGoal
     }
 
-    function initWeaponGoal() {
+    function initWeaponGoal(id: number) {
+
         return {
             type,
             character: "",
@@ -166,7 +149,8 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
     }
 
     if (characterIdx < 0) {
-        characterGoal = type == "character" ? initCharacterGoal() : initWeaponGoal();
+        const id = getNextId();
+        characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
         const seelieGoal = type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as ConeGoal
         const {goal, current} = seelieGoal;
@@ -353,9 +337,13 @@ export const batchUpdateTrace = (all: boolean, normal: number, skill: number, bu
     if (normal > 6) {
         normal = 6
     }
-    getTotalGoal().filter(a => a.type == 'trace').filter(a => all || !getGoalInactive().includes(a.character as string))
-        .map(a => updateTrace(a as TraceGoal, normal, skill, burst, t))
-    refreshPage()
+    batchUpdateGoals<TraceGoal>(
+        'trace',
+        'character', // 天赋目标用character字段标识
+        (trace) => updateTrace(trace, normal, skill, burst, t),
+        all
+    );
+
 }
 
 
@@ -372,13 +360,21 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
 }
 
 export const batchUpdateCharacter = (all: boolean, characterStatusGoal: CharacterStatus,) => {
-    getTotalGoal().filter(a => a.type == "character").filter(a => all || !getGoalInactive().includes(a.character as string))
-        .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    refreshPage()
+    batchUpdateGoals<CharacterGoal>(
+        'character',
+        'character',
+        updateCharacter,
+        all,
+        characterStatusGoal
+    );
 }
 
 export const batchUpdateWeapon = (all: boolean, characterStatusGoal: CharacterStatus,) => {
-    getTotalGoal().filter(a => a.type == "cone").filter(a => all || !getGoalInactive().includes(a.cone as string))
-        .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    refreshPage()
+    batchUpdateGoals<ConeGoal>(
+        'cone',
+        'cone',
+        (weapon) => updateCharacter(weapon as unknown as CharacterGoal, characterStatusGoal),
+        all,
+        characterStatusGoal
+    );
 }

@@ -1,14 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 
 interface IProps<T> {
-    selected: T;
-    setSelected: (selected: T) => void;
-    optionList: T[];
-    show: (selected: T) => string;
+    selected: T,
+    setSelected: (selected: T) => void,
+    optionList: T[],
+    show: (selected: T) => string,
+    className?: string
+}
+
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(" ");
 }
 
 function ListboxSelect<T>(props: IProps<T>) {
-    const { selected, setSelected, optionList, show } = props;
+    const {selected, setSelected, optionList, show, className = ""} = props;
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +44,7 @@ function ListboxSelect<T>(props: IProps<T>) {
     };
 
     return (
-        <div ref={containerRef} className="relative mt-1 w-full">
+        <div ref={containerRef} className={classNames("relative mt-1 w-full", className)}>
             {/* 下拉按钮 */}
             <button
                 type="button"
@@ -55,7 +60,7 @@ function ListboxSelect<T>(props: IProps<T>) {
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
           </svg>
         </span>
             </button>
@@ -88,7 +93,7 @@ function ListboxSelect<T>(props: IProps<T>) {
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/>
                   </svg>
                 </span>
                             )}

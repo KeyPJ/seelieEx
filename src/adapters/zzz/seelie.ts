@@ -1,29 +1,11 @@
 import Goal = seelie.ZZZGoal;
 import CharacterStatus = seelie.CharacterStatus;
 import CharacterGoal = seelie.ZZZCharacterGoal;
-
 import {getCharacterId, getWeaponId} from "./query";
 import HSRCharacterData = mihoyo.ZZZCharacterData;
-import ConeGoal = seelie.ZZZWeaponGoal;
-import TraceGoal = seelie.ZZZTalentGoal;
-import Bonus = seelie.Bonus;
-import {refreshPage} from "../common";
-import ZZZTalentGoal = seelie.ZZZTalentGoal;
-
-const getAccount: () => string = () => localStorage.account || "main";
-
-const getTotalGoal: () => Goal[] = () =>
-    JSON.parse(
-        localStorage.getItem(`${getAccount()}-goals`) || "[]"
-    ) as Goal[];
-
-const getGoalInactive: () => string[] = () =>
-    Object.keys(JSON.parse(localStorage.getItem(`${getAccount()}-inactive`) || "{}"));
-
-const setGoals = (goals: any) => {
-    localStorage.setItem(`${getAccount()}-goals`, JSON.stringify(goals));
-    localStorage.setItem("last_update", new Date().toISOString());
-};
+import WeaponGoal = seelie.ZZZWeaponGoal;
+import TalentGoal = seelie.ZZZTalentGoal;
+import {batchUpdateGoals, getNextId, getTotalGoal, setGoals} from "../common";
 
 const addGoal = (data: any) => {
     let index: number = -1;
@@ -50,12 +32,9 @@ const addGoal = (data: any) => {
     }
     setGoals(goals);
 };
-let initBonus = {} as Bonus
 
 const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.ZZZSkill[]) => {
-    const totalGoal: Goal[] = getTotalGoal();
-    const ids = totalGoal.map(g => g.id);
-    const id = Math.max(...ids) + 1 || 1;
+    const totalGoal = getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "talent" && g.character == talentCharacter);
     // 创建排序权重映射
     const typeOrder = [0, 2, 6, 1, 3, 5];
@@ -66,9 +45,10 @@ const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.ZZZSkill[]) =>
     });
 
     const [baseCurrent, dodgeCurrent, assistCurrent, specialCurrent, chainCurrent, coreCurrent] = skill_list.map(a => a.level);
-    let talentGoal: TraceGoal;
+    let talentGoal: TalentGoal;
     let coreValue = coreCurrent - 1;
     if (talentIdx < 0) {
+        const id = getNextId();
         talentGoal = {
             type: "talent",
             character: talentCharacter,
@@ -99,8 +79,8 @@ const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.ZZZSkill[]) =>
             id
         }
     } else {
-        const seelieGoal = totalGoal[talentIdx] as TraceGoal;
-        const {basic, dodge, assist, special, chain, core} = seelieGoal as ZZZTalentGoal;
+        const seelieGoal = totalGoal[talentIdx] as TalentGoal;
+        const {basic, dodge, assist, special, chain, core} = seelieGoal;
         const {goal: basicGoal} = basic;
         const {goal: dodgeGoal} = dodge;
         const {goal: assistGoal} = assist;
@@ -136,9 +116,8 @@ const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.ZZZSkill[]) =>
 };
 
 export const addCharacterGoal = (level_current: number, nameEn: String, name: string, type: string) => {
-    let totalGoal: Goal[] = getTotalGoal();
-    const ids = totalGoal.map(g => g.id);
-    const id = Math.max(...ids) + 1 || 1;
+    let totalGoal = getTotalGoal() as Goal[];
+
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     let weaponPredicate = (g: Goal) => g.type == type && g.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
@@ -146,7 +125,7 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
 
     let characterGoal: Goal
 
-    function initCharacterGoal() {
+    function initCharacterGoal(id: number) {
         return {
             type: "character",
             character: nameEn,
@@ -157,7 +136,7 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
         } as unknown as CharacterGoal
     }
 
-    function initWeaponGoal() {
+    function initWeaponGoal(id: number) {
         return {
             type: "weapon",
             character: "",
@@ -165,13 +144,14 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
             current: characterStatus,
             goal: characterStatus,
             id
-        } as unknown as ConeGoal
+        } as unknown as WeaponGoal
     }
 
     if (characterIdx < 0) {
-        characterGoal = type == "character" ? initCharacterGoal() : initWeaponGoal();
+        const id = getNextId();
+        characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
-        const seelieGoal = type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as ConeGoal
+        const seelieGoal = type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as WeaponGoal
         const {goal, current} = seelieGoal;
         const {level: levelCurrent, asc: ascCurrent} = current;
         const {level: levelGoal, asc: ascGoal} = goal;
@@ -300,7 +280,8 @@ const initCharacterStatus = (level_current: number) => {
     }
     return initCharacterStatus;
 };
-const updateTrace = (talent: TraceGoal, basicGoal = 11, dodgeGoal = 11, assistGoal = 11, specialGoal = 11, chainGoal = 11, coreGoal = 6) => {
+
+const updateTrace = (talent: TalentGoal, basicGoal = 11, dodgeGoal = 11, assistGoal = 11, specialGoal = 11, chainGoal = 11, coreGoal = 6) => {
     const {
         basic: {current: baseCurrent},
         dodge: {current: dodgeCurrent},
@@ -340,9 +321,12 @@ export const batchUpdateTrace = (all: boolean, basicGoal = 11, dodgeGoal = 11, a
     if (coreGoal > 6) {
         coreGoal = 6
     }
-    getTotalGoal().filter(a => a.type == 'talent').filter(a => all || !getGoalInactive().includes(a.character as string))
-        .map(a => updateTrace(a as TraceGoal, basicGoal, dodgeGoal, assistGoal, specialGoal, chainGoal, coreGoal))
-    refreshPage()
+    batchUpdateGoals<TalentGoal>(
+        'talent',
+        'character', // 天赋目标用character字段标识
+        (trace) => updateTrace(trace, basicGoal, dodgeGoal, assistGoal, specialGoal, chainGoal, coreGoal),
+        all
+    );
 }
 
 
@@ -359,13 +343,21 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
 }
 
 export const batchUpdateCharacter = (all: boolean, characterStatusGoal: CharacterStatus,) => {
-    getTotalGoal().filter(a => a.type == "character").filter(a => all || !getGoalInactive().includes(a.character as string))
-        .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    refreshPage()
+    batchUpdateGoals<CharacterGoal>(
+        'character',
+        'character', // 角色目标用character字段标识
+        updateCharacter,
+        all,
+        characterStatusGoal
+    );
 }
 
 export const batchUpdateWeapon = (all: boolean, characterStatusGoal: CharacterStatus,) => {
-    getTotalGoal().filter(a => a.type == "weapon").filter(a => all || !getGoalInactive().includes(a.weapon as string))
-        .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    refreshPage()
+    batchUpdateGoals<WeaponGoal>(
+        'weapon',
+        'weapon', // 武器目标用weapon字段标识
+        (weapon) => updateCharacter(weapon as unknown as CharacterGoal, characterStatusGoal),
+        all,
+        characterStatusGoal
+    );
 }

@@ -3,18 +3,20 @@ import CharacterStatus = seelie.CharacterStatus;
 
 import ToggleSwitch from "../switch/ToggleSwitch";
 import ListboxSelect from "../select/ListboxSelect";
+import {AdapterManager} from "../../adapters/adapterManager";
 
 interface IProps {
     showText: string,
     batchUpdateCharacter: Function
-    characterStatusList: CharacterStatus[]
 }
 
 function CharacterGoalTab(props: IProps) {
 
-    const {showText, batchUpdateCharacter, characterStatusList} = props
+    const {showText, batchUpdateCharacter} = props
 
     const [selectAllRoles, setSelectAllRoles] = useState<boolean>(() => true);
+
+    const characterStatusList = AdapterManager.getCurrentAdapter().getCharacterStatusList();
 
     const optionList = characterStatusList.slice(0).reverse();
 

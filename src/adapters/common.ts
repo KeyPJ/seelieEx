@@ -2,6 +2,7 @@ import adapter from "axios-userscript-adapter/dist/esm";
 import axios, {AxiosAdapter, AxiosRequestHeaders} from "axios";
 import Data = mihoyo.Data;
 import Role = mihoyo.Role;
+import Goal = seelie.Goal;
 
 axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
@@ -101,4 +102,40 @@ export const getAccount = async (roleUrl: string, openUrl: string, gameType: str
     alert(`请确认已登录活动页面且绑定${gameType}账户!`)
     GM_openInTab(openUrl)
     throw err ? err : new Error("账户信息获取失败");
+};
+
+const getStorageAccount: () => string = () => localStorage.account || "main";
+
+export const getTotalGoal: () => Goal[] = () =>
+    JSON.parse(
+        localStorage.getItem(`${getStorageAccount()}-goals`) || "[]"
+    ) as Goal[];
+
+export const getGoalInactive: () => string[] = () =>
+    Object.keys(JSON.parse(localStorage.getItem(`${getStorageAccount()}-inactive`) || "{}"));
+
+export const setGoals = (goals: any) => {
+    localStorage.setItem(`${getStorageAccount()}-goals`, JSON.stringify(goals));
+    localStorage.setItem("last_update", new Date().toISOString());
+};
+
+export const getNextId = () => {
+    const goals = getTotalGoal();
+    const ids = goals.map(g => g.id).filter((id): id is number => typeof id === 'number');
+    return ids.length > 0 ? Math.max(...ids) + 1 : 1;
+};
+
+export const batchUpdateGoals = <T extends Goal>(
+    type: string,
+    identifierKey: 'character' | 'weapon' | 'cone', // 支持不同游戏的标识字段（角色/武器/光锥）
+    updateFn: (item: T, ...args: any[]) => void,
+    all: boolean,
+    ...updateArgs: any[]
+) => {
+    const totalGoal = getTotalGoal() as Goal[];
+    totalGoal
+        .filter(a => a.type === type)
+        .filter(a => all || !getGoalInactive().includes((a as any)[identifierKey]))
+        .forEach(item => updateFn(item as T, ...updateArgs));
+    refreshPage();
 };

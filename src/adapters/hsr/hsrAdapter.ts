@@ -2,10 +2,10 @@
 import {GameAdapter, GameType} from '../game';
 import {getDetailList as getHsrDetailList} from './hoyo';
 import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon, characterStatusList} from './seelie';
-import CharacterStatus = seelie.CharacterStatus;
-import {getAccount} from "../common";
+import {BaseAdapter} from "../baseAdapter";
 
-export class HsrAdapter implements GameAdapter {
+export class HsrAdapter extends BaseAdapter implements GameAdapter {
+
     getGameName(): string {
         return GameType.HSR;
     }
@@ -17,18 +17,12 @@ export class HsrAdapter implements GameAdapter {
         };
     }
 
-    async getAccounts() {
-        const {BBS_URL, ROLE_URL} = this.getApiConfig();
-        return await getAccount(ROLE_URL, BBS_URL, this.getGameName());
-    }
-
     async getCharacterDetails(uid: string, region: string) {
         return getHsrDetailList(uid, region);
     }
 
     syncCharacters(res: any[]) {
         console.group("返回数据");
-
         console.groupCollapsed("角色");
         console.table(res.map((a) => a.avatar));
         console.groupEnd();
@@ -51,22 +45,17 @@ export class HsrAdapter implements GameAdapter {
             console.groupEnd();
         });
         console.groupEnd();
-
         console.groupEnd();
         res.forEach(v => addCharacter(v));
     }
 
-    batchUpdateCharacter(all: boolean, characterStatusGoal: CharacterStatus): void {
-        batchUpdateCharacter(all, characterStatusGoal);
+    protected importSeelieMethods() {
+        return {batchUpdateCharacter, batchUpdateWeapon};
     }
 
-    batchUpdateWeapon(all: boolean, characterStatusGoal: CharacterStatus): void {
-        batchUpdateWeapon(all, characterStatusGoal);
-    }
-
-    batchUpdateTalent(all: boolean, normal: number, skill: number, burst: number, t: number): void {
+    batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number, t: number): void => {
         batchUpdateTrace(all, normal, skill, burst, t);
-    }
+    };
 
     getCharacterStatusList() {
         return characterStatusList;

@@ -1,10 +1,9 @@
 import {GameAdapter, GameType} from '../game';
 import {getDetailList as getZzzDetailList} from './hoyo';
 import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon, characterStatusList} from './seelie';
-import CharacterStatus = seelie.CharacterStatus;
-import {getAccount} from "../common";
+import {BaseAdapter} from "../baseAdapter";
 
-export class ZzzAdapter implements GameAdapter {
+export class ZzzAdapter extends BaseAdapter implements GameAdapter {
     getGameName(): string {
         return GameType.ZZZ;
     }
@@ -14,11 +13,6 @@ export class ZzzAdapter implements GameAdapter {
             BBS_URL: 'https://act.mihoyo.com/zzz/gt/character-builder-h/index.html',
             ROLE_URL: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookieToken?game_biz=nap_cn'
         };
-    }
-
-    async getAccounts() {
-        const {BBS_URL, ROLE_URL} = this.getApiConfig();
-        return await getAccount(ROLE_URL, BBS_URL, this.getGameName());
     }
 
     async getCharacterDetails(uid: string, region: string) {
@@ -55,15 +49,11 @@ export class ZzzAdapter implements GameAdapter {
         res.forEach(v => addCharacter(v));
     }
 
-    batchUpdateCharacter(all: boolean, characterStatusGoal: CharacterStatus): void {
-        batchUpdateCharacter(all, characterStatusGoal);
+    protected importSeelieMethods() {
+        return {batchUpdateCharacter, batchUpdateWeapon};
     }
 
-    batchUpdateWeapon(all: boolean, characterStatusGoal: CharacterStatus): void {
-        batchUpdateWeapon(all, characterStatusGoal);
-    }
-
-    batchUpdateTalent(all: boolean, basicGoal: number, dodgeGoal: number, assistGoal: number, specialGoal: number, chainGoal: number, coreGoal: number): void {
+    batchUpdateTalent = (all: boolean, basicGoal: number, dodgeGoal: number, assistGoal: number, specialGoal: number, chainGoal: number, coreGoal: number): void => {
         batchUpdateTrace(all, basicGoal, dodgeGoal, assistGoal, specialGoal, chainGoal, coreGoal);
     }
 

@@ -3,10 +3,7 @@ import ListboxSelect from "./select/ListboxSelect";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {AdapterManager} from '../adapters/adapterManager';
-import {GameType} from "../adapters/game";
-import TarceGoalTab from "./tabs/TarceGoalTab";
 import {refreshPage} from "../adapters/common";
-import ZZZTalentGoalTab from "./tabs/ZZZTalentGoalTab";
 
 interface IProps {
     onClose: () => void
@@ -243,20 +240,14 @@ function ExDialog(props: IProps) {
                                             <CharacterGoalTab
                                                 showText={"角色"}
                                                 batchUpdateCharacter={currentAdapter.batchUpdateCharacter}
-                                                characterStatusList={currentAdapter.getCharacterStatusList()}
                                             />
                                         )}
-                                        {activeTab === 1 && currentAdapter.getGameName() === GameType.GENSHIN &&
-                                            <TalentGoalTab batchUpdateTalent={currentAdapter.batchUpdateTalent}/>}
-                                        {activeTab === 1 && currentAdapter.getGameName() === GameType.HSR &&
-                                            <TarceGoalTab/>}
-                                        {activeTab === 1 && currentAdapter.getGameName() === GameType.ZZZ &&
-                                            <ZZZTalentGoalTab batchUpdateTalent={currentAdapter.batchUpdateTalent}/>}
+                                        {activeTab === 1 &&
+                                            <TalentGoalTab/>}
                                         {activeTab === 2 && (
                                             <CharacterGoalTab
                                                 showText={"武器"}
                                                 batchUpdateCharacter={currentAdapter.batchUpdateWeapon}
-                                                characterStatusList={currentAdapter.getCharacterStatusList()}
                                             />
                                         )}
                                     </div>
