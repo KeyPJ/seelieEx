@@ -1,9 +1,9 @@
 import React, {useState} from "react";
-import {characterStatusList} from "../../seelie";
 import CharacterStatus = seelie.CharacterStatus;
 
 import ToggleSwitch from "../switch/ToggleSwitch";
 import ListboxSelect from "../select/ListboxSelect";
+import {AdapterManager} from "../../adapters/adapterManager";
 
 interface IProps {
     showText: string,
@@ -16,16 +16,14 @@ function CharacterGoalTab(props: IProps) {
 
     const [selectAllRoles, setSelectAllRoles] = useState<boolean>(() => true);
 
+    const characterStatusList = AdapterManager.getCurrentAdapter().getCharacterStatusList();
+
     const optionList = characterStatusList.slice(0).reverse();
 
     const [characterLevelGoal, setCharacterLevelGoal] = useState<CharacterStatus>(() => optionList[0]);
 
     const batchSetCharacterGoalLevel = () => {
-        console.log(`批量设置${showText}目标等级`)
-        console.log(selectAllRoles)
-        console.log(characterLevelGoal)
         batchUpdateCharacter(!selectAllRoles, characterLevelGoal)
-        alert(`${showText}目标等级设置完毕`)
     }
 
     return <div>

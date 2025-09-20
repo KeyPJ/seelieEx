@@ -1,28 +1,16 @@
-import Goal = seelie.Goal;
+import Goal = seelie.GIGoal;
 import CharacterDataEx = mihoyo.CharacterDataEx;
 import CharacterStatus = seelie.CharacterStatus;
-import CharacterGoal = seelie.CharacterGoal;
-import TalentGoal = seelie.TalentGoal;
+import CharacterGoal = seelie.GICharacterGoal;
+import TalentGoal = seelie.GITalentGoal;
+import WeaponGoal = seelie.GIWeaponGoal;
 import {getCharacterId, getElementAttrName, getWeaponId} from "./query";
-import WeaponGoal = seelie.WeaponGoal;
-
-
-const getAccount: () => string = () => localStorage.account || "main";
-
-const getTotalGoal: () => Goal[] = () =>
-    JSON.parse(
-        localStorage.getItem(`${getAccount()}-goals`) || "[]"
-    ) as Goal[];
-
-const getGoalInactive: () => string[] = () =>
-    Object.keys(JSON.parse(localStorage.getItem(`${getAccount()}-inactive`) || "{}"));
-
-const setGoals = (goals: any) => {
-    // console.log(`${getAccount()}-goals`)
-    // console.log(JSON.stringify(goals))
-    localStorage.setItem(`${getAccount()}-goals`, JSON.stringify(goals));
-    localStorage.setItem("last_update", new Date().toISOString());
-};
+import {
+    batchUpdateGoals,
+    getNextId,
+    getTotalGoal,
+    setGoals
+} from "../common";
 
 const addGoal = (data: any) => {
     let index: number = -1;
@@ -46,19 +34,17 @@ const addGoal = (data: any) => {
 
         data.id = (lastId || 0) + 1;
         goals.push(data);
-        console.log(data);
     }
     setGoals(goals);
 };
 
 const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
-    const totalGoal: Goal[] = getTotalGoal();
-    const ids = totalGoal.map(g => g.id);
-    const id = Math.max(...ids) + 1 || 1;
+    const totalGoal = getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "talent" && g.character == talentCharacter);
     const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter(a => a.max_level == 10).sort().map(a => a.level_current)
     let talentGoal: TalentGoal;
     if (talentIdx < 0) {
+        const id = getNextId();
         talentGoal = {
             type: "talent",
             character: talentCharacter,
@@ -102,17 +88,15 @@ const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
 };
 
 export const addCharacterGoal = (level_current: number, nameEn: String, name: string, type: string) => {
-    let totalGoal: Goal[] = getTotalGoal();
-    const ids = totalGoal.map(g => g.id);
-    const id = Math.max(...ids) + 1 || 1;
+    let totalGoal = getTotalGoal() as Goal[];
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     let weaponPredicate = (g: Goal) => g.type == type && g.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
     const characterStatus: CharacterStatus = initCharacterStatus(level_current);
-
     let characterGoal: Goal
 
-    function initCharacterGoal() {
+    function initCharacterGoal(id: number) {
+
         return {
             type,
             character: nameEn,
@@ -122,7 +106,8 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
         } as CharacterGoal
     }
 
-    function initWeaponGoal() {
+    function initWeaponGoal(id: number) {
+
         return {
             type,
             character: "",
@@ -134,7 +119,8 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
     }
 
     if (characterIdx < 0) {
-        characterGoal = type == "character" ? initCharacterGoal() : initWeaponGoal();
+        const id = getNextId();
+        characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
         const seelieGoal = type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as WeaponGoal
         const {goal, current} = seelieGoal;
@@ -237,8 +223,12 @@ const updateTalent = (talent: TalentGoal, normalGoal = 9, skillGoal = 9, burstGo
 }
 
 export const batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number) => {
-    getTotalGoal().filter(a => a.type == 'talent').filter(a => all || !getGoalInactive().includes(a.character as string))
-        .map(a => updateTalent(a as TalentGoal, normal, skill, burst))
+    batchUpdateGoals<TalentGoal>(
+        'talent',
+        'character', // 天赋目标用character字段标识
+        (talent) => updateTalent(talent, normal, skill, burst),
+        all
+    );
 }
 
 
@@ -254,14 +244,22 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
     addGoal(characterGoalNew)
 }
 
-export const batchUpdateCharacter = (all: boolean, characterStatusGoal: CharacterStatus,) => {
-    getTotalGoal().filter(a => a.type == "character").filter(a => all || !getGoalInactive().includes(a.character as string))
-        .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    location.reload()
+export const batchUpdateCharacter: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = (all: boolean, characterStatusGoal: CharacterStatus,) => {
+    batchUpdateGoals<CharacterGoal>(
+        'character',
+        'character', // 角色目标用character字段标识
+        updateCharacter,
+        all,
+        characterStatusGoal
+    );
 }
 
-export const batchUpdateWeapon = (all: boolean, characterStatusGoal: CharacterStatus,) => {
-    getTotalGoal().filter(a => a.type == "weapon").filter(a => all || !getGoalInactive().includes(a.weapon as string))
-        .map(a => updateCharacter(a as CharacterGoal, characterStatusGoal))
-    location.reload()
+export const batchUpdateWeapon: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = (all: boolean, characterStatusGoal: CharacterStatus,) => {
+    batchUpdateGoals<WeaponGoal>(
+        'weapon',
+        'weapon', // 武器目标用weapon字段标识
+        (weapon) => updateCharacter(weapon as unknown as CharacterGoal, characterStatusGoal),
+        all,
+        characterStatusGoal
+    );
 }
