@@ -61,7 +61,7 @@ function TalentGoalTab() {
             {/* 动态渲染天赋等级选择器（还原原网格布局） */}
             <div className="grid grid-rows-2 grid-flow-col gap-2"> {/* 还原原网格类 */}
                 {talentTypes.map((type, index) => (
-                    <div key={type} className="flex flex-col items-center">
+                    <div key={type} className="flex ex-flex-col items-center">
                         <label className="mt-10">{labels[index]}</label> {/* 还原 mt-10，移除 text-sm/mb-2 */}
                         <ListboxSelect
                             selected={talentGoalLevel[type]}

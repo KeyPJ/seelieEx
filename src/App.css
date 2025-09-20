@@ -2,3 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.ex-flex-col {
+    flex-direction: column;
+}
+
+.ex-mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}

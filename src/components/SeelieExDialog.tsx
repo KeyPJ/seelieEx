@@ -115,11 +115,11 @@ function ExDialog(props: IProps) {
     };
     return (
         <div
-            className="fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl"
+            className="fixed top-10 inset-x-[20%] ex-mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl"
             onMouseLeave={handleMouseLeave}>
             <h1 className="text-3xl font-bold underline pt-4 text-white">SeelieEX</h1>
             <div className="w-full p-4">
-                <div className="w-full max-w-md p-2 mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
+                <div className="w-full max-w-md p-2 ex-mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
                     {/* 第一个折叠面板 - 角色信息同步 */}
                     <div ref={panelRefs[0]} className="mt-2 border border-gray-700 rounded-lg bg-slate-700/50">
                         <button
