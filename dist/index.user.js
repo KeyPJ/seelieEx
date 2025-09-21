@@ -2,7 +2,7 @@
 // @name             genshinSeelieEx
 // @name:zh          原神、崩坏：星穹铁道、绝区零规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          6.0.0
+// @version          6.0.2
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -12,8 +12,9 @@
 // @include          https://seelie.me/*
 // @include          https://hsr.seelie.me/*
 // @include          https://zzz.seelie.me/*
-// @require          https://unpkg.zhimg.com/react@17.0.2/umd/react.production.min.js
-// @require          https://unpkg.zhimg.com/react-dom@17.0.2/umd/react-dom.production.min.js
+// @require          https://unpkg.com/react@17.0.2/umd/react.production.min.js
+// @require          https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js
+// @require          https://unpkg.com/localforage@1.10.0/dist/localforage.min.js
 // @resource         character      https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json
 // @resource         hsr_character  https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_character.json
 // @resource         hsr_weapon     https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_weapon.json
@@ -41,7 +42,7 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-(function(require$$1, ReactDOM2) {
+(function(require$$1, ReactDOM2, localforage2) {
   var _a, _b;
   "use strict";
   const App$1 = "";
@@ -1776,7 +1777,8 @@ var __publicField = (obj, key, value) => {
   };
   axios$1.defaults.adapter = xhrAdapter;
   axios$1.defaults.withCredentials = true;
-  function refreshPage() {
+  async function refreshPage() {
+    console.log("刷新页面?");
     const confirmed = confirm("确定要刷新页面吗？刷新后将重新加载所有数据。");
     if (confirmed) {
       window.location.reload();
@@ -1866,31 +1868,46 @@ var __publicField = (obj, key, value) => {
     throw err ? err : new Error("账户信息获取失败");
   };
   const getStorageAccount = () => localStorage.account || "main";
-  const getTotalGoal = () => JSON.parse(
-    localStorage.getItem(`${getStorageAccount()}-goals`) || "[]"
-  );
-  const getGoalInactive = () => Object.keys(JSON.parse(localStorage.getItem(`${getStorageAccount()}-inactive`) || "{}"));
-  const setGoalInactive = (ids = /* @__PURE__ */ new Set()) => {
+  const getTotalGoal = async () => {
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    const key = `${getStorageAccount()}-goals`;
+    const text = await currentAdapter.getItem(key) || "[]";
+    return typeof text === "string" ? JSON.parse(text) : text;
+  };
+  const getGoalInactive = async () => {
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    const key = `${getStorageAccount()}-inactive`;
+    const text = await currentAdapter.getItem(key) || "[]";
+    return Object.keys(typeof text === "string" ? JSON.parse(text) : text);
+  };
+  const setGoalInactive = async (ids = /* @__PURE__ */ new Set()) => {
     const inactiveObject = Object.fromEntries(
       [...ids].map((id) => [id, true])
     );
-    localStorage.setItem(`${getStorageAccount()}-inactive`, JSON.stringify(inactiveObject));
-    refreshPage();
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    const key = `${getStorageAccount()}-inactive`;
+    await currentAdapter.setItem(key, inactiveObject);
+    await refreshPage();
   };
-  const setGoals = (goals) => {
-    localStorage.setItem(`${getStorageAccount()}-goals`, JSON.stringify(goals));
-    localStorage.setItem("last_update", (/* @__PURE__ */ new Date()).toISOString());
+  const setGoals = async (goals) => {
+    const key = `${getStorageAccount()}-goals`;
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    await currentAdapter.setItem(key, goals);
+    await currentAdapter.setItem("last_update", (/* @__PURE__ */ new Date()).toISOString());
   };
-  const getNextId = () => {
-    const goals = getTotalGoal();
-    const ids = goals.map((g2) => g2.id).filter((id) => typeof id === "number");
+  const getNextId = async () => {
+    const goals = await getTotalGoal();
+    const ids = goals.map((g2) => g2.id).filter((id) => true);
     return ids.length > 0 ? Math.max(...ids) + 1 : 1;
   };
-  const batchUpdateGoals = (type, identifierKey, updateFn, all, ...updateArgs) => {
-    const totalGoal = getTotalGoal();
-    const goals = totalGoal.filter((a) => a.type === type).filter((a) => all || !getGoalInactive().includes(a[identifierKey]));
-    goals.map((item) => updateFn(item, ...updateArgs));
-    refreshPage();
+  const batchUpdateGoals = async (type, identifierKey, updateFn, all, ...updateArgs) => {
+    const totalGoal = await getTotalGoal();
+    const goalInactive = await getGoalInactive();
+    const goals = totalGoal.filter((a) => a.type === type).filter((a) => all || !goalInactive.includes(a[identifierKey]));
+    for (let goal of goals) {
+      await updateFn(goal, ...updateArgs);
+    }
+    await refreshPage();
   };
   const computeInactive = (goals, config) => {
     var _a2, _b2, _c;
@@ -1920,10 +1937,10 @@ var __publicField = (obj, key, value) => {
     const characterNames = new Set([...talentIds].filter((id) => characterIds.has(id)));
     return /* @__PURE__ */ new Set([...characterNames, ...weaponIds]);
   };
-  const setInactive = (config) => {
-    const goals = getTotalGoal();
+  const setInactive = async (config) => {
+    const goals = await getTotalGoal();
     const inactive = computeInactive(goals, config);
-    setGoalInactive(inactive);
+    await setGoalInactive(inactive);
   };
   axios$1.defaults.adapter = xhrAdapter;
   axios$1.defaults.withCredentials = true;
@@ -1979,10 +1996,10 @@ var __publicField = (obj, key, value) => {
     }
     return detailList;
   };
-  const addGoal$2 = (data2) => {
+  const addGoal$2 = async (data2) => {
     var _a2, _b2;
     let index = -1;
-    const goals = getTotalGoal();
+    const goals = await getTotalGoal();
     if (data2.character) {
       index = goals.findIndex(
         (g2) => g2.character === data2.character && g2.type === data2.type
@@ -1997,15 +2014,15 @@ var __publicField = (obj, key, value) => {
       data2.id = (lastId || 0) + 1;
       goals.push(data2);
     }
-    setGoals(goals);
+    await setGoals(goals);
   };
-  const addTalentGoal = (talentCharacter, skill_list) => {
-    const totalGoal = getTotalGoal();
+  const addTalentGoal = async (talentCharacter, skill_list) => {
+    const totalGoal = await getTotalGoal();
     const talentIdx = totalGoal.findIndex((g2) => g2.type == "talent" && g2.character == talentCharacter);
     const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter((a) => a.max_level == 10).sort().map((a) => a.level_current);
     let talentGoal;
     if (talentIdx < 0) {
-      const id = getNextId();
+      const id = await getNextId();
       talentGoal = {
         type: "talent",
         character: talentCharacter,
@@ -2047,10 +2064,10 @@ var __publicField = (obj, key, value) => {
         }
       };
     }
-    addGoal$2(talentGoal);
+    await addGoal$2(talentGoal);
   };
-  const addCharacterGoal$2 = (level_current, nameEn, name, type) => {
-    let totalGoal = getTotalGoal();
+  const addCharacterGoal$2 = async (level_current, nameEn, name, type) => {
+    let totalGoal = await getTotalGoal();
     let characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
     let weaponPredicate = (g2) => g2.type == type && g2.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
@@ -2076,7 +2093,7 @@ var __publicField = (obj, key, value) => {
       };
     }
     if (characterIdx < 0) {
-      const id = getNextId();
+      const id = await getNextId();
       characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
       const seelieGoal = type == "character" ? totalGoal[characterIdx] : totalGoal[characterIdx];
@@ -2090,16 +2107,16 @@ var __publicField = (obj, key, value) => {
         goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal
       };
     }
-    addGoal$2(characterGoal);
+    await addGoal$2(characterGoal);
   };
-  function addCharacter$2(characterDataEx) {
+  async function addCharacter$2(characterDataEx) {
     const { character, skill_list, weapon } = characterDataEx;
     const { name, element_attr_id } = character;
     if (weapon) {
       const { name: name2, level_current: weaponLeveL } = weapon;
       const weaponId = getWeaponId$2(name2);
       if (weaponId) {
-        addCharacterGoal$2(weaponLeveL, weaponId, name2, "weapon");
+        await addCharacterGoal$2(weaponLeveL, weaponId, name2, "weapon");
       }
     }
     const { level_current: characterLevel } = character;
@@ -2107,13 +2124,13 @@ var __publicField = (obj, key, value) => {
     if (!characterId) {
       return;
     }
-    addCharacterGoal$2(characterLevel, characterId, name, "character");
+    await addCharacterGoal$2(characterLevel, characterId, name, "character");
     let talentCharacter = characterId;
     if (characterId == "traveler") {
       const elementAttrName = getElementAttrName(element_attr_id);
       talentCharacter = `traveler_${elementAttrName}`;
     }
-    addTalentGoal(talentCharacter, skill_list);
+    await addTalentGoal(talentCharacter, skill_list);
   }
   const characterStatusList$2 = [
     { level: 1, asc: 0, text: "1" },
@@ -2148,7 +2165,7 @@ var __publicField = (obj, key, value) => {
     }
     return initCharacterStatus2;
   };
-  const updateTalent = (talent, normalGoal = 9, skillGoal = 9, burstGoal = 9) => {
+  const updateTalent = async (talent, normalGoal = 9, skillGoal = 9, burstGoal = 9) => {
     const { normal: { current: normalCurrent }, skill: { current: skillCurrent }, burst: { current: burstCurrent } } = talent;
     const talentNew = {
       ...talent,
@@ -2165,10 +2182,10 @@ var __publicField = (obj, key, value) => {
         goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
       }
     };
-    addGoal$2(talentNew);
+    await addGoal$2(talentNew);
   };
-  const batchUpdateTalent = (all, normal, skill, burst) => {
-    batchUpdateGoals(
+  const batchUpdateTalent = async (all, normal, skill, burst) => {
+    await batchUpdateGoals(
       "talent",
       "character",
       // 天赋目标用character字段标识
@@ -2176,7 +2193,7 @@ var __publicField = (obj, key, value) => {
       all
     );
   };
-  const updateCharacter$2 = (character, characterStatusGoal) => {
+  const updateCharacter$2 = async (character, characterStatusGoal) => {
     const { current } = character;
     const { level: levelCurrent, asc: ascCurrent } = current;
     const { level, asc } = characterStatusGoal;
@@ -2184,9 +2201,9 @@ var __publicField = (obj, key, value) => {
       ...character,
       goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current
     };
-    addGoal$2(characterGoalNew);
+    await addGoal$2(characterGoalNew);
   };
-  const batchUpdateCharacter$2 = (all, characterStatusGoal) => {
+  const batchUpdateCharacter$2 = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "character",
       "character",
@@ -2194,9 +2211,11 @@ var __publicField = (obj, key, value) => {
       updateCharacter$2,
       all,
       characterStatusGoal
-    );
+    ).then(() => {
+      console.log("角色更新完成");
+    });
   };
-  const batchUpdateWeapon$2 = (all, characterStatusGoal) => {
+  const batchUpdateWeapon$2 = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "weapon",
       "weapon",
@@ -2204,7 +2223,9 @@ var __publicField = (obj, key, value) => {
       (weapon) => updateCharacter$2(weapon, characterStatusGoal),
       all,
       characterStatusGoal
-    );
+    ).then(() => {
+      console.log("武器更新完成");
+    });
   };
   class BaseAdapter {
     constructor() {
@@ -2224,12 +2245,21 @@ var __publicField = (obj, key, value) => {
       const { BBS_URL, ROLE_URL } = this.getApiConfig();
       return await getAccount(ROLE_URL, BBS_URL, this.getGameName());
     }
+    async getItem(key) {
+      return Promise.resolve(localStorage.getItem(key));
+    }
+    async setItem(key, value) {
+      localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
+      return Promise.resolve();
+    }
   }
   class GenshinAdapter extends BaseAdapter {
     constructor() {
       super(...arguments);
       __publicField(this, "batchUpdateTalent", (all, normal, skill, burst) => {
-        batchUpdateTalent(all, normal, skill, burst);
+        batchUpdateTalent(all, normal, skill, burst).then(() => {
+          console.log("天赋更新完成");
+        });
       });
       __publicField(this, "getInactiveConfig", () => {
         const GENSHIN_INACTIVE_CONFIG = [
@@ -2261,7 +2291,7 @@ var __publicField = (obj, key, value) => {
     async getCharacterDetails(uid, region) {
       return getDetailList$2(uid, region);
     }
-    syncCharacters(res) {
+    async syncCharacters(res) {
       console.group("返回数据");
       console.groupCollapsed("角色");
       console.table(res.map((a) => a.character));
@@ -2278,7 +2308,9 @@ var __publicField = (obj, key, value) => {
       });
       console.groupEnd();
       console.groupEnd();
-      res.forEach((v) => addCharacter$2(v));
+      for (let v of res) {
+        await addCharacter$2(v);
+      }
     }
     importSeelieMethods() {
       return { batchUpdateCharacter: batchUpdateCharacter$2, batchUpdateWeapon: batchUpdateWeapon$2 };
@@ -2371,10 +2403,10 @@ var __publicField = (obj, key, value) => {
     }
     return detailList;
   };
-  const addGoal$1 = (data2) => {
+  const addGoal$1 = async (data2) => {
     var _a2, _b2;
     let index = -1;
-    const goals = getTotalGoal();
+    const goals = await getTotalGoal();
     if (data2.character) {
       index = goals.findIndex(
         (g2) => g2.character === data2.character && g2.type === data2.type
@@ -2389,11 +2421,11 @@ var __publicField = (obj, key, value) => {
       data2.id = (lastId || 0) + 1;
       goals.push(data2);
     }
-    setGoals(goals);
+    await setGoals(goals);
   };
   let initBonus = {};
-  const addTraceGoal$1 = (talentCharacter, skill_list, skills_servant) => {
-    const totalGoal = getTotalGoal();
+  const addTraceGoal$1 = async (talentCharacter, skill_list, skills_servant) => {
+    const totalGoal = await getTotalGoal();
     const talentIdx = totalGoal.findIndex((g2) => g2.type == "trace" && g2.character == talentCharacter);
     skill_list.sort((a, b) => a.point_id > b.point_id ? 1 : 0);
     const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = skill_list.map((a) => a.cur_level);
@@ -2404,7 +2436,7 @@ var __publicField = (obj, key, value) => {
     }
     let talentGoal;
     if (talentIdx < 0) {
-      const id = getNextId();
+      const id = await getNextId();
       talentGoal = {
         type: "trace",
         character: talentCharacter,
@@ -2472,10 +2504,10 @@ var __publicField = (obj, key, value) => {
         }
       };
     }
-    addGoal$1(talentGoal);
+    await addGoal$1(talentGoal);
   };
-  const addCharacterGoal$1 = (level_current, nameEn, name, type) => {
-    const totalGoal = getTotalGoal();
+  const addCharacterGoal$1 = async (level_current, nameEn, name, type) => {
+    const totalGoal = await getTotalGoal();
     let characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
     let weaponPredicate = (g2) => g2.type == type && g2.cone == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
@@ -2502,7 +2534,7 @@ var __publicField = (obj, key, value) => {
       };
     }
     if (characterIdx < 0) {
-      const id = getNextId();
+      const id = await getNextId();
       characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
       const seelieGoal = type == "character" ? totalGoal[characterIdx] : totalGoal[characterIdx];
@@ -2516,16 +2548,16 @@ var __publicField = (obj, key, value) => {
         goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal
       };
     }
-    addGoal$1(characterGoal);
+    await addGoal$1(characterGoal);
   };
-  function addCharacter$1(characterDataEx) {
+  async function addCharacter$1(characterDataEx) {
     const { avatar: character, skills: skill_list, skills_servant, equipment: weapon } = characterDataEx;
     const { item_name: name } = character;
     if (weapon) {
       const { item_name: name2, cur_level: weaponLeveL } = weapon;
       const weaponId = getWeaponId$1(name2);
       if (weaponId) {
-        addCharacterGoal$1(weaponLeveL, weaponId, name2, "cone");
+        await addCharacterGoal$1(weaponLeveL, weaponId, name2, "cone");
       }
     }
     const { cur_level: characterLevel } = character;
@@ -2533,8 +2565,8 @@ var __publicField = (obj, key, value) => {
     if (!characterId || characterId.includes("trailblazer")) {
       return;
     }
-    addCharacterGoal$1(characterLevel, characterId, name, "character");
-    addTraceGoal$1(characterId, skill_list, skills_servant);
+    await addCharacterGoal$1(characterLevel, characterId, name, "character");
+    await addTraceGoal$1(characterId, skill_list, skills_servant);
   }
   const characterStatusList$1 = [
     { level: 1, asc: 0, text: "1" },
@@ -2569,7 +2601,7 @@ var __publicField = (obj, key, value) => {
     }
     return initCharacterStatus2;
   };
-  const updateTrace$1 = (talent, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9) => {
+  const updateTrace$1 = async (talent, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9) => {
     const {
       basic: { current: basicCurrent },
       skill: { current: skillCurrent },
@@ -2595,13 +2627,13 @@ var __publicField = (obj, key, value) => {
         goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
       }
     };
-    addGoal$1(talentNew);
+    await addGoal$1(talentNew);
   };
-  const batchUpdateTrace$1 = (all, normal, skill, burst, t) => {
+  const batchUpdateTrace$1 = async (all, normal, skill, burst, t) => {
     if (normal > 6) {
       normal = 6;
     }
-    batchUpdateGoals(
+    await batchUpdateGoals(
       "trace",
       "character",
       // 天赋目标用character字段标识
@@ -2609,7 +2641,7 @@ var __publicField = (obj, key, value) => {
       all
     );
   };
-  const updateCharacter$1 = (character, characterStatusGoal) => {
+  const updateCharacter$1 = async (character, characterStatusGoal) => {
     const { current } = character;
     const { level: levelCurrent, asc: ascCurrent } = current;
     const { level, asc } = characterStatusGoal;
@@ -2617,25 +2649,29 @@ var __publicField = (obj, key, value) => {
       ...character,
       goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current
     };
-    addGoal$1(characterGoalNew);
+    await addGoal$1(characterGoalNew);
   };
-  const batchUpdateCharacter$1 = (all, characterStatusGoal) => {
+  const batchUpdateCharacter$1 = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "character",
       "character",
       updateCharacter$1,
       all,
       characterStatusGoal
-    );
+    ).then(() => {
+      console.log("角色更新完成");
+    });
   };
-  const batchUpdateWeapon$1 = (all, characterStatusGoal) => {
+  const batchUpdateWeapon$1 = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "cone",
       "cone",
       (weapon) => updateCharacter$1(weapon, characterStatusGoal),
       all,
       characterStatusGoal
-    );
+    ).then(() => {
+      console.log("武器更新完成");
+    });
   };
   class HsrAdapter extends BaseAdapter {
     constructor() {
@@ -2672,7 +2708,7 @@ var __publicField = (obj, key, value) => {
     async getCharacterDetails(uid, region) {
       return getDetailList$1(uid, region);
     }
-    syncCharacters(res) {
+    async syncCharacters(res) {
       console.group("返回数据");
       console.groupCollapsed("角色");
       console.table(res.map((a) => a.avatar));
@@ -2697,13 +2733,21 @@ var __publicField = (obj, key, value) => {
       });
       console.groupEnd();
       console.groupEnd();
-      res.forEach((v) => addCharacter$1(v));
+      for (let v of res) {
+        await addCharacter$1(v);
+      }
     }
     importSeelieMethods() {
       return { batchUpdateCharacter: batchUpdateCharacter$1, batchUpdateWeapon: batchUpdateWeapon$1 };
     }
     getCharacterStatusList() {
       return characterStatusList$1;
+    }
+    async getItem(key) {
+      return localforage2.getItem(key);
+    }
+    async setItem(key, value) {
+      return localforage2.setItem(key, value);
     }
   }
   axios$1.defaults.adapter = xhrAdapter;
@@ -2812,10 +2856,10 @@ var __publicField = (obj, key, value) => {
     console.error(`getWeaponrId ${queryName} 查询失败`);
     return "";
   };
-  const addGoal = (data2) => {
+  const addGoal = async (data2) => {
     var _a2, _b2;
     let index = -1;
-    const goals = getTotalGoal();
+    const goals = await getTotalGoal();
     if (data2.character) {
       index = goals.findIndex(
         (g2) => g2.character === data2.character && g2.type === data2.type
@@ -2830,10 +2874,10 @@ var __publicField = (obj, key, value) => {
       data2.id = (lastId || 0) + 1;
       goals.push(data2);
     }
-    setGoals(goals);
+    await setGoals(goals);
   };
-  const addTraceGoal = (talentCharacter, skill_list) => {
-    const totalGoal = getTotalGoal();
+  const addTraceGoal = async (talentCharacter, skill_list) => {
+    const totalGoal = await getTotalGoal();
     const talentIdx = totalGoal.findIndex((g2) => g2.type == "talent" && g2.character == talentCharacter);
     const typeOrder = [0, 2, 6, 1, 3, 5];
     skill_list.sort((a, b) => {
@@ -2845,7 +2889,7 @@ var __publicField = (obj, key, value) => {
     let talentGoal;
     let coreValue = coreCurrent - 1;
     if (talentIdx < 0) {
-      const id = getNextId();
+      const id = await getNextId();
       talentGoal = {
         type: "talent",
         character: talentCharacter,
@@ -2912,10 +2956,10 @@ var __publicField = (obj, key, value) => {
         }
       };
     }
-    addGoal(talentGoal);
+    await addGoal(talentGoal);
   };
-  const addCharacterGoal = (level_current, nameEn, name, type) => {
-    let totalGoal = getTotalGoal();
+  const addCharacterGoal = async (level_current, nameEn, name, type) => {
+    let totalGoal = await getTotalGoal();
     let characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
     let weaponPredicate = (g2) => g2.type == type && g2.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
@@ -2942,7 +2986,7 @@ var __publicField = (obj, key, value) => {
       };
     }
     if (characterIdx < 0) {
-      const id = getNextId();
+      const id = await getNextId();
       characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
       const seelieGoal = type == "character" ? totalGoal[characterIdx] : totalGoal[characterIdx];
@@ -2956,16 +3000,16 @@ var __publicField = (obj, key, value) => {
         goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal
       };
     }
-    addGoal(characterGoal);
+    await addGoal(characterGoal);
   };
-  function addCharacter(characterDataEx) {
+  async function addCharacter(characterDataEx) {
     const { avatar: character, weapon } = characterDataEx;
     const { name_mi18n: name, skills: skill_list } = character;
     if (weapon) {
       const { name: name2, level: weaponLeveL } = weapon;
       const weaponId = getWeaponId(name2);
       if (weaponId) {
-        addCharacterGoal(weaponLeveL, weaponId, name2, "weapon");
+        await addCharacterGoal(weaponLeveL, weaponId, name2, "weapon");
       }
     }
     const { level: characterLevel } = character;
@@ -2973,8 +3017,8 @@ var __publicField = (obj, key, value) => {
     if (!characterId || characterId.includes("trailblazer")) {
       return;
     }
-    addCharacterGoal(characterLevel, characterId, name, "character");
-    addTraceGoal(characterId, skill_list);
+    await addCharacterGoal(characterLevel, characterId, name, "character");
+    await addTraceGoal(characterId, skill_list);
   }
   const characterStatusList = [
     { level: 1, asc: 0, text: "1" },
@@ -3005,7 +3049,7 @@ var __publicField = (obj, key, value) => {
     }
     return initCharacterStatus2;
   };
-  const updateTrace = (talent, basicGoal = 11, dodgeGoal = 11, assistGoal = 11, specialGoal = 11, chainGoal = 11, coreGoal = 6) => {
+  const updateTrace = async (talent, basicGoal = 11, dodgeGoal = 11, assistGoal = 11, specialGoal = 11, chainGoal = 11, coreGoal = 6) => {
     const {
       basic: { current: baseCurrent },
       dodge: { current: dodgeCurrent },
@@ -3041,13 +3085,13 @@ var __publicField = (obj, key, value) => {
         goal: coreCurrent > coreGoal ? coreCurrent : coreGoal
       }
     };
-    addGoal(talentNew);
+    await addGoal(talentNew);
   };
-  const batchUpdateTrace = (all, basicGoal = 11, dodgeGoal = 11, assistGoal = 11, specialGoal = 11, chainGoal = 11, coreGoal = 6) => {
+  const batchUpdateTrace = async (all, basicGoal = 11, dodgeGoal = 11, assistGoal = 11, specialGoal = 11, chainGoal = 11, coreGoal = 6) => {
     if (coreGoal > 6) {
       coreGoal = 6;
     }
-    batchUpdateGoals(
+    await batchUpdateGoals(
       "talent",
       "character",
       // 天赋目标用character字段标识
@@ -3055,7 +3099,7 @@ var __publicField = (obj, key, value) => {
       all
     );
   };
-  const updateCharacter = (character, characterStatusGoal) => {
+  const updateCharacter = async (character, characterStatusGoal) => {
     const { current } = character;
     const { level: levelCurrent, asc: ascCurrent } = current;
     const { level, asc } = characterStatusGoal;
@@ -3063,9 +3107,9 @@ var __publicField = (obj, key, value) => {
       ...character,
       goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current
     };
-    addGoal(characterGoalNew);
+    await addGoal(characterGoalNew);
   };
-  const batchUpdateCharacter = (all, characterStatusGoal) => {
+  const batchUpdateCharacter = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "character",
       "character",
@@ -3073,9 +3117,11 @@ var __publicField = (obj, key, value) => {
       updateCharacter,
       all,
       characterStatusGoal
-    );
+    ).then(() => {
+      console.log("角色更新完成");
+    });
   };
-  const batchUpdateWeapon = (all, characterStatusGoal) => {
+  const batchUpdateWeapon = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "weapon",
       "weapon",
@@ -3083,7 +3129,9 @@ var __publicField = (obj, key, value) => {
       (weapon) => updateCharacter(weapon, characterStatusGoal),
       all,
       characterStatusGoal
-    );
+    ).then(() => {
+      console.log("武器更新完成");
+    });
   };
   class ZzzAdapter extends BaseAdapter {
     constructor() {
@@ -3120,32 +3168,26 @@ var __publicField = (obj, key, value) => {
     async getCharacterDetails(uid, region) {
       return getDetailList(uid, region);
     }
-    syncCharacters(res) {
+    async syncCharacters(res) {
       console.group("返回数据");
       console.groupCollapsed("角色");
       console.table(res.map((a) => a.avatar));
       console.groupEnd();
       console.groupCollapsed("光锥");
-      console.table(res.map((a) => a.equipment));
+      console.table(res.map((a) => a.weapon));
       console.groupEnd();
       console.groupCollapsed("角色天赋");
       res.forEach((c) => {
-        const name = c.avatar.item_name;
+        const name = c.avatar.name_mi18n;
         console.groupCollapsed(name);
-        console.table(c.skills);
-        console.groupEnd();
-      });
-      console.groupEnd();
-      console.groupCollapsed("角色额外天赋(仅展示不做处理)");
-      res.forEach((c) => {
-        const name = c.avatar.item_name;
-        console.groupCollapsed(name);
-        console.table(c.skills_other);
+        console.table(c.avatar.skills);
         console.groupEnd();
       });
       console.groupEnd();
       console.groupEnd();
-      res.forEach((v) => addCharacter(v));
+      for (let v of res) {
+        await addCharacter(v);
+      }
     }
     importSeelieMethods() {
       return { batchUpdateCharacter, batchUpdateWeapon };
@@ -3389,11 +3431,11 @@ var __publicField = (obj, key, value) => {
         game_uid,
         region
       } = currentAccount;
-      currentAdapter.getCharacterDetails(game_uid, region).then((res) => {
-        currentAdapter.syncCharacters(res);
+      currentAdapter.getCharacterDetails(game_uid, region).then(async (res) => {
+        await currentAdapter.syncCharacters(res);
         console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
         console.log("角色信息同步完毕");
-        refreshPage();
+        await refreshPage();
       }).catch((err) => {
         console.error("同步失败:", err);
         GM_openInTab(currentAdapter.getApiConfig().BBS_URL);
@@ -3563,4 +3605,4 @@ var __publicField = (obj, key, value) => {
   ReactDOM2.render(/* @__PURE__ */ jsx(require$$1.StrictMode, {
     children: /* @__PURE__ */ jsx(App, {})
   }), document.getElementById("seelieEx"));
-})(React, ReactDOM);
+})(React, ReactDOM, localforage);
