@@ -41,4 +41,13 @@ export abstract class BaseAdapter implements GameAdapter {
 
     abstract getInactiveConfig: () => GoalTypeConfig[];
 
+    async getItem(key: string): Promise<any> {
+        return Promise.resolve(localStorage.getItem(key));
+    }
+
+    async setItem(key: string, value: any): Promise<void> {
+        localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
+        return Promise.resolve();
+    }
+
 }

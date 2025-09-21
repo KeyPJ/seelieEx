@@ -47,4 +47,10 @@ export interface GameAdapter {
 
     getInactiveConfig: () => GoalTypeConfig[];
 
+    // 异步获取存储项
+    getItem: (key: string) => Promise<any>;
+
+    // 异步设置存储项
+    setItem: (key: string, value: any) => Promise<void>;
+
 }

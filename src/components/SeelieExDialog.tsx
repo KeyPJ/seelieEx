@@ -84,11 +84,11 @@ function ExDialog(props: IProps) {
         setIsSyncing(true); // 开始同步时设置 loading 状态
         const {game_uid, region} = currentAccount;
         currentAdapter.getCharacterDetails(game_uid, region)
-            .then((res) => {
-                currentAdapter.syncCharacters(res);
+            .then(async (res) => {
+                await currentAdapter.syncCharacters(res);
                 console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
                 console.log("角色信息同步完毕");
-                refreshPage()
+                await refreshPage()
             })
             .catch((err) => {
                 console.error("同步失败:", err);
@@ -119,7 +119,8 @@ function ExDialog(props: IProps) {
             onMouseLeave={handleMouseLeave}>
             <h1 className="text-3xl font-bold underline pt-4 text-white">SeelieEX</h1>
             <div className="w-full p-4">
-                <div className="w-full max-w-md p-2 ex-mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
+                <div
+                    className="w-full max-w-md p-2 ex-mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
                     {/* 第一个折叠面板 - 角色信息同步 */}
                     <div ref={panelRefs[0]} className="mt-2 border border-gray-700 rounded-lg bg-slate-700/50">
                         <button

@@ -5,14 +5,16 @@ import Role = mihoyo.Role;
 import Goal = seelie.Goal;
 import GICharacterGoal = seelie.GICharacterGoal;
 import {GoalTypeConfig} from "./game";
+import {AdapterManager} from "./adapterManager";
 
 axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
 
-export function refreshPage() {
+export async function refreshPage() {
+    console.log("刷新页面?");
     const confirmed = confirm('确定要刷新页面吗？刷新后将重新加载所有数据。');
-
-    // 只有当用户确认后才执行页面刷新
+    //
+    // // 只有当用户确认后才执行页面刷新
     if (confirmed) {
         window.location.reload();
     }
@@ -108,53 +110,64 @@ export const getAccount = async (roleUrl: string, openUrl: string, gameType: str
 
 const getStorageAccount: () => string = () => localStorage.account || "main";
 
-export const getTotalGoal: () => Goal[] = () =>
-    JSON.parse(
-        localStorage.getItem(`${getStorageAccount()}-goals`) || "[]"
-    ) as Goal[];
+export const getTotalGoal: () => Promise<seelie.Goal[]> = async () => {
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    const key = `${getStorageAccount()}-goals`;
+    const text = await currentAdapter.getItem(key) || "[]";
+    return typeof text === 'string' ? JSON.parse(text as unknown as string) as Goal[] : text as unknown as Goal[];
+};
 
-export const getGoalInactive: () => string[] = () =>
-    Object.keys(JSON.parse(localStorage.getItem(`${getStorageAccount()}-inactive`) || "{}"));
+export const getGoalInactive: () => Promise<string[]> = async () => {
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    const key = `${getStorageAccount()}-inactive`;
+    const text = await currentAdapter.getItem(key) || "[]";
+    return Object.keys(typeof text === 'string' ? JSON.parse(text as unknown as string) : text) as string[];
+};
 
-export const setGoalInactive = (ids = new Set()) => {
+export const setGoalInactive = async (ids = new Set()) => {
     const inactiveObject = Object.fromEntries(
         [...ids].map(id => [id as unknown as string, true])
     );
-    localStorage.setItem(`${getStorageAccount()}-inactive`, JSON.stringify(inactiveObject));
-    refreshPage();
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    const key = `${getStorageAccount()}-inactive`;
+    await currentAdapter.setItem(key, inactiveObject);
+    await refreshPage();
 }
 
-export const setGoals = (goals: any) => {
-    localStorage.setItem(`${getStorageAccount()}-goals`, JSON.stringify(goals));
-    localStorage.setItem("last_update", new Date().toISOString());
+export const setGoals = async (goals: any) => {
+    const key = `${getStorageAccount()}-goals`;
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    await currentAdapter.setItem(key, goals);
+    await currentAdapter.setItem("last_update", new Date().toISOString());
 };
 
-export const getNextId = () => {
-    const goals = getTotalGoal();
-    const ids = goals.map(g => g.id).filter((id): id is number => typeof id === 'number');
+export const getNextId = async () => {
+    const goals = await getTotalGoal();
+    const ids = goals.map(g => g.id).filter((id): id is number => true);
     return ids.length > 0 ? Math.max(...ids) + 1 : 1;
 };
 
-export const batchUpdateGoals = <T extends Goal>(
+export const batchUpdateGoals = async <T extends Goal>(
     type: string,
     identifierKey: 'character' | 'weapon' | 'talent' | 'cone', // 支持不同游戏的标识字段（角色/武器/天赋）
-    updateFn: (item: T, ...args: any[]) => void,
+    updateFn: (item: T, ...args: any[]) => Promise<void>,
     all: boolean,
     ...updateArgs: any[]
 ) => {
-    const totalGoal = getTotalGoal() as Goal[];
+    const totalGoal = await getTotalGoal() as Goal[];
+    const goalInactive = await getGoalInactive();
     const goals = totalGoal
         .filter(a => a.type === type)
-        .filter(a => all || !getGoalInactive().includes((a as any)[identifierKey]));
-    goals.map(item => updateFn(item as T, ...updateArgs))
-    refreshPage();
-
+        .filter(a => all || !goalInactive.includes((a as any)[identifierKey]));
+    for (let goal of goals) {
+        await updateFn(goal as T, ...updateArgs);
+    }
+    await refreshPage();
 };
 
 
-
 // 通用未达标目标计算函数（变量名规范化版）
-export const computeInactive  = (goals: Goal[], config: GoalTypeConfig[]): Set<string> => {
+export const computeInactive = (goals: Goal[], config: GoalTypeConfig[]): Set<string> => {
     // 1. 明确函数语义：判断目标是否"已完成"（而非模糊的"达标"）
     const isGoalCompleted = (goal: { goal: { level: number }, current: { level: number } }) =>
         goal.goal.level <= goal.current.level;
@@ -162,7 +175,7 @@ export const computeInactive  = (goals: Goal[], config: GoalTypeConfig[]): Set<s
     // 2. 存储"目标类型→标识符集合"的映射（原名：resultMap）
     const goalTypeIdentifiers = new Map<string, Set<string>>();
 
-    config.forEach(({ type, identifierKey, isTalent, talentKeys }) => {
+    config.forEach(({type, identifierKey, isTalent, talentKeys}) => {
         // 3. 筛选当前类型的目标（原名：goalGroup）
         const filteredGoals = goals.filter(g => g.type === type);
 
@@ -200,8 +213,8 @@ export const computeInactive  = (goals: Goal[], config: GoalTypeConfig[]): Set<s
     return new Set([...characterNames, ...weaponIds]);
 };
 
-export const setInactive: (config: GoalTypeConfig[]) => void = (config) => {
-    const goals = getTotalGoal();
+export const setInactive: (config: GoalTypeConfig[]) => void = async (config) => {
+    const goals = await getTotalGoal();
     const inactive = computeInactive(goals, config); // 调用通用函数
-    setGoalInactive(inactive);
+    await setGoalInactive(inactive);
 };

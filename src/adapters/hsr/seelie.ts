@@ -14,9 +14,9 @@ import {
     setGoals
 } from "../common";
 
-const addGoal = (data: any) => {
+const addGoal = async (data: any) => {
     let index: number = -1;
-    const goals = getTotalGoal() as Goal[];
+    const goals = await getTotalGoal() as Goal[];
 
     if (data.character) {
         index = goals.findIndex(
@@ -37,12 +37,12 @@ const addGoal = (data: any) => {
         data.id = (lastId || 0) + 1;
         goals.push(data);
     }
-    setGoals(goals);
+    await setGoals(goals);
 };
 let initBonus = {} as Bonus
 
-const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.HSRSkill[], skills_servant: mihoyo.HSRSkill[]) => {
-    const totalGoal = getTotalGoal() as Goal[];
+const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill[], skills_servant: mihoyo.HSRSkill[]) => {
+    const totalGoal = await getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "trace" && g.character == talentCharacter);
     skill_list.sort((a, b) => a.point_id > b.point_id ? 1 : 0);
     const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = skill_list.map(a => a.cur_level);
@@ -53,7 +53,7 @@ const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.HSRSkill[], sk
     }
     let talentGoal: TraceGoal;
     if (talentIdx < 0) {
-        const id = getNextId();
+        const id = await getNextId();
         talentGoal = {
             type: "trace",
             character: talentCharacter,
@@ -118,11 +118,11 @@ const addTraceGoal = (talentCharacter: string, skill_list: mihoyo.HSRSkill[], sk
             }
         }
     }
-    addGoal(talentGoal)
+    await addGoal(talentGoal)
 };
 
-export const addCharacterGoal = (level_current: number, nameEn: String, name: string, type: string) => {
-    const totalGoal = getTotalGoal() as Goal[];
+export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string) => {
+    const totalGoal = await getTotalGoal() as Goal[];
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     let weaponPredicate = (g: Goal) => g.type == type && g.cone == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
@@ -154,7 +154,7 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
     }
 
     if (characterIdx < 0) {
-        const id = getNextId();
+        const id = await getNextId();
         characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
         const seelieGoal = type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as ConeGoal
@@ -169,102 +169,19 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
         } as CharacterGoal
     }
-    addGoal(characterGoal)
+    await addGoal(characterGoal)
 };
 
-export function addCharacter(characterDataEx: HSRCharacterData) {
+export async function addCharacter(characterDataEx: HSRCharacterData) {
 
     const {avatar: character, skills: skill_list, skills_servant, equipment: weapon} = characterDataEx;
     const {item_name: name} = character;
-
-    //{"type":"character","character":"traveler","current":{"level":70,"asc":4,"text":"70"},"goal":{"level":70,"asc":4,"text":"70"},"id":1},
-    //{"type":"weapon","weapon":""deathmatch"","current":{"level":70,"asc":4,"text":"70"},"goal":{"level":70,"asc":4,"text":"70"},"id":1},
-    //{"type":"talent","character":"traveler_geo","c3":false,"c5":false,"normal":{"current":1,"goal":6},"skill":{"current":1,"goal":6},"burst":{"current":1,"goal":6},"id":2}
-
-    //hsr
-    //{"type":"character","character":"seele","cons":0,"current":{"level":60,"asc":4,"text":"60"},"goal":{"level":70,"asc":5,"text":"70"},"id":1}
-    //{"type":"cone","id":6,"cone":"but_the_battle_isnt_over","current":{"level":80,"asc":6,"text":"80"},"goal":{"level":80,"asc":6,"text":"80"}}
-    //{
-    //   "type": "trace",
-    //   "character": "clara",
-    //   "basic": {
-    //     "current": 6,
-    //     "goal": 6
-    //   },
-    //   "skill": {
-    //     "current": 8,
-    //     "goal": 8
-    //   },
-    //   "ultimate": {
-    //     "current": 8,
-    //     "goal": 8
-    //   },
-    //   "talent": {
-    //     "current": 8,
-    //     "goal": 8
-    //   },
-    //   "bonus": {
-    //     "bonus-trace-1-1": {
-    //       "type": "a4m",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-1-1": {
-    //       "type": "a4s",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-1-1-1": {
-    //       "type": "a5s",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-1-1-1-1": {
-    //       "type": "a5s",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-2": {
-    //       "type": "a2m",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-2-1": {
-    //       "type": "a2s",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-2-1-1": {
-    //       "type": "a3s",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-2-1-1-1": {
-    //       "type": "a3s",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-3": {
-    //       "type": "a6m",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-3-1": {
-    //       "type": "a6s",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-3-1-1": {
-    //       "type": "l75",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-3-1-2": {
-    //       "type": "l80",
-    //       "done": false
-    //     },
-    //     "bonus-trace-1-4": {
-    //       "type": "l1",
-    //       "done": false
-    //     }
-    //   },
-    //   "id": 5
-    // }
 
     if (weapon) {
         const {item_name: name, cur_level: weaponLeveL} = weapon;
         const weaponId = getWeaponId(name);
         if (weaponId) {
-            addCharacterGoal(weaponLeveL, weaponId, name, "cone");
+            await addCharacterGoal(weaponLeveL, weaponId, name, "cone");
         }
     }
     const {cur_level: characterLevel} = character;
@@ -272,9 +189,9 @@ export function addCharacter(characterDataEx: HSRCharacterData) {
     if (!characterId || characterId.includes("trailblazer")) {
         return
     }
-    addCharacterGoal(characterLevel, characterId, name, "character");
+    await addCharacterGoal(characterLevel, characterId, name, "character");
 
-    addTraceGoal(characterId, skill_list, skills_servant);
+    await addTraceGoal(characterId, skill_list, skills_servant);
 
 }
 
@@ -312,7 +229,7 @@ const initCharacterStatus = (level_current: number) => {
     }
     return initCharacterStatus;
 };
-const updateTrace = (talent: TraceGoal, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9) => {
+const updateTrace = async (talent: TraceGoal, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9) => {
     const {
         basic: {current: basicCurrent},
         skill: {current: skillCurrent},
@@ -335,14 +252,14 @@ const updateTrace = (talent: TraceGoal, normalGoal = 6, skillGoal = 9, burstGoal
             goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
         },
     }
-    addGoal(talentNew)
+    await addGoal(talentNew)
 }
 
-export const batchUpdateTrace = (all: boolean, normal: number, skill: number, burst: number, t: number) => {
+export const batchUpdateTrace = async (all: boolean, normal: number, skill: number, burst: number, t: number) => {
     if (normal > 6) {
         normal = 6
     }
-    batchUpdateGoals<TraceGoal>(
+    await batchUpdateGoals<TraceGoal>(
         'trace',
         'character', // 天赋目标用character字段标识
         (trace) => updateTrace(trace, normal, skill, burst, t),
@@ -352,7 +269,7 @@ export const batchUpdateTrace = (all: boolean, normal: number, skill: number, bu
 }
 
 
-const updateCharacter = (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
+const updateCharacter = async (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
     const {current} = character;
     const {level: levelCurrent, asc: ascCurrent} = current;
     const {level, asc} = characterStatusGoal;
@@ -361,25 +278,29 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
         ...character,
         goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current,
     }
-    addGoal(characterGoalNew)
+    await addGoal(characterGoalNew)
 }
 
-export const batchUpdateCharacter = (all: boolean, characterStatusGoal: CharacterStatus,) => {
-    batchUpdateGoals<CharacterGoal>(
+export const batchUpdateCharacter = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
+     batchUpdateGoals<CharacterGoal>(
         'character',
         'character',
         updateCharacter,
         all,
         characterStatusGoal
-    );
+    ).then(() => {
+        console.log("角色更新完成");
+    });
 }
 
-export const batchUpdateWeapon = (all: boolean, characterStatusGoal: CharacterStatus,) => {
+export const batchUpdateWeapon = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
     batchUpdateGoals<ConeGoal>(
         'cone',
         'cone',
         (weapon) => updateCharacter(weapon as unknown as CharacterGoal, characterStatusGoal),
         all,
         characterStatusGoal
-    );
+    ).then(() => {
+        console.log("武器更新完成");
+    });
 }

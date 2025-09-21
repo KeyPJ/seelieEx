@@ -3,6 +3,7 @@ import {GameAdapter, GameType, GoalTypeConfig} from '../game';
 import {getDetailList as getHsrDetailList} from './hoyo';
 import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon, characterStatusList} from './seelie';
 import {BaseAdapter} from "../baseAdapter";
+import localforage from "localforage";
 
 export class HsrAdapter extends BaseAdapter implements GameAdapter {
 
@@ -21,7 +22,7 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         return getHsrDetailList(uid, region);
     }
 
-    syncCharacters(res: any[]) {
+    async syncCharacters(res: any[]) {
         console.group("返回数据");
         console.groupCollapsed("角色");
         console.table(res.map((a) => a.avatar));
@@ -46,7 +47,9 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         });
         console.groupEnd();
         console.groupEnd();
-        res.forEach(v => addCharacter(v));
+        for (let v of res) {
+            await addCharacter(v)
+        }
     }
 
     protected importSeelieMethods() {
@@ -63,15 +66,23 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
 
     getInactiveConfig: () => GoalTypeConfig[] = () => {
         const HSR_INACTIVE_CONFIG: GoalTypeConfig[] = [
-            { type: "character", identifierKey: "character" }, // 角色目标
+            {type: "character", identifierKey: "character"}, // 角色目标
             {
                 type: "trace",
                 identifierKey: "character",
                 isTalent: true,
                 talentKeys: ['basic', 'skill', 'ultimate', 'talent', 'pet_talent', 'pet_skill']
             }, // 行迹目标
-            { type: "cone", identifierKey: "id" } // 光锥目标（标识键为 id）
+            {type: "cone", identifierKey: "id"} // 光锥目标（标识键为 id）
         ];
         return HSR_INACTIVE_CONFIG;
+    }
+
+    async getItem(key: string): Promise<any> {
+        return localforage.getItem(key);
+    }
+
+    async setItem(key: string, value: any): Promise<void> {
+        return localforage.setItem(key, value);
     }
 }

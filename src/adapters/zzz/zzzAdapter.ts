@@ -25,34 +25,28 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
         return getZzzDetailList(uid, region);
     }
 
-    syncCharacters(res: any[]) {
+    async syncCharacters(res: any[]) {
         console.group("返回数据");
 
         console.groupCollapsed("角色");
         console.table(res.map((a) => a.avatar));
         console.groupEnd();
         console.groupCollapsed("光锥");
-        console.table(res.map((a) => a.equipment));
+        console.table(res.map((a) => a.weapon));
         console.groupEnd();
         console.groupCollapsed("角色天赋");
         res.forEach((c) => {
-            const name = c.avatar.item_name;
+            const name = c.avatar.name_mi18n;
             console.groupCollapsed(name);
-            console.table(c.skills);
-            console.groupEnd();
-        });
-        console.groupEnd();
-        console.groupCollapsed("角色额外天赋(仅展示不做处理)");
-        res.forEach((c) => {
-            const name = c.avatar.item_name;
-            console.groupCollapsed(name);
-            console.table(c.skills_other);
+            console.table(c.avatar.skills);
             console.groupEnd();
         });
         console.groupEnd();
 
         console.groupEnd();
-        res.forEach(v => addCharacter(v));
+        for (let v of res) {
+            await addCharacter(v)
+        }
     }
 
     protected importSeelieMethods() {

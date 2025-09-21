@@ -12,9 +12,9 @@ import {
     setGoals
 } from "../common";
 
-const addGoal = (data: any) => {
+const addGoal = async (data: any) => {
     let index: number = -1;
-    const goals = getTotalGoal();
+    const goals = await getTotalGoal();
 
     if (data.character) {
         index = goals.findIndex(
@@ -35,16 +35,16 @@ const addGoal = (data: any) => {
         data.id = (lastId || 0) + 1;
         goals.push(data);
     }
-    setGoals(goals);
+    await setGoals(goals);
 };
 
-const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
-    const totalGoal = getTotalGoal() as Goal[];
+const addTalentGoal = async (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
+    const totalGoal = await getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "talent" && g.character == talentCharacter);
     const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter(a => a.max_level == 10).sort().map(a => a.level_current)
     let talentGoal: TalentGoal;
     if (talentIdx < 0) {
-        const id = getNextId();
+        const id = await getNextId();
         talentGoal = {
             type: "talent",
             character: talentCharacter,
@@ -84,11 +84,11 @@ const addTalentGoal = (talentCharacter: string, skill_list: mihoyo.Skill[]) => {
             }
         }
     }
-    addGoal(talentGoal)
+    await addGoal(talentGoal)
 };
 
-export const addCharacterGoal = (level_current: number, nameEn: String, name: string, type: string) => {
-    let totalGoal = getTotalGoal() as Goal[];
+export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string) => {
+    let totalGoal = await getTotalGoal() as Goal[];
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     let weaponPredicate = (g: Goal) => g.type == type && g.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
@@ -119,7 +119,7 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
     }
 
     if (characterIdx < 0) {
-        const id = getNextId();
+        const id = await getNextId();
         characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
         const seelieGoal = type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as WeaponGoal
@@ -134,10 +134,10 @@ export const addCharacterGoal = (level_current: number, nameEn: String, name: st
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
         }
     }
-    addGoal(characterGoal)
+    await addGoal(characterGoal)
 };
 
-export function addCharacter(characterDataEx: CharacterDataEx) {
+export async function addCharacter(characterDataEx: CharacterDataEx) {
 
     const {character, skill_list, weapon} = characterDataEx;
     const {name, element_attr_id} = character;
@@ -150,7 +150,7 @@ export function addCharacter(characterDataEx: CharacterDataEx) {
         const {name, level_current: weaponLeveL} = weapon;
         const weaponId = getWeaponId(name);
         if (weaponId) {
-            addCharacterGoal(weaponLeveL, weaponId, name, "weapon");
+            await addCharacterGoal(weaponLeveL, weaponId, name, "weapon");
         }
     }
     const {level_current: characterLevel} = character;
@@ -158,14 +158,14 @@ export function addCharacter(characterDataEx: CharacterDataEx) {
     if (!characterId) {
         return
     }
-    addCharacterGoal(characterLevel, characterId, name, "character");
+    await addCharacterGoal(characterLevel, characterId, name, "character");
 
     let talentCharacter = characterId;
     if (characterId == "traveler") {
         const elementAttrName = getElementAttrName(element_attr_id);
         talentCharacter = `traveler_${elementAttrName}`;
     }
-    addTalentGoal(talentCharacter, skill_list);
+    await addTalentGoal(talentCharacter, skill_list);
 
 }
 
@@ -204,7 +204,7 @@ const initCharacterStatus = (level_current: number) => {
     return initCharacterStatus;
 };
 
-const updateTalent = (talent: TalentGoal, normalGoal = 9, skillGoal = 9, burstGoal = 9) => {
+const updateTalent = async (talent: TalentGoal, normalGoal = 9, skillGoal = 9, burstGoal = 9) => {
     const {normal: {current: normalCurrent}, skill: {current: skillCurrent}, burst: {current: burstCurrent}} = talent;
     const talentNew = {
         ...talent,
@@ -219,11 +219,11 @@ const updateTalent = (talent: TalentGoal, normalGoal = 9, skillGoal = 9, burstGo
             goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
         }
     }
-    addGoal(talentNew)
+    await addGoal(talentNew)
 }
 
-export const batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number) => {
-    batchUpdateGoals<TalentGoal>(
+export const batchUpdateTalent = async (all: boolean, normal: number, skill: number, burst: number) => {
+    await batchUpdateGoals<TalentGoal>(
         'talent',
         'character', // 天赋目标用character字段标识
         (talent) => updateTalent(talent, normal, skill, burst),
@@ -232,7 +232,7 @@ export const batchUpdateTalent = (all: boolean, normal: number, skill: number, b
 }
 
 
-const updateCharacter = (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
+const updateCharacter = async (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
     const {current} = character;
     const {level: levelCurrent, asc: ascCurrent} = current;
     const {level, asc} = characterStatusGoal;
@@ -241,25 +241,29 @@ const updateCharacter = (character: CharacterGoal, characterStatusGoal: Characte
         ...character,
         goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current,
     }
-    addGoal(characterGoalNew)
+    await addGoal(characterGoalNew)
 }
 
-export const batchUpdateCharacter: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = (all: boolean, characterStatusGoal: CharacterStatus,) => {
-    batchUpdateGoals<CharacterGoal>(
+export const batchUpdateCharacter: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
+     batchUpdateGoals<CharacterGoal>(
         'character',
         'character', // 角色目标用character字段标识
         updateCharacter,
         all,
         characterStatusGoal
-    );
+    ).then(() => {
+        console.log("角色更新完成");
+    });
 }
 
-export const batchUpdateWeapon: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = (all: boolean, characterStatusGoal: CharacterStatus,) => {
+export const batchUpdateWeapon: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
     batchUpdateGoals<WeaponGoal>(
         'weapon',
         'weapon', // 武器目标用weapon字段标识
         (weapon) => updateCharacter(weapon as unknown as CharacterGoal, characterStatusGoal),
         all,
         characterStatusGoal
-    );
+    ).then(() => {
+        console.log("武器更新完成");
+    });
 }

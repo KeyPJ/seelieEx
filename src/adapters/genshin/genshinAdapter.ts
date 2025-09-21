@@ -28,7 +28,7 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
         return getGenshinDetailList(uid, region);
     }
 
-    syncCharacters(res: any[]) {
+    async syncCharacters(res: any[]) {
         console.group("返回数据");
 
         console.groupCollapsed("角色");
@@ -47,7 +47,9 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
         console.groupEnd();
 
         console.groupEnd();
-        res.forEach(v => addCharacter(v));
+        for (let v of res) {
+            await addCharacter(v)
+        }
     }
 
     protected importSeelieMethods() {
@@ -56,7 +58,9 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
 
 
     batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number): void => {
-        batchUpdateTalent(all, normal, skill, burst);
+        batchUpdateTalent(all, normal, skill, burst).then(() => {
+            console.log("天赋更新完成");
+        });
     };
 
     getCharacterStatusList() {
