@@ -36,6 +36,10 @@
 		"name": "丹恒"
 	},
 	{
+		"id": "dan_heng_permansor_terrae",
+		"name": "丹恒•腾荒"
+	},
+	{
 		"id": "dan_heng_imbibitor_lunae",
 		"name": "丹恒•饮月"
 	},
@@ -286,6 +290,10 @@
 	{
 		"id": "yunli",
 		"name": "云璃"
+	},
+	{
+		"id": "evernight",
+		"name": "长夜月"
 	},
 	{
 		"id": "dr_ratio",

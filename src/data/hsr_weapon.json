@@ -560,6 +560,10 @@
 		"name": "制胜的瞬间"
 	},
 	{
+		"id": "to_evernights_stars",
+		"name": "致长夜的星光"
+	},
+	{
 		"id": "data_bank",
 		"name": "智库"
 	},
@@ -574,6 +578,10 @@
 	{
 		"id": "in_pursuit_of_the_wind",
 		"name": "追逐风的时候"
+	},
+	{
+		"id": "though_worlds_apart",
+		"name": "纵然山河万程"
 	},
 	{
 		"id": "final_victor",
