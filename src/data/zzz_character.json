@@ -96,6 +96,10 @@
 		"name": "柳"
 	},
 	{
+		"id": "lucia",
+		"name": "卢西娅"
+	},
+	{
 		"id": "lucy",
 		"name": "露西"
 	},
@@ -136,6 +140,10 @@
 		"name": "耀嘉音"
 	},
 	{
+		"id": "yidhari",
+		"name": "伊德海莉"
+	},
+	{
 		"id": "evelyn",
 		"name": "伊芙琳"
 	},
@@ -154,6 +162,10 @@
 	{
 		"id": "hugo",
 		"name": "雨果"
+	},
+	{
+		"id": "manato",
+		"name": "真斗"
 	},
 	{
 		"id": "zhu_yuan",

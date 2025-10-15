@@ -100,6 +100,10 @@
 		"name": "电波漫步"
 	},
 	{
+		"id": "grill_owisp",
+		"name": "燔火胧夜"
+	},
+	{
 		"id": "riot_suppressor_mark_vi",
 		"name": "防暴者Ⅵ型"
 	},
@@ -126,6 +130,10 @@
 	{
 		"id": "precious_fossilized_core",
 		"name": "贵重骨核"
+	},
+	{
+		"id": "krakens_cradle",
+		"name": "海妖摇篮"
 	},
 	{
 		"id": "bashful_demon",
@@ -286,6 +294,10 @@
 	{
 		"id": "original_transmorpher",
 		"name": "正版变身器"
+	},
+	{
+		"id": "dreamlit_hearth",
+		"name": "铸梦炉歌"
 	},
 	{
 		"id": "flamemaker_shaker",
