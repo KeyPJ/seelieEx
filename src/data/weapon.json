@@ -520,6 +520,10 @@
 		"name": "神射手之誓"
 	},
 	{
+		"id": "sacrificers_staff",
+		"name": "圣祭者的辉杖"
+	},
+	{
 		"id": "key_of_khaj_nisut",
 		"name": "圣显之钥"
 	},
@@ -550,6 +554,10 @@
 	{
 		"id": "mailed_flower",
 		"name": "饰铁之花"
+	},
+	{
+		"id": "dawning_frost",
+		"name": "霜辰"
 	},
 	{
 		"id": "sword_of_narzissenkreuz",
@@ -782,6 +790,10 @@
 	{
 		"id": "eye_of_perception",
 		"name": "昭心"
+	},
+	{
+		"id": "reliquary_of_truth",
+		"name": "真语秘匣"
 	},
 	{
 		"id": "mountain_bracing_bolt",
