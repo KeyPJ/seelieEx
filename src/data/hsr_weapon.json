@@ -4,6 +4,10 @@
 		"name": "「我」的诞生"
 	},
 	{
+		"id": "this_love_forever",
+		"name": "爱如此刻永恒"
+	},
+	{
 		"id": "brighter_than_the_sun",
 		"name": "比阳光更明亮的"
 	},
@@ -66,6 +70,10 @@
 	{
 		"id": "poised_to_bloom",
 		"name": "芳华待灼"
+	},
+	{
+		"id": "fly_into_a_pink_tomorrow",
+		"name": "飞向粉色的明天"
 	},
 	{
 		"id": "shadowburn",
