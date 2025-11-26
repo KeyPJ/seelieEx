@@ -192,6 +192,10 @@
 		"name": "鎏金花信"
 	},
 	{
+		"id": "wrathful_vajra",
+		"name": "怒目金刚"
+	},
+	{
 		"id": "myriad_eclipse",
 		"name": "千面日陨"
 	},
@@ -302,6 +306,10 @@
 	{
 		"id": "flamemaker_shaker",
 		"name": "灼心摇壶"
+	},
+	{
+		"id": "yesterday_calls",
+		"name": "昨夜来电"
 	},
 	{
 		"id": "six_shooter",
