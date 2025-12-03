@@ -68,6 +68,10 @@
 		"name": "迪希雅"
 	},
 	{
+		"id": "durin",
+		"name": "杜林"
+	},
+	{
 		"id": "dori",
 		"name": "多莉"
 	},
@@ -398,6 +402,10 @@
 	{
 		"id": "xingqiu",
 		"name": "行秋"
+	},
+	{
+		"id": "jahoda",
+		"name": "雅珂达"
 	},
 	{
 		"id": "yanfei",

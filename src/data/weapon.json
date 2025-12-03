@@ -256,6 +256,10 @@
 		"name": "黑剑"
 	},
 	{
+		"id": "athame_artis",
+		"name": "黑蚀"
+	},
+	{
 		"id": "blackcliff_pole",
 		"name": "黑岩刺枪"
 	},
@@ -282,6 +286,10 @@
 	{
 		"id": "footprint_of_the_rainbow",
 		"name": "虹的行迹"
+	},
+	{
+		"id": "rainbow_serpents_rain_bow",
+		"name": "虹蛇的雨弦"
 	},
 	{
 		"id": "staff_of_homa",
@@ -374,6 +382,10 @@
 	{
 		"id": "cool_steel",
 		"name": "冷刃"
+	},
+	{
+		"id": "the_daybreak_chronicles",
+		"name": "黎明破晓之史"
 	},
 	{
 		"id": "harbinger_of_dawn",
