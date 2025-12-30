@@ -60,6 +60,10 @@
 		"name": "「月相」-望"
 	},
 	{
+		"id": "half_sugar_bunny",
+		"name": "半糖雪兔"
+	},
+	{
 		"id": "tusks_of_fury",
 		"name": "奔袭獠牙"
 	},
@@ -212,6 +216,10 @@
 		"name": "青溟笼舍"
 	},
 	{
+		"id": "cauldron_of_clarity",
+		"name": "青漪灵鼎"
+	},
+	{
 		"id": "hellfire_gears",
 		"name": "燃狱齿轮"
 	},
@@ -290,6 +298,10 @@
 	{
 		"id": "ice_jade_teapot",
 		"name": "玉壶青冰"
+	},
+	{
+		"id": "cloudcleave_radiance",
+		"name": "云霓孤光"
 	},
 	{
 		"id": "tremor_trigram_vessel",
