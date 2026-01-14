@@ -188,6 +188,10 @@
 		"name": "飞天御剑"
 	},
 	{
+		"id": "lightbearing_moonshard",
+		"name": "朏魄含光"
+	},
+	{
 		"id": "emerald_orb",
 		"name": "翡玉法球"
 	},
@@ -654,6 +658,10 @@
 	{
 		"id": "kings_squire",
 		"name": "王下近侍"
+	},
+	{
+		"id": "nocturnes_curtain_call",
+		"name": "帷间夜曲"
 	},
 	{
 		"id": "beacon_of_the_reed_sea",

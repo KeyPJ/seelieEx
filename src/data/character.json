@@ -104,6 +104,10 @@
 		"name": "甘雨"
 	},
 	{
+		"id": "columbina",
+		"name": "哥伦比娅"
+	},
+	{
 		"id": "hutao",
 		"name": "胡桃"
 	},
@@ -416,6 +420,10 @@
 		"name": "瑶瑶"
 	},
 	{
+		"id": "illuga",
+		"name": "叶洛亚"
+	},
+	{
 		"id": "yelan",
 		"name": "夜兰"
 	},
@@ -450,5 +458,9 @@
 	{
 		"id": "chongyun",
 		"name": "重云"
+	},
+	{
+		"id": "zibai",
+		"name": "兹白"
 	}
 ]
