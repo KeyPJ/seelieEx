@@ -180,6 +180,10 @@
 		"name": "聚宝箱"
 	},
 	{
+		"id": "angel_in_the_shell",
+		"name": "壳中之灵"
+	},
+	{
 		"id": "metanukimorphosis",
 		"name": "狸法七变化"
 	},
@@ -246,6 +250,10 @@
 	{
 		"id": "weeping_gemini",
 		"name": "双生泣星"
+	},
+	{
+		"id": "thoughtbop",
+		"name": "思络成歌"
 	},
 	{
 		"id": "spectral_gaze",
