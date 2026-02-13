@@ -96,6 +96,10 @@
 		"name": "黄泉"
 	},
 	{
+		"id": "sparxie",
+		"name": "火花"
+	},
+	{
 		"id": "huohuo",
 		"name": "藿藿"
 	},
@@ -282,6 +286,10 @@
 	{
 		"id": "yanqing",
 		"name": "彦卿"
+	},
+	{
+		"id": "yao_guang",
+		"name": "爻光"
 	},
 	{
 		"id": "silver_wolf",

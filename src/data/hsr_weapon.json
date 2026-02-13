@@ -20,6 +20,14 @@
 		"name": "不息的演算"
 	},
 	{
+		"id": "lingering_tear",
+		"name": "残泪"
+	},
+	{
+		"id": "sneering",
+		"name": "嗤笑"
+	},
+	{
 		"id": "river_flows_in_spring",
 		"name": "春水初生"
 	},
@@ -38,6 +46,10 @@
 	{
 		"id": "but_the_battle_isnt_over",
 		"name": "但战斗还未结束"
+	},
+	{
+		"id": "when_she_decided_to_see",
+		"name": "当她决定看见"
 	},
 	{
 		"id": "the_unreachable_side",
@@ -92,6 +104,10 @@
 		"name": "孤独的疗愈"
 	},
 	{
+		"id": "mushy_shroomys_adventures",
+		"name": "菇菇嘎嘎历险记"
+	},
+	{
 		"id": "the_storys_next_page",
 		"name": "故事的下一页"
 	},
@@ -136,6 +152,10 @@
 		"name": "花儿不会忘记"
 	},
 	{
+		"id": "dazzled_by_a_flowery_world",
+		"name": "花花世界迷人眼"
+	},
+	{
 		"id": "lies_dance_on_the_breeze",
 		"name": "谎言在风中飘扬"
 	},
@@ -170,6 +190,10 @@
 	{
 		"id": "time_woven_into_gold",
 		"name": "将光阴织成黄金"
+	},
+	{
+		"id": "todays_good_luck",
+		"name": "今日好手气"
 	},
 	{
 		"id": "today_is_another_peaceful_day",
