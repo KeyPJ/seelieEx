@@ -188,6 +188,10 @@
 		"name": "狸法七变化"
 	},
 	{
+		"id": "serpentine_seeker",
+		"name": "鳞齿寻踪"
+	},
+	{
 		"id": "elegant_vanity",
 		"name": "玲珑妆匣"
 	},
@@ -198,6 +202,10 @@
 	{
 		"id": "gilded_blossom",
 		"name": "鎏金花信"
+	},
+	{
+		"id": "neon_fantasies",
+		"name": "霓虹妄想"
 	},
 	{
 		"id": "wrathful_vajra",
@@ -294,6 +302,10 @@
 	{
 		"id": "drill_rig_red_axis",
 		"name": "旋钻机-赤轴"
+	},
+	{
+		"id": "the_simmering_pot",
+		"name": "炎炙沸釜"
 	},
 	{
 		"id": "blazing_laurel",
