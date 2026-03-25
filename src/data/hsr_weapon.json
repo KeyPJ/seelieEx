@@ -156,6 +156,10 @@
 		"name": "花花世界迷人眼"
 	},
 	{
+		"id": "elation_brimming_with_blessings",
+		"name": "欢愉满溢祝福"
+	},
+	{
 		"id": "lies_dance_on_the_breeze",
 		"name": "谎言在风中飘扬"
 	},
@@ -482,6 +486,10 @@
 	{
 		"id": "flowing_nightglow",
 		"name": "夜色流光溢彩"
+	},
+	{
+		"id": "the_finale_of_a_lie",
+		"name": "一场谎言的终幕"
 	},
 	{
 		"id": "postop_conversation",
