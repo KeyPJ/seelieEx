@@ -156,6 +156,10 @@
 		"name": "花花世界迷人眼"
 	},
 	{
+		"id": "welcome_to_the_cosmic_city",
+		"name": "欢迎来到银河城"
+	},
+	{
 		"id": "elation_brimming_with_blessings",
 		"name": "欢愉满溢祝福"
 	},
@@ -416,6 +420,10 @@
 		"name": "为了明日的旅途"
 	},
 	{
+		"id": "tomorrow_together",
+		"name": "未来，有我们一起"
+	},
+	{
 		"id": "i_venture_forth_to_hunt",
 		"name": "我将，巡征追猎"
 	},
@@ -458,6 +466,10 @@
 	{
 		"id": "after_the_charmony_fall",
 		"name": "谐乐静默之后"
+	},
+	{
+		"id": "until_the_flowers_bloom_again",
+		"name": "邂逅于下一个花季"
 	},
 	{
 		"id": "before_the_tutorial_mission_starts",

@@ -56,6 +56,10 @@
 		"name": "飞霄"
 	},
 	{
+		"id": "evanescia",
+		"name": "绯英"
+	},
+	{
 		"id": "jade",
 		"name": "翡翠"
 	},
@@ -134,6 +138,10 @@
 	{
 		"id": "kafka",
 		"name": "卡芙卡"
+	},
+	{
+		"id": "trailblazer_elation_male",
+		"name": "开拓者"
 	},
 	{
 		"id": "trailblazer_ice_male",
@@ -298,6 +306,10 @@
 	{
 		"id": "silver_wolf",
 		"name": "银狼"
+	},
+	{
+		"id": "silver_wolf_lv999",
+		"name": "银狼LV.999"
 	},
 	{
 		"id": "argenti",
