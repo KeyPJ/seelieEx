@@ -156,6 +156,10 @@
 		"name": "幻变魔方"
 	},
 	{
+		"id": "starlight_rider_faceplate",
+		"name": "辉骑面铠"
+	},
+	{
 		"id": "cordis_germina",
 		"name": "机巧心种"
 	},
@@ -258,6 +262,10 @@
 	{
 		"id": "weeping_gemini",
 		"name": "双生泣星"
+	},
+	{
+		"id": "frostfall_sickle",
+		"name": "朔月裁霜"
 	},
 	{
 		"id": "thoughtbop",
