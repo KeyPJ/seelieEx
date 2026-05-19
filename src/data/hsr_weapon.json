@@ -16,6 +16,10 @@
 		"name": "别让世界静下来"
 	},
 	{
+		"id": "multiplication",
+		"name": "蕃息"
+	},
+	{
 		"id": "eternal_calculus",
 		"name": "不息的演算"
 	},
@@ -70,10 +74,6 @@
 	{
 		"id": "sweat_now_cry_less",
 		"name": "多流汗，少流泪"
-	},
-	{
-		"id": "multiplication",
-		"name": "蕃息"
 	},
 	{
 		"id": "worrisome_blissful",
