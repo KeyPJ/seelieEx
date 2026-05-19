@@ -26,11 +26,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '24'
 
-      # Runs a single command using the runners shell
-      - name: Build
-        run: npm install && npm run getdata
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Get Data
+        run: node src/crawler/getData.js
 
       - name: Update Data
         uses: EndBug/add-and-commit@v9

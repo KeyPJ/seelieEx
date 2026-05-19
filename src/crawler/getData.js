@@ -1,6 +1,12 @@
+const { chromium } = require('playwright');
+
+const BROWSER_CONFIG = {
+    headless: true,
+    channel: process.env.CI ? undefined : 'msedge', // 本地用系统自带Edge，CI用默认Chromium
+};
+
 const fs = require('fs');
 const path = require('path');
-const puppeteer = require('puppeteer'); // 添加缺失的导入
 
 // 优化getPageData函数，移除未使用的getIdName函数
 async function getPageData(page, url, selector) {
@@ -60,11 +66,11 @@ const scrapeTargets = [
 ];
 
 const scrape = async () => {
-    const browser = await puppeteer.launch({headless: true, devtools: false});
+    const browser = await chromium.launch(BROWSER_CONFIG);
     const page = await browser.newPage();
 
     // 浏览器环境配置
-    await page.evaluateOnNewDocument(() => {
+    await page.addInitScript(() => {
         const newProto = navigator.__proto__;
         delete newProto.webdriver;
         navigator.__proto__ = newProto;
