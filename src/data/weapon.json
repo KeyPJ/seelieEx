@@ -92,6 +92,10 @@
 		"name": "测距规"
 	},
 	{
+		"id": "angelos_heptades",
+		"name": "尘光七谕"
+	},
+	{
 		"id": "memory_of_dust",
 		"name": "尘世之锁"
 	},
@@ -814,6 +818,10 @@
 	{
 		"id": "halberd",
 		"name": "钺矛"
+	},
+	{
+		"id": "disaster_and_remorse",
+		"name": "灾悔"
 	},
 	{
 		"id": "eye_of_perception",
