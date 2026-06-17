@@ -128,12 +128,20 @@
 		"name": "妮可"
 	},
 	{
+		"id": "norma",
+		"name": "诺姆"
+	},
+	{
 		"id": "piper",
 		"name": "派派"
 	},
 	{
 		"id": "pan_yinhu",
 		"name": "潘引壶"
+	},
+	{
+		"id": "pyrois",
+		"name": "佩洛伊斯"
 	},
 	{
 		"id": "promeia",
@@ -154,6 +162,10 @@
 	{
 		"id": "vivian",
 		"name": "薇薇安"
+	},
+	{
+		"id": "velina",
+		"name": "维琳娜"
 	},
 	{
 		"id": "cissia",
