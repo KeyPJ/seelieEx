@@ -116,6 +116,14 @@
 		"name": "姬子"
 	},
 	{
+		"id": "himeko_nova",
+		"name": "姬子•启行"
+	},
+	{
+		"id": "gilgamesh",
+		"name": "吉尔伽美什"
+	},
+	{
 		"id": "gallagher",
 		"name": "加拉赫"
 	},
@@ -322,6 +330,10 @@
 	{
 		"id": "yukong",
 		"name": "驭空"
+	},
+	{
+		"id": "rin_tohsaka",
+		"name": "远坂凛"
 	},
 	{
 		"id": "yunli",

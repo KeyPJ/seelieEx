@@ -56,6 +56,10 @@
 		"name": "当她决定看见"
 	},
 	{
+		"id": "a_star_that_lights_the_night",
+		"name": "当一颗星照亮夜空"
+	},
+	{
 		"id": "the_unreachable_side",
 		"name": "到不了的彼岸"
 	},
@@ -380,6 +384,10 @@
 		"name": "溯忆"
 	},
 	{
+		"id": "i_am_as_you_behold",
+		"name": "所见即我"
+	},
+	{
 		"id": "she_already_shut_her_eyes",
 		"name": "她已闭上双眼"
 	},
@@ -478,6 +486,10 @@
 	{
 		"id": "cruising_in_the_stellar_sea",
 		"name": "星海巡航"
+	},
+	{
+		"id": "flickering_stars",
+		"name": "星火悄然闪耀"
 	},
 	{
 		"id": "along_the_passing_shore",
