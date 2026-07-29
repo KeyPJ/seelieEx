@@ -192,6 +192,10 @@
 		"name": "壳中之灵"
 	},
 	{
+		"id": "ode_of_resurrected_wings",
+		"name": "空羽复归之诗"
+	},
+	{
 		"id": "metanukimorphosis",
 		"name": "狸法七变化"
 	},
@@ -306,6 +310,10 @@
 	{
 		"id": "hailstorm_shrine",
 		"name": "霰落星殿"
+	},
+	{
+		"id": "knights_extolment",
+		"name": "骁骑礼赞"
 	},
 	{
 		"id": "unfettered_game_ball",
