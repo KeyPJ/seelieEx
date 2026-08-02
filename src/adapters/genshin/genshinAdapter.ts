@@ -82,11 +82,11 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
     }
 
     batchUpdateInventory = async (uid: string, region: string) => {
-        // 5 分钟节流（对齐参考站组件 B）
+        // 1 分钟节流（避免频繁打米游社 batch_compute）
         const last = Number(localStorage.getItem("last-sync") || 0);
-        if (last && Date.now() - last < 5 * 60 * 1000) {
-            const wait = Math.ceil((5 * 60 * 1000 - (Date.now() - last)) / 1000);
-            alert(`请稍候 ${wait}s 再同步（素材同步 5 分钟节流）`);
+        if (last && Date.now() - last < 1 * 60 * 1000) {
+            const wait = Math.ceil((1 * 60 * 1000 - (Date.now() - last)) / 1000);
+            alert(`请稍候 ${wait}s 再同步（素材同步 1 分钟节流）`);
             return;
         }
         const results = await batchUpdateInventoryGI(uid, region);
