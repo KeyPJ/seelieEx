@@ -10,6 +10,7 @@ import {
 import {BaseAdapter} from "../baseAdapter";
 
 export class ZzzAdapter extends BaseAdapter implements GameAdapter {
+
     getGameName(): string {
         return GameType.ZZZ;
     }
@@ -73,6 +74,12 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
             {type: "weapon", identifierKey: "id"} // 武器目标（标识键为 id）
         ];
         return ZZZ_INACTIVE_CONFIG;
+    }
+
+    batchUpdateInventory = async (uid: string, region: string) => {
+        // 结构化占位：ZZZ 素材同步依赖本地 db 素材库（nap_cultivate_tool + NAP token），暂未实现
+        console.warn("[seelieEx] ZZZ 素材/库存同步尚未实现（需要本地 db 素材库）");
+        return {ok: false, skipped: true, reason: "ZZZ 素材同步尚未实现，需要本地 db 素材库"};
     }
 
 }

@@ -85,4 +85,10 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
     async setItem(key: string, value: any): Promise<void> {
         return localforage.setItem(key, value);
     }
+
+    batchUpdateInventory = async (uid: string, region: string) => {
+        // 结构化占位：HSR 素材同步依赖本地 traces 素材库（rpgcalc/compute + DS 签名），暂未实现
+        console.warn("[seelieEx] HSR 素材/库存同步尚未实现（需要本地 traces 素材库）");
+        return {ok: false, skipped: true, reason: "HSR 素材同步尚未实现，需要本地 traces 素材库"};
+    }
 }

@@ -37,6 +37,8 @@ export abstract class BaseAdapter implements GameAdapter {
 
     abstract batchUpdateTalent: Function;
 
+    abstract batchUpdateInventory: Function;
+
     abstract getCharacterDetails(uid: string, region: string): Promise<any[]>;
 
     abstract getInactiveConfig: () => GoalTypeConfig[];

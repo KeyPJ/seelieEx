@@ -3,14 +3,8 @@ import ListboxSelect from "./select/ListboxSelect";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {AdapterManager} from '../adapters/adapterManager';
-import {refreshPage, setInactive} from "../adapters/common";
 
-interface IProps {
-    onClose: () => void
-}
-
-function ExDialog(props: IProps) {
-    const {onClose} = props;
+function ExDialog({onClose}: { onClose?: () => void }) {
 
     const currentAdapter = AdapterManager.getCurrentAdapter();
     // 页面加载时自动显示当前游戏名称
@@ -23,8 +17,10 @@ function ExDialog(props: IProps) {
     const [isFirstPanelOpen, setIsFirstPanelOpen] = useState(false);
     const [isSecondPanelOpen, setIsSecondPanelOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
-    const [isSyncing, setIsSyncing] = useState(false); // 添加 loading 状态
     const panelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
+    
+    // 添加对话框根元素的引用
+    const dialogRef = useRef<HTMLDivElement>(null);
 
     // 点击外部关闭面板
     useEffect(() => {
@@ -48,6 +44,12 @@ function ExDialog(props: IProps) {
         return () => document.removeEventListener("click", handleClickOutside);
     }, [isFirstPanelOpen, isSecondPanelOpen]);
 
+    // 添加鼠标移出事件处理函数
+    const handleMouseLeave = () => {
+        setIsFirstPanelOpen(false);
+        setIsSecondPanelOpen(false);
+    };
+
     const handleRoleSelectChange = (idx: number) => {
         setCurrentAccount(accountList[idx]);
     };
@@ -61,6 +63,7 @@ function ExDialog(props: IProps) {
     };
 
     const getAccountList = () => {
+        // import("../adapters/genshin/hoyo").then(({ getAccount }) => {
         currentAdapter.getAccounts()
             .then((res) => {
                 const roles: mihoyo.Role[] = res;
@@ -72,30 +75,54 @@ function ExDialog(props: IProps) {
                 console.error("账户信息获取失败");
                 alert("账户信息获取失败");
             });
+        // });
     };
 
-    const syncCharacterInfo = () => {
+    const syncAll = () => {
         if (!currentAccount) {
             console.error("账户信息获取失败");
             alert("账户信息获取失败");
             return;
         }
-        console.log("开始同步角色信息");
-        setIsSyncing(true); // 开始同步时设置 loading 状态
         const {game_uid, region} = currentAccount;
+        console.log("开始同步（角色信息 + 素材/库存）");
+
         currentAdapter.getCharacterDetails(game_uid, region)
-            .then(async (res) => {
-                await currentAdapter.syncCharacters(res);
+            .then((res) => {
+                console.group("返回数据");
+                console.groupCollapsed("角色");
+                console.table(res.map((a) => a.character ?? a.avatar));
+                console.groupEnd();
+                console.groupCollapsed("武器");
+                console.table(res.map((a) => a.weapon ?? a.equipment));
+                console.groupEnd();
+                console.groupCollapsed("角色天赋");
+                res.forEach((c) => {
+                    const name = c.character?.name ?? c.avatar?.item_name ?? c.avatar?.name_mi18n;
+                    console.groupCollapsed(name);
+                    console.table(c.skill_list ?? c.skills);
+                    console.groupEnd();
+                });
+                console.groupEnd();
+                console.groupEnd();
+                // 1) 写回角色/武器/天赋目标
+                currentAdapter.syncCharacters(res);
+                console.log("角色信息同步完毕，继续同步素材/库存");
+                // 2) 素材/库存同步（失败不阻断角色同步）
+                return currentAdapter.batchUpdateInventory(game_uid, region);
+            })
+            .then((invRes: any) => {
+                const skipped = invRes && invRes.skipped;
+                console.log("素材/库存同步结果:", invRes);
                 console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
-                console.log("角色信息同步完毕");
-                await refreshPage()
+                alert(skipped
+                    ? `角色信息已同步\n（素材/库存同步暂不支持当前游戏：${invRes.reason || ""}）`
+                    : "同步完毕（角色信息 + 素材/库存）");
+                location.reload();
             })
-            .catch((err) => {
+            .catch((err: any) => {
                 console.error("同步失败:", err);
-                GM_openInTab(currentAdapter.getApiConfig().BBS_URL)
-            })
-            .finally(() => {
-                setIsSyncing(false); // 同步完成后设置 loading 状态为 false
+                alert("同步失败：" + (err?.message || err));
             });
     };
 
@@ -103,31 +130,28 @@ function ExDialog(props: IProps) {
         return classes.filter(Boolean).join(" ");
     }
 
-    // 添加鼠标移出事件处理函数
-    const handleMouseLeave = () => {
-        setIsFirstPanelOpen(false);
-        setIsSecondPanelOpen(false);
-        onClose()
-    };
-
-    const batchInActive = () => {
-        setInactive(currentAdapter.getInactiveConfig())
-    };
     return (
         <div
-            className="fixed top-10 inset-x-[20%] ex-mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl"
+            ref={dialogRef}
+            className="fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl"
             onMouseLeave={handleMouseLeave}>
-            <h1 className="text-3xl font-bold underline pt-4 text-white">SeelieEX</h1>
+            <div className="flex items-center justify-between px-4 pt-4">
+                <h1 className="text-3xl font-bold underline text-white">SeelieEX</h1>
+                <button
+                    className="text-white text-2xl leading-none hover:text-gray-300"
+                    onClick={onClose}
+                    aria-label="关闭"
+                >×</button>
+            </div>
             <div className="w-full p-4">
-                <div
-                    className="w-full max-w-md p-2 ex-mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
-                    {/* 第一个折叠面板 - 角色信息同步 */}
+                <div className="w-full max-w-md p-2 mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
+                    {/* 第一个折叠面板 - 同步（角色信息 + 素材/库存） */}
                     <div ref={panelRefs[0]} className="mt-2 border border-gray-700 rounded-lg bg-slate-700/50">
                         <button
                             className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors"
                             onClick={() => setIsFirstPanelOpen(!isFirstPanelOpen)}
                         >
-                            <span>角色信息同步</span>
+                            <span>同步</span>
                             <svg
                                 className={`w-5 h-5 text-purple-300 transition-transform ${
                                     isFirstPanelOpen ? "transform rotate-180" : ""
@@ -175,17 +199,10 @@ function ExDialog(props: IProps) {
                                     <div className="w-full">
                                         <button
                                             className="text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded transition-colors"
-                                            onClick={syncCharacterInfo}
-                                            disabled={isSyncing} // 禁用按钮当 loading 为 true
+                                            onClick={syncAll}
                                         >
-                                            {isSyncing ? '同步中...' : '同步mihoyo角色信息'}
+                                            同步
                                         </button>
-                                        {/* 添加 loading 状态显示 */}
-                                        {isSyncing && (
-                                            <div className="mt-2 text-blue-300">
-                                                正在同步角色信息，请稍候...
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -218,14 +235,6 @@ function ExDialog(props: IProps) {
 
                         {isSecondPanelOpen && (
                             <div className="px-4 pt-4 pb-2 text-sm text-gray-100">
-                                <div className="mb-4">
-                                    <button
-                                        className="w-full text-white bg-blue-500 py-2 px-4 rounded transition-colors"
-                                        onClick={batchInActive}
-                                    >
-                                        一键激活/取消未达标目标
-                                    </button>
-                                </div>
                                 {/* 标签页切换 */}
                                 <div className="mt-4">
                                     <div className="flex border-b border-gray-600">
@@ -260,13 +269,14 @@ function ExDialog(props: IProps) {
                                             <CharacterGoalTab
                                                 showText={"武器"}
                                                 batchUpdateCharacter={currentAdapter.batchUpdateWeapon}
-                                            />
+                                                                                            />
                                         )}
                                     </div>
                                 </div>
                             </div>
                         )}
                     </div>
+
                 </div>
             </div>
         </div>

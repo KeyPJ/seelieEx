@@ -110,6 +110,44 @@ export const getAccount = async (roleUrl: string, openUrl: string, gameType: str
 
 const getStorageAccount: () => string = () => localStorage.account || "main";
 
+// ===== seelie 库存读写（素材/库存同步专用）=====
+// 存储格式：{type, item, tier, value}[]，持久化到 localStorage[`${account}-inventory`]
+// 另有 localStorage[`${account}-inv_sync`] 同步标记（时间戳）
+export interface SeelieInventoryItem {
+    type: string;
+    item: string;
+    tier: number;
+    value: number;
+}
+
+export const seelieGetInventory = (type: string, item: string, tier: number): number | null => {
+    const account = getStorageAccount();
+    const raw = localStorage.getItem(`${account}-inventory`);
+    if (!raw) return null;
+    try {
+        const arr = JSON.parse(raw) as SeelieInventoryItem[];
+        const found = arr.find(a => a.type === type && a.item === item && a.tier === tier);
+        return found ? found.value : null;
+    } catch {
+        return null;
+    }
+};
+
+export const seelieSetInventory = (type: string, item: string, tier: number, value: number): void => {
+    const account = getStorageAccount();
+    const key = `${account}-inventory`;
+    const raw = localStorage.getItem(key);
+    const arr: SeelieInventoryItem[] = raw ? JSON.parse(raw) as SeelieInventoryItem[] : [];
+    const found = arr.find(a => a.type === type && a.item === item && a.tier === tier);
+    if (found) {
+        found.value = value;
+    } else {
+        arr.push({type, item, tier, value});
+    }
+    localStorage.setItem(key, JSON.stringify(arr));
+    localStorage.setItem(`${account}-inv_sync`, Date.now().toString());
+};
+
 export const getTotalGoal: () => Promise<seelie.Goal[]> = async () => {
     const currentAdapter = AdapterManager.getCurrentAdapter();
     const key = `${getStorageAccount()}-goals`;

@@ -173,4 +173,10 @@ declare namespace mihoyo {
         items: SkillItem[];
     }
 
+
+    // export interface GIConsumeData {
+    //     items:                    Item[];
+    //     overall_consume:          AvailableMaterial[];
+    // }
+
 }

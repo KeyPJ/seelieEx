@@ -37,6 +37,8 @@ export interface GameAdapter {
 
     batchUpdateTalent: Function;
 
+    batchUpdateInventory: Function;
+
     getCharacterStatusList: Function
 
     // 获取游戏相关API配置
