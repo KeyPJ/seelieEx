@@ -99,6 +99,8 @@ declare namespace mihoyo {
         cur_level: number
         target_level: number
         vertical_icon_url: string
+        /** 命座（0~6，字符串），来自 calc/avatar/detail 的 avatar.rank */
+        rank?: string
     }
 
     export interface HSRSkill {

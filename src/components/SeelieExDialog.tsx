@@ -17,6 +17,9 @@ function ExDialog({onClose}: { onClose?: () => void }) {
     const [isFirstPanelOpen, setIsFirstPanelOpen] = useState(false);
     const [isSecondPanelOpen, setIsSecondPanelOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [progressText, setProgressText] = useState("");
     const panelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
     
     // 添加对话框根元素的引用
@@ -78,7 +81,7 @@ function ExDialog({onClose}: { onClose?: () => void }) {
         // });
     };
 
-    const syncAll = () => {
+    const syncAll = async () => {
         if (!currentAccount) {
             console.error("账户信息获取失败");
             alert("账户信息获取失败");
@@ -87,43 +90,56 @@ function ExDialog({onClose}: { onClose?: () => void }) {
         const {game_uid, region} = currentAccount;
         console.log("开始同步（角色信息 + 素材/库存）");
 
-        currentAdapter.getCharacterDetails(game_uid, region)
-            .then((res) => {
-                console.group("返回数据");
-                console.groupCollapsed("角色");
-                console.table(res.map((a) => a.character ?? a.avatar));
-                console.groupEnd();
-                console.groupCollapsed("武器");
-                console.table(res.map((a) => a.weapon ?? a.equipment));
-                console.groupEnd();
-                console.groupCollapsed("角色天赋");
-                res.forEach((c) => {
-                    const name = c.character?.name ?? c.avatar?.item_name ?? c.avatar?.name_mi18n;
-                    console.groupCollapsed(name);
-                    console.table(c.skill_list ?? c.skills);
-                    console.groupEnd();
+        setLoading(true);
+        setProgress(5);
+        setProgressText("正在获取角色详情...");
+
+        let progressInterval: ReturnType<typeof setInterval> | null = null;
+        try {
+            const res = await currentAdapter.getCharacterDetails(game_uid, region);
+
+            setProgress(30);
+            setProgressText("正在写入角色/天赋目标...");
+
+            // 模拟进度：素材同步是耗时大头，用 setInterval 让进度条从 30% 慢慢走到 85%
+            progressInterval = setInterval(() => {
+                setProgress(prev => {
+                    if (prev < 85) return prev + 2;
+                    return prev;
                 });
-                console.groupEnd();
-                console.groupEnd();
-                // 1) 写回角色/武器/天赋目标
-                currentAdapter.syncCharacters(res);
-                console.log("角色信息同步完毕，继续同步素材/库存");
-                // 2) 素材/库存同步（失败不阻断角色同步）
-                return currentAdapter.batchUpdateInventory(game_uid, region);
-            })
-            .then((invRes: any) => {
-                const skipped = invRes && invRes.skipped;
-                console.log("素材/库存同步结果:", invRes);
-                console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
-                alert(skipped
-                    ? `角色信息已同步\n（素材/库存同步暂不支持当前游戏：${invRes.reason || ""}）`
-                    : "同步完毕（角色信息 + 素材/库存）");
-                location.reload();
-            })
-            .catch((err: any) => {
-                console.error("同步失败:", err);
-                alert("同步失败：" + (err?.message || err));
-            });
+            }, 3000);
+
+            currentAdapter.syncCharacters(res);
+            setProgress(40);
+            setProgressText("角色目标写入完成，正在同步素材/库存...");
+
+            const invRes = await currentAdapter.batchUpdateInventory(game_uid, region);
+
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+            setProgress(100);
+            setProgressText("同步完成");
+
+            const skipped = invRes && invRes.skipped;
+            console.log("素材/库存同步结果:", invRes);
+            console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
+            alert(skipped
+                ? `角色信息已同步\n（素材/库存同步暂不支持当前游戏：${invRes.reason || ""}）`
+                : "同步完毕（角色信息 + 素材/库存）");
+            location.reload();
+        } catch (err: any) {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+            }
+            console.error("同步失败:", err);
+            alert("同步失败：" + (err?.message || err));
+        } finally {
+            setLoading(false);
+            setProgress(0);
+            setProgressText("");
+        }
     };
 
     function classNames(...classes: string[]) {
@@ -198,13 +214,29 @@ function ExDialog({onClose}: { onClose?: () => void }) {
                                 <div className="flex pt-2">
                                     <div className="w-full">
                                         <button
-                                            className="text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded transition-colors"
+                                            className={`px-4 py-2 rounded transition-colors ${
+                                                loading
+                                                    ? "text-gray-300 bg-gray-600 cursor-not-allowed"
+                                                    : "text-white bg-blue-600 hover:bg-blue-500"
+                                            }`}
                                             onClick={syncAll}
+                                            disabled={loading}
                                         >
-                                            同步
+                                            {loading ? "同步中..." : "同步"}
                                         </button>
                                     </div>
                                 </div>
+                                {loading && (
+                                    <div className="mt-3">
+                                        <div className="w-full bg-gray-700 rounded-full h-2.5">
+                                            <div
+                                                className="bg-blue-500 h-2.5 rounded-full transition-all duration-500 ease-out"
+                                                style={{width: `${progress}%`}}
+                                            ></div>
+                                        </div>
+                                        <p className="text-xs text-gray-300 mt-1">{progressText}</p>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

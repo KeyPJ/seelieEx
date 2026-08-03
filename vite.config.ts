@@ -31,12 +31,6 @@ export default defineConfig({
                 license: 'MIT',
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
                 connect: ['api-takumi.mihoyo.com','act-api-takumi.mihoyo.com', 'public-data-api.mihoyo.com'],
-                resource: {
-                    hsr_character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_character.json",
-                    hsr_weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_weapon.json",
-                    zzz_character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/zzz_character.json",
-                    zzz_weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/zzz_weapon.json",
-                },
                 "run-at": "document-end",
                 homepage: "https://github.com/KeyPJ",
                 homepageURL: "https://github.com/KeyPJ/seelieEx",

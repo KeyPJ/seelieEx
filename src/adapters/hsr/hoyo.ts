@@ -1,7 +1,7 @@
 import Role = mihoyo.Role;
 import Data = mihoyo.Data;
 import adapter from "axios-userscript-adapter/dist/esm";
-import {charactersNum} from "./query";
+import {getCharactersNum} from "./query";
 
 import axios, {AxiosAdapter} from "axios";
 import Avatar = mihoyo.Avatar;
@@ -72,7 +72,7 @@ const getCharacterDetail = async (character: Avatar, uid: string, region: string
 
 export const getDetailList = async (game_uid: string, region: string) => {
 
-    let maxPageSize = Math.ceil(charactersNum / requestPageSize);
+    let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
     let idxs = Array.from(new Array(maxPageSize).keys());
 
     const characters: Avatar[] = [];

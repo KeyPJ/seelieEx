@@ -80,6 +80,7 @@ declare module seelie {
         bonus: Bonus
         pet_skill: SkillStatus
         pet_talent: SkillStatus
+        elation_skill: SkillStatus
     }
 
     export interface HSRConeGoal extends HSRGoal {

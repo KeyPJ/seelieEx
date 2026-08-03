@@ -44,8 +44,11 @@ let initBonus = {} as Bonus
 const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill[], skills_servant: mihoyo.HSRSkill[]) => {
     const totalGoal = await getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "trace" && g.character == talentCharacter);
-    skill_list.sort((a, b) => a.point_id > b.point_id ? 1 : 0);
-    const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = skill_list.map(a => a.cur_level);
+    // 按 point_type 筛选：type=2 是 4 个战斗技能，type=4 是欢愉技
+    const combatSkills = skill_list.filter(s => s.point_type === 2).sort((a, b) => parseInt(a.point_id) - parseInt(b.point_id));
+    const elationSkill = skill_list.find(s => s.point_type === 4);
+    const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = combatSkills.map(a => a.cur_level);
+    const elationCurrent = elationSkill?.cur_level;
     let [petSkillCurrent, petTalentCurrent] = [1, 1]
     let hasServant = skills_servant && skills_servant.length > 0;
     if (hasServant) {
@@ -78,26 +81,31 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
                 goal: petSkillCurrent
             },
             pet_talent: {
-                current: petSkillCurrent,
-                goal: petSkillCurrent
+                current: petTalentCurrent,
+                goal: petTalentCurrent
+            },
+            elation_skill: {
+                current: elationCurrent ?? 1,
+                goal: elationCurrent ?? 1
             },
             bonus: initBonus,
             id
         }
     } else {
         const seelieGoal = totalGoal[talentIdx] as TraceGoal;
-        const {basic, skill, ultimate, talent, pet_skill, pet_talent} = seelieGoal;
+        const {basic, skill, ultimate, talent, pet_skill, pet_talent, elation_skill} = seelieGoal;
         const {goal: basicGoal} = basic;
         const {goal: skillGoal} = skill;
         const {goal: ultimateGoal} = ultimate;
         const {goal: talentGoal2} = talent;
         const {goal: petSkillGoal} = pet_skill;
         const {goal: petTalentGoal} = pet_talent;
+        const {goal: elationGoal} = elation_skill ?? {goal: 1};
         talentGoal = {
             ...seelieGoal,
             basic: {
                 current: baseCurrent,
-                goal: baseCurrent > basicGoal ? Math.min(petSkillCurrent, 6) : basicGoal
+                goal: baseCurrent > basicGoal ? Math.min(baseCurrent, 6) : basicGoal
             }, skill: {
                 current: skillCurrent,
                 goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
@@ -115,13 +123,17 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
             pet_talent: {
                 current: petTalentCurrent,
                 goal: petTalentCurrent > petTalentGoal ? Math.min(petTalentCurrent, 6) : petTalentGoal
+            },
+            elation_skill: {
+                current: elationCurrent ?? 1,
+                goal: (elationCurrent ?? 1) > (elationGoal ?? 1) ? Math.min(elationCurrent ?? 1, 10) : (elationGoal ?? 1)
             }
         }
     }
     await addGoal(talentGoal)
 };
 
-export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string) => {
+export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string, eidolon?: number) => {
     const totalGoal = await getTotalGoal() as Goal[];
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     let weaponPredicate = (g: Goal) => g.type == type && g.cone == nameEn;
@@ -137,7 +149,7 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
             current: characterStatus,
             goal: characterStatus,
             id,
-            eidolon: 0
+            eidolon: eidolon ?? 0
         } as CharacterGoal
     }
 
@@ -163,11 +175,16 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
         const {level: levelGoal, asc: ascGoal} = goal;
         const {level, asc} = characterStatus;
 
-        characterGoal = {
+        const merged: any = {
             ...seelieGoal,
             current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
-        } as CharacterGoal
+        };
+        // 命座只增不减（光锥无 eidolon 字段，不注入）
+        if (type == "character" && (eidolon !== undefined || (seelieGoal as CharacterGoal).eidolon !== undefined)) {
+            merged.eidolon = Math.max((seelieGoal as CharacterGoal).eidolon ?? 0, eidolon ?? 0);
+        }
+        characterGoal = merged as CharacterGoal;
     }
     await addGoal(characterGoal)
 };
@@ -175,21 +192,27 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
 export async function addCharacter(characterDataEx: HSRCharacterData) {
 
     const {avatar: character, skills: skill_list, skills_servant, equipment: weapon} = characterDataEx;
-    const {item_name: name} = character;
+    const {item_name: name, item_id: itemId, rank} = character;
 
     if (weapon) {
-        const {item_name: name, cur_level: weaponLeveL} = weapon;
-        const weaponId = getWeaponId(name);
+        const {item_name: weaponName, item_id: weaponItemId, cur_level: weaponLeveL} = weapon;
+        // 米游社 item_id 为字符串（如 "23060"），运行时目录 id 为数字，反查前必须 parseInt
+        const weaponId = getWeaponId({id: parseInt(weaponItemId)});
         if (weaponId) {
-            await addCharacterGoal(weaponLeveL, weaponId, name, "cone");
+            await addCharacterGoal(weaponLeveL, weaponId, weaponName, "cone");
         }
     }
     const {cur_level: characterLevel} = character;
-    const characterId = getCharacterId(name);
+    const characterId = getCharacterId({id: parseInt(itemId)});
+    // 开拓者一律跳过（沿用既有行为）。运行时目录 5 条开拓者的 id 是男主(8001/8003/8005/8007/8009)、
+    // alt_id 是女主(8002/8004/8006/8008/8010)；getIdMap 只映射 entry.id，
+    // 故女主号的 item_id 反查为空串，而男主号会命中 trailblazer_* ——必须保留 includes 兜底才能性别无关地跳过。
     if (!characterId || characterId.includes("trailblazer")) {
         return
     }
-    await addCharacterGoal(characterLevel, characterId, name, "character");
+    // 命座：detail 的 avatar.rank 是字符串（如 "0"），转数字后交由 addCharacterGoal 做「只增不减」合并
+    const eidolon = parseInt(rank ?? "") || 0;
+    await addCharacterGoal(characterLevel, characterId, name, "character", eidolon);
 
     await addTraceGoal(characterId, skill_list, skills_servant);
 
