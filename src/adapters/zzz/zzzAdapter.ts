@@ -8,6 +8,7 @@ import {
     characterStatusList,
 } from './seelie';
 import {BaseAdapter} from "../baseAdapter";
+import {withThrottle} from "../inventory-common";
 
 export class ZzzAdapter extends BaseAdapter implements GameAdapter {
 
@@ -76,17 +77,9 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
         return ZZZ_INACTIVE_CONFIG;
     }
 
+    // 1 分钟节流（避免频繁打米游社 avatar_calc；独立 key 不干扰 GI/HSR）
     batchUpdateInventory = async (uid: string, region: string) => {
-        // 1 分钟节流（避免频繁打米游社 avatar_calc；独立 key 不干扰 GI/HSR）
-        const last = Number(localStorage.getItem("zzz-last-sync") || 0);
-        if (last && Date.now() - last < 1 * 60 * 1000) {
-            const wait = Math.ceil((1 * 60 * 1000 - (Date.now() - last)) / 1000);
-            alert(`请稍候 ${wait}s 再同步（ZZZ 素材同步 1 分钟节流）`);
-            return {ok: false, skipped: true, reason: "节流"};
-        }
-        const results = await batchUpdateInventoryZZZ(uid, region);
-        localStorage.setItem("zzz-last-sync", Date.now().toString());
-        return results;
+        return withThrottle("zzz-last-sync", "ZZZ 素材同步", batchUpdateInventoryZZZ, uid, region);
     }
 
 }

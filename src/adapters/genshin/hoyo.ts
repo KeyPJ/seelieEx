@@ -4,58 +4,15 @@ import CharacterDataEx = mihoyo.CharacterDataEx;
 import adapter from "axios-userscript-adapter/dist/esm";
 import {charactersNum} from "./query";
 import axios, {AxiosAdapter, AxiosRequestHeaders} from "axios";
-import {getFp, headers, to, seelieGetInventory, seelieSetInventory} from "../common";
+import {getFp, headers, to} from "../common";
+import {getItemsFromPage} from "../items";
+import {MaterialMatch, loadSeelieItems, sleep, writeMergedToSeelieInventory} from "../inventory-common";
 // import giItems from "../../data/gi_items.json";
 
-// 素材 id → seelie key 映射库的一条记录
-export interface SeelieItemEntry {
-    type: string;
-    id?: number;
-    ids?: number[];
-}
-
-export type SeelieItems = Record<string, SeelieItemEntry>;
-
-/**
- * 外置读取 seelie 页面里的素材 id→key 映射库。
- * seelie.me 把这份库挂在根 Vue 实例 data 上，运行时直接取，无需打包静态 JSON。
- * 优先读 data.items，否则遍历 data 找“值含 type + id/ids”的对象。
- * 取不到时回退到 src/data/gi_items.json（开发期从参考站抽出的 469 条）。
- */
-export const getItemsFromPage = (): SeelieItems | null => {
-    try {
-        const app = document.querySelector('#app') as any;
-        const data = app?._vnode?.component?.data;
-        if (!data) return null;
-        if (data.items && typeof data.items === 'object' && !Array.isArray(data.items)) {
-            return data.items as SeelieItems;
-        }
-        for (const key of Object.keys(data)) {
-            const v = (data as any)[key];
-            if (v && typeof v === 'object' && !Array.isArray(v)) {
-                const sample = Object.values(v)[0] as any;
-                if (sample && typeof sample === 'object' && typeof sample.type === 'string' && ('id' in sample || 'ids' in sample)) {
-                    return v as SeelieItems;
-                }
-            }
-        }
-        return null;
-    } catch {
-        return null;
-    }
-};
-
-/** 按米游社素材 id 在 items 库中反查 seelie key / type / tier */
-export const findItemMatch = (items: SeelieItems, id: number): { key: string; type: string; tier: number } | null => {
-    for (const [key, info] of Object.entries(items)) {
-        const ids = info.ids ?? (info.id != null ? [info.id] : []);
-        const tier = info.ids ? info.ids.indexOf(id) : 0;
-        if (ids.includes(id)) {
-            return {key, type: info.type, tier};
-        }
-    }
-    return null;
-};
+// items 库的定义已迁移至 ../items（叶子模块，避免与 inventory-common 循环依赖）。
+// 此处重导出以保持既有 importer（hsr/hoyo、zzz/hoyo 等）的引用路径不变。
+export {findItemMatch, getItemsFromPage} from "../items";
+export type {SeelieItems, SeelieItemEntry} from "../items";
 
 axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
@@ -195,6 +152,13 @@ export const getAllCharacters = async (): Promise<any[]> => {
     return result;
 };
 
+// GI 素材 id → seelie type/key/tier 的特例表（其余走页面 items 库匹配）
+const GI_SPECIAL: Record<number, MaterialMatch> = {
+    104003: {type: "xp", key: "xp", tier: 0},
+    202: {type: "mora", key: "mora", tier: 0},
+    104013: {type: "wep_xp", key: "wep_xp", tier: 0},
+};
+
 /**
  * 原神素材/库存同步（对标参考站组件 B）：
  * 1. 拉养成计算器的角色列表（复用本地 getDetailList，含 current/target 等级、突破、武器、天赋）
@@ -301,7 +265,7 @@ export const batchUpdateInventoryGI = async (uid: string, region: string) => {
             const left = chunk.slice(0, mid);
             const right = chunk.slice(mid);
             console.warn(`[素材同步] 批次(${chunk.length}条)失败，二分重试 -> ${left.length}+${right.length}，间隔 ${SPLIT_RETRY_DELAY}ms`);
-            await new Promise(resolve => setTimeout(resolve, SPLIT_RETRY_DELAY));
+            await sleep(SPLIT_RETRY_DELAY);
             const l = await processChunk(left);
             const r = await processChunk(right);
             return [...l, ...r];
@@ -326,50 +290,31 @@ export const batchUpdateInventoryGI = async (uid: string, region: string) => {
         throw new Error("Failed to calculate inventory.");
     }
     // 跨批聚合：同一素材 id 不累加，按 (num+lack_num) 取最大值（同批次内 id 不会重复，不同批次取最大）
-    const merged: Record<number, any> = {};
+    // lackNum 沿用该 id 首次出现时的 lack_num（与重构前 {...t, value} 的语义一致，仅 value 会被更大值覆盖）
+    const merged: Record<number, { value: number; lackNum: number }> = {};
     for (const t of consumeRaw) {
         const v = t.num + t.lack_num;
         if (merged[t.id]) {
             if (v > merged[t.id].value) merged[t.id].value = v;
         } else {
-            merged[t.id] = {...t, value: v};
+            merged[t.id] = {value: v, lackNum: t.lack_num};
         }
     }
-    const overall_consume = Object.values(merged) as any[];
 
-    // 4. 折算入库（items 外置：优先页面运行时读取，取不到回退静态 gi_items.json）
+    // 4. 折算入库（items 外置：优先页面运行时读取）
     const pageItems = getItemsFromPage();
-    const itemLib = pageItems as unknown as SeelieItems;
-    console.log(`[素材同步] items 来源：${pageItems ? "页面运行时(#app._vnode.component.data)" : "静态 gi_items.json 兜底"}，共 ${Object.keys(itemLib).length} 条`);
-
-    const results: any[] = [];
-    for (const t of overall_consume) {
-        let type: string, key: string, tier = 0;
-        if (t.id === 104003) { type = "xp"; key = "xp"; }
-        else if (t.id === 202) { type = "mora"; key = "mora"; }
-        else if (t.id === 104013) { type = "wep_xp"; key = "wep_xp"; }
-        else {
-            const match = findItemMatch(itemLib, t.id);
-            if (!match) {
-                console.warn(`[素材同步] 未匹配素材 id=${t.id} name=${t.name}`);
-                continue;
-            }
-            type = match.type; key = match.key; tier = match.tier;
-        }
-        const value = t.value;  // = num + lack_num（取跨批最大值），即库存值
-        const f = seelieGetInventory(type, key, tier);
-        results.push({
-            type, item: key, tier,
-            sort: 0,
-            value,
-            mod: value - (f ?? 0),
-            max: !t.lack_num
-        });
-        seelieSetInventory(type, key, tier, value);
-    }
+    const itemLib = loadSeelieItems("[素材同步]", pageItems);
+    const results = writeMergedToSeelieInventory(
+        Object.fromEntries(
+            Object.entries(merged).map(([k, v]) => [Number(k), v.value] as [number, number])
+        ) as Record<number, number>,
+        itemLib,
+        GI_SPECIAL,
+        "[素材同步]",
+        (id) => ({sort: 0, max: !merged[id].lackNum})
+    );
 
     localStorage.removeItem("fp");
-    console.log(`[素材同步] 已写入 ${results.length} 条素材到 seelie 库存`);
     return {ok: true, count: results.length, source: pageItems ? "page" : "fallback"};
 };
 

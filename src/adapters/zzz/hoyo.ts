@@ -4,8 +4,16 @@ import adapter from "axios-userscript-adapter/dist/esm";
 import axios, {AxiosAdapter} from "axios";
 import Avatar = mihoyo.ZZZAvatar;
 import CharacterData = mihoyo.ZZZCharacterData;
-import {getFp, headers, to, seelieGetInventory, seelieSetInventory} from "../common";
-import {getItemsFromPage, findItemMatch, SeelieItems} from "../genshin/hoyo";
+import {getFp, headers, to} from "../common";
+import {getItemsFromPage} from "../genshin/hoyo";
+import {
+    MaterialMatch,
+    getFpDeviceId,
+    loadSeelieItems,
+    mergeMaterialsMax,
+    sleepWithJitter,
+    writeMergedToSeelieInventory,
+} from "../inventory-common";
 
 
 axios.defaults.adapter = adapter as AxiosAdapter;
@@ -112,11 +120,13 @@ export const getDetailList = async (game_uid: string, region: string) => {
 
 // ===== ZZZ 素材/库存同步（对标 HSR：nap_cultivate_tool avatar_calc 单 avatar，逐角色循环）=====
 const ZZZ_CALC_URL = 'https://act-api-takumi.mihoyo.com/event/nap_cultivate_tool/user/avatar_calc';
-const ZZZ_REQ_DELAY = 400; // 请求间短间隔(ms)，避免频限
+// ZZZ 的 avatar_calc 频限比 HSR 更严：基础间隔 800ms + 0~400ms 随机抖动，
+// 且在「每次请求之前」等待（含首次与末次），避免尾部请求被频限拒绝。
+const ZZZ_REQ_DELAY = 800; // 请求前基础间隔(ms)
+const ZZZ_REQ_JITTER = 400; // 随机抖动上限(ms)
 
 const buildZzzHeaders = async () => {
-    const fp = await getFp();
-    const deviceId = localStorage.getItem("mysDeviceId") || fp;
+    const {fp, deviceId} = await getFpDeviceId();
     return {
         ...headers,
         "x-rpc-cultivate_source": "pc",
@@ -131,10 +141,9 @@ const buildZzzHeaders = async () => {
     } as unknown as import("axios").AxiosRequestHeaders;
 };
 
-// ZZZ 素材 id → seelie type/key/tier（复用页面 items 库；特例 丁尼 id=10 → credit）
-const mapZzzMaterial = (itemLib: SeelieItems, id: number) => {
-    if (id === 10) return {type: "credit", key: "credit", tier: 0};
-    return findItemMatch(itemLib, id);
+// ZZZ 素材 id → seelie type/key/tier 的特例表（其余走页面 items 库匹配；丁尼 id=10 → denny，对应 seelie 官方 isCurrency 白名单）
+const ZZZ_SPECIAL: Record<number, MaterialMatch> = {
+    10: {type: "denny", key: "denny", tier: 0},
 };
 
 export const batchUpdateInventoryZZZ = async (uid: string, region: string) => {
@@ -145,8 +154,8 @@ export const batchUpdateInventoryZZZ = async (uid: string, region: string) => {
 
     // 2. 复用页面 items 库（含 ZZZ 素材）
     const pageItems = getItemsFromPage();
-    const itemLib = (pageItems || {}) as SeelieItems;
-    console.log(`[ZZZ素材] items 来源：${pageItems ? "页面运行时" : "无（findItemMatch 可能空匹配）"}，共 ${Object.keys(itemLib).length} 条`);
+    const itemLib = loadSeelieItems("[ZZZ素材]", pageItems);
+    const source = pageItems ? "page" : "none";
 
     // 3. 逐角色组装 avatar_calc 入参（单 avatar，强制 current=1、target=max）并串行计算，
     //    收集 user_owns_materials；跨角色同素材取最大值
@@ -154,6 +163,8 @@ export const batchUpdateInventoryZZZ = async (uid: string, region: string) => {
     const merged: Record<number, number> = {};
     let computed = 0;
     for (const d of details) {
+        // 每次 avatar_calc 请求前先等待（含首次/末次），带抖动错开频限窗口
+        await sleepWithJitter(ZZZ_REQ_DELAY, ZZZ_REQ_JITTER);
         const avatar = d.avatar || {};
         const itemInfo = d.item_info || {};
         const avatarLevelMax = itemInfo.avatar_level_max || 60;
@@ -199,34 +210,15 @@ export const batchUpdateInventoryZZZ = async (uid: string, region: string) => {
             continue;
         }
         const mats = resData?.data?.user_owns_materials || {};
-        for (const [k, v] of Object.entries(mats)) {
-            const id = Number(k);
-            const val = Number(v);
-            if (!Number.isFinite(id) || !Number.isFinite(val)) continue;
-            if (!(id in merged) || val > merged[id]) merged[id] = val;
-        }
+        mergeMaterialsMax(merged, mats);
         computed++;
         if (computed % 10 === 0) console.log(`[ZZZ素材] 已计算 ${computed}/${details.length}`);
-        await new Promise(r => setTimeout(r, ZZZ_REQ_DELAY));
     }
     if (!Object.keys(merged).length) throw new Error("[ZZZ素材] 未计算出任何素材（请检查接口/items 库）");
 
     // 4. 折算入库：素材 id → seelie type/key/tier → seelieSetInventory（value 取跨角色最大值）
-    const results: any[] = [];
-    for (const [idStr, value] of Object.entries(merged)) {
-        const id = Number(idStr);
-        const match = mapZzzMaterial(itemLib, id);
-        if (!match) {
-            console.warn(`[ZZZ素材] 未匹配素材 id=${id}`);
-            continue;
-        }
-        const {type, key, tier} = match;
-        const f = seelieGetInventory(type, key, tier);
-        results.push({type, item: key, tier, value, mod: value - (f ?? 0)});
-        seelieSetInventory(type, key, tier, value);
-    }
-    console.log(`[ZZZ素材] 已写入 ${results.length} 条素材到 seelie 库存`);
-    return {ok: true, count: results.length, source: pageItems ? "page" : "none"};
+    const results = writeMergedToSeelieInventory(merged, itemLib, ZZZ_SPECIAL, "[ZZZ素材]");
+    return {ok: true, count: results.length, source};
 };
 
 

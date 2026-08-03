@@ -3,6 +3,7 @@ import {GameAdapter, GameType, GoalTypeConfig} from '../game';
 import {getDetailList as getHsrDetailList, batchUpdateInventoryHSR} from './hoyo';
 import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon, characterStatusList} from './seelie';
 import {BaseAdapter} from "../baseAdapter";
+import {withThrottle} from "../inventory-common";
 import localforage from "localforage";
 
 export class HsrAdapter extends BaseAdapter implements GameAdapter {
@@ -86,16 +87,8 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         return localforage.setItem(key, value);
     }
 
+    // 1 分钟节流（避免频繁打米游社 calc/compute；独立 key 不干扰 GI 的 last-sync）
     batchUpdateInventory = async (uid: string, region: string) => {
-        // 1 分钟节流（避免频繁打米游社 calc/compute；独立 key 不干扰 GI 的 last-sync）
-        const last = Number(localStorage.getItem("hsr-last-sync") || 0);
-        if (last && Date.now() - last < 1 * 60 * 1000) {
-            const wait = Math.ceil((1 * 60 * 1000 - (Date.now() - last)) / 1000);
-            alert(`请稍候 ${wait}s 再同步（HSR 素材同步 1 分钟节流）`);
-            return {ok: false, skipped: true, reason: "节流"};
-        }
-        const results = await batchUpdateInventoryHSR(uid, region);
-        localStorage.setItem("hsr-last-sync", Date.now().toString());
-        return results;
+        return withThrottle("hsr-last-sync", "HSR 素材同步", batchUpdateInventoryHSR, uid, region);
     }
 }

@@ -30,7 +30,7 @@ export default defineConfig({
                 ],
                 license: 'MIT',
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
-                connect: ['api-takumi.mihoyo.com', 'public-data-api.mihoyo.com'],
+                connect: ['api-takumi.mihoyo.com','act-api-takumi.mihoyo.com', 'public-data-api.mihoyo.com'],
                 resource: {
                     character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json",
                     weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/weapon.json",

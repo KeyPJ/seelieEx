@@ -6,8 +6,16 @@ import {charactersNum} from "./query";
 import axios, {AxiosAdapter} from "axios";
 import Avatar = mihoyo.Avatar;
 import HSRCharacterData = mihoyo.HSRCharacterData;
-import {headers, to, getFp, seelieGetInventory, seelieSetInventory} from "../common";
-import {getItemsFromPage, findItemMatch, SeelieItems} from "../genshin/hoyo";
+import {headers, to} from "../common";
+import {getItemsFromPage} from "../genshin/hoyo";
+import {
+    MaterialMatch,
+    getFpDeviceId,
+    loadSeelieItems,
+    mergeMaterialsMax,
+    sleep,
+    writeMergedToSeelieInventory,
+} from "../inventory-common";
 
 axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
@@ -89,8 +97,7 @@ const HSR_COMPUTE_URL = 'https://api-takumi.mihoyo.com/event/rpgcultivate/calc/c
 const HSR_REQ_DELAY = 400; // 请求间短间隔(ms)，避免频限
 
 const buildHsrHeaders = async () => {
-    const fp = await getFp();
-    const deviceId = localStorage.getItem("mysDeviceId") || fp;
+    const {fp, deviceId} = await getFpDeviceId();
     return {
         ...headers,
         "x-rpc-device_fp": fp,
@@ -135,10 +142,9 @@ const getHsrCalcDetail = async (item_id: string, uid: string, region: string): P
     return resData?.data as any;
 };
 
-// HSR 素材 id → seelie type/key/tier（复用页面 items 库；特例 信用点 id=2）
-const mapHsrMaterial = (itemLib: SeelieItems, id: number) => {
-    if (id === 2) return {type: "credit", key: "credit", tier: 0};
-    return findItemMatch(itemLib, id);
+// HSR 素材 id → seelie type/key/tier 的特例表（其余走页面 items 库匹配；信用点 id=2）
+const HSR_SPECIAL: Record<number, MaterialMatch> = {
+    2: {type: "credit", key: "credit", tier: 0},
 };
 
 export const batchUpdateInventoryHSR = async (uid: string, region: string) => {
@@ -154,14 +160,14 @@ export const batchUpdateInventoryHSR = async (uid: string, region: string) => {
         const slice = allChars.slice(i, i + D_BATCH);
         const part = await Promise.all(slice.map((c: any) => getHsrCalcDetail(String(c.item_id), uid, region)));
         details.push(...part.filter(Boolean));
-        if (i + D_BATCH < allChars.length) await new Promise(r => setTimeout(r, HSR_REQ_DELAY));
+        if (i + D_BATCH < allChars.length) await sleep(HSR_REQ_DELAY);
     }
     console.log(`[HSR素材] 拿到详情 ${details.length} 个`);
 
     // 3. 逐角色组装 calc/compute 入参（单 avatar）并串行计算，收集 user_owns_materials；跨角色同素材取最大值
     const pageItems = getItemsFromPage();
-    const itemLib = (pageItems || {}) as SeelieItems;
-    console.log(`[HSR素材] items 来源：${pageItems ? "页面运行时" : "无（findItemMatch 可能空匹配）"}，共 ${Object.keys(itemLib).length} 条`);
+    const itemLib = loadSeelieItems("[HSR素材]", pageItems);
+    const source = pageItems ? "page" : "none";
 
     const h = await buildHsrHeaders();
     const merged: Record<number, number> = {};
@@ -214,34 +220,16 @@ export const batchUpdateInventoryHSR = async (uid: string, region: string) => {
             continue;
         }
         const mats = resData?.data?.user_owns_materials || {};
-        for (const [k, v] of Object.entries(mats)) {
-            const id = Number(k);
-            const val = Number(v);
-            if (!Number.isFinite(id) || !Number.isFinite(val)) continue;
-            if (!(id in merged) || val > merged[id]) merged[id] = val;
-        }
+        mergeMaterialsMax(merged, mats);
         computed++;
         if (computed % 10 === 0) console.log(`[HSR素材] 已计算 ${computed}/${details.length}`);
-        await new Promise(r => setTimeout(r, HSR_REQ_DELAY));
+        await sleep(HSR_REQ_DELAY);
     }
     if (!Object.keys(merged).length) throw new Error("[HSR素材] 未计算出任何素材（请检查接口/items 库）");
 
     // 4. 折算入库：素材 id → seelie type/key/tier → seelieSetInventory（value 取跨角色最大值）
-    const results: any[] = [];
-    for (const [idStr, value] of Object.entries(merged)) {
-        const id = Number(idStr);
-        const match = mapHsrMaterial(itemLib, id);
-        if (!match) {
-            console.warn(`[HSR素材] 未匹配素材 id=${id}`);
-            continue;
-        }
-        const {type, key, tier} = match;
-        const f = seelieGetInventory(type, key, tier);
-        results.push({type, item: key, tier, value, mod: value - (f ?? 0)});
-        seelieSetInventory(type, key, tier, value);
-    }
-    console.log(`[HSR素材] 已写入 ${results.length} 条素材到 seelie 库存`);
-    return {ok: true, count: results.length, source: pageItems ? "page" : "none"};
+    const results = writeMergedToSeelieInventory(merged, itemLib, HSR_SPECIAL, "[HSR素材]");
+    return {ok: true, count: results.length, source};
 };
 
 
