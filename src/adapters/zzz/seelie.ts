@@ -120,53 +120,82 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.ZZZSkill
     await addGoal(talentGoal)
 };
 
-export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string) => {
-    let totalGoal = await getTotalGoal() as Goal[];
+/**
+ * 由等级 + 突破档解析出唯一档位。对齐 GI 的 resolveStatus。
+ * 米游社 ZZZ 的 promotes 语义为「已解锁等级上限 / 10」(1~6)，并非 seelie 的 asc 索引；
+ * 例：level=40 promotes=5 → 上限 50、已突破 40 → 取该等级更高档 {40,3}。
+ * 无 promotes（武器或字段缺失）时退回旧逻辑：取该等级最高档（已突破），与官方站一致。
+ */
+const resolveStatus = (level: number, promote?: number): CharacterStatus => {
+    const closest = characterStatusList.filter(s => s.level <= level).pop() ?? characterStatusList[0];
+    const candidates = characterStatusList.filter(s => s.level === closest.level);
+    if (typeof promote !== "number") {
+        // 武器/缺失 promotes：沿用等级推导（已突破的最高档），与旧 initCharacterStatus 行为一致
+        return {...closest};
+    }
+    // promotes*10 = 已解锁等级上限；上限严格大于当前所属档位即视为已突破到更高档
+    const cap = promote * 10;
+    const ascended = cap > closest.level;
+    return {...(ascended ? candidates[candidates.length - 1] : candidates[0])};
+};
 
-    let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
-    let weaponPredicate = (g: Goal) => g.type == type && g.weapon == nameEn;
+export const addCharacterGoal = async (
+    status: CharacterStatus,
+    nameEn: string,
+    type: "character" | "weapon",
+    extra?: { cons?: number; owner?: string }
+) => {
+    const totalGoal = await getTotalGoal() as Goal[];
+    const cons = extra?.cons;
+    const owner = extra?.owner ?? "";
+    const characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
+    const weaponPredicate = (g: Goal) => g.type == type && g.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
-    const characterStatus: CharacterStatus = initCharacterStatus(level_current);
-
-    let characterGoal: Goal
+    const characterStatus: CharacterStatus = status;
 
     function initCharacterGoal(id: number) {
         return {
             type: "character",
             character: nameEn,
             current: characterStatus,
-            goal: characterStatus,
+            goal: {...characterStatus},
             id,
-            cons: 0,
+            cons: cons ?? 0,
         } as unknown as CharacterGoal
     }
 
     function initWeaponGoal(id: number) {
+        const ws: CharacterStatus & { craft?: number } = {...characterStatus, craft: 0};
         return {
             type: "weapon",
-            character: "",
+            character: owner,
             weapon: nameEn,
-            current: characterStatus,
-            goal: characterStatus,
+            current: ws,
+            goal: {...ws},
             id
         } as unknown as WeaponGoal
     }
 
+    let characterGoal: Goal
     if (characterIdx < 0) {
         const id = await getNextId();
         characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
-        const seelieGoal = type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as WeaponGoal
+        const seelieGoal = (type == "character" ? totalGoal[characterIdx] as CharacterGoal : totalGoal[characterIdx] as WeaponGoal);
         const {goal, current} = seelieGoal;
         const {level: levelCurrent, asc: ascCurrent} = current;
         const {level: levelGoal, asc: ascGoal} = goal;
         const {level, asc} = characterStatus;
-
-        characterGoal = {
+        const merged: any = {
             ...seelieGoal,
             current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
-        } as CharacterGoal
+        };
+        // 命座只增不减
+        if (type == "character" && (cons !== undefined || (seelieGoal as CharacterGoal).cons !== undefined)) {
+            merged.cons = Math.max((seelieGoal as CharacterGoal).cons ?? 0, cons ?? 0);
+        }
+        characterGoal = merged;
     }
     await addGoal(characterGoal)
 };
@@ -174,85 +203,31 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
 export async function addCharacter(characterDataEx: HSRCharacterData) {
 
     const {avatar: character, weapon} = characterDataEx;
-    const {name_mi18n: name, skills: skill_list} = character;
-
-    // [
-    //     {
-    //         "type": "character",
-    //         "character": "soldier_11",
-    //         "cons": 0,
-    //         "current": {
-    //             "level": 10,
-    //             "asc": 0
-    //         },
-    //         "goal": {
-    //             "level": 60,
-    //             "asc": 5
-    //         },
-    //         "id": 1
-    //     },
-    //     {
-    //         "type": "talent",
-    //         "character": "soldier_11",
-    //         "basic": {
-    //             "current": 1,
-    //             "goal": 12
-    //         },
-    //         "dodge": {
-    //             "current": 2,
-    //             "goal": 12
-    //         },
-    //         "assist": {
-    //             "current": 3,
-    //             "goal": 12
-    //         },
-    //         "special": {
-    //             "current": 4,
-    //             "goal": 12
-    //         },
-    //         "chain": {
-    //             "current": 5,
-    //             "goal": 12
-    //         },
-    //         "core": {
-    //             "current": 2,
-    //             "goal": 6
-    //         },
-    //         "id": 2
-    //     },
-    //     {
-    //         "type": "weapon",
-    //         "id": 3,
-    //         "weapon": "tusks_of_fury",
-    //         "current": {
-    //             "level": 10,
-    //             "asc": 0,
-    //             "craft": 0
-    //         },
-    //         "goal": {
-    //             "level": 15,
-    //             "asc": 1,
-    //             "craft": 1
-    //         }
-    //     }
-    // ]
+    const {level: characterLevel, rank, promotes} = character;
 
     if (weapon) {
-        const {name, level: weaponLeveL} = weapon;
-        const weaponId = getWeaponId(name);
+        const {level: weaponLevel, promotes: weaponPromotes} = weapon;
+        const weaponId = getWeaponId(weapon);
         if (weaponId) {
-            await addCharacterGoal(weaponLeveL, weaponId, name, "weapon");
+            // 武器无 promotes 字段，沿用等级推导；craft 默认 0
+            await addCharacterGoal(
+                resolveStatus(weaponLevel, weaponPromotes),
+                weaponId, "weapon"
+            );
         }
     }
-    const {level: characterLevel} = character;
-    const characterId = getCharacterId(name);
-    if (!characterId || characterId.includes("trailblazer")) {
+    const characterId = getCharacterId(character);
+    if (!characterId) {
         return
     }
-    await addCharacterGoal(characterLevel, characterId, name, "character");
+    // 角色：突破档用真实 promotes，命座用 rank 写入 cons
+    await addCharacterGoal(
+        resolveStatus(characterLevel, promotes),
+        characterId, "character",
+        {cons: rank}
+    );
 
-    await addTraceGoal(characterId, skill_list);
-
+    await addTraceGoal(characterId, character.skills);
 }
 
 export const characterStatusList: CharacterStatus[] = [
@@ -267,24 +242,6 @@ export const characterStatusList: CharacterStatus[] = [
     {level: 50, asc: 4, text: "50 A"},
     {level: 60, asc: 5, text: "60"},
 ]
-
-const initCharacterStatus = (level_current: number) => {
-    let initCharacterStatus = characterStatusList[0];
-    if (level_current < 20) {
-        return initCharacterStatus;
-    }
-    for (let characterStatus of characterStatusList) {
-        const {level} = characterStatus;
-        if (level_current < level) {
-            return initCharacterStatus;
-        } else if (level_current == level) {
-            return characterStatus;
-        } else if (level_current > level) {
-            initCharacterStatus = characterStatus
-        }
-    }
-    return initCharacterStatus;
-};
 
 const updateTrace = async (talent: TalentGoal, basicGoal = 11, dodgeGoal = 11, assistGoal = 11, specialGoal = 11, chainGoal = 11, coreGoal = 6) => {
     const {

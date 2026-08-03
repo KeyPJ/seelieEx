@@ -87,7 +87,7 @@ const getCharacterDetail = async (ids: number[], uid: string, region: string) =>
 
 export const getDetailList = async (game_uid: string, region: string) => {
 
-    let maxPageSize = 1;//Math.ceil(charactersNum / requestPageSize);
+    let maxPageSize = 1; // ZZZ 角色列表单次返回全部，分页上界固定为 1（已无打包 JSON 的 charactersNum 依赖）
     let idxs = Array.from(new Array(maxPageSize).keys());
 
     const characters: Avatar[] = [];

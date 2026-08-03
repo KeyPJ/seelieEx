@@ -148,6 +148,8 @@ declare namespace mihoyo {
         rank: number;
         sub_element_type: number;
         awaken_state: "AwakenStateNotVisible" | "AwakenStateActivated" | string;
+        /** 角色突破档位（0~5），来自 batch_avatar_detail_v2 */
+        promotes?: number;
         skills: ZZZSkill[];
     }
 
@@ -161,6 +163,8 @@ declare namespace mihoyo {
         talent_title: string;
         talent_content: string;
         profession: number;
+        /** 武器突破档位（0~5），来自 batch_avatar_detail_v2 */
+        promotes?: number;
     }
 
     /**
