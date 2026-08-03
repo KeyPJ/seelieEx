@@ -2,3 +2,7 @@ node_modules
 dist
 /.idea/
 yarn.lock
+.claude
+.codegraph
+.workbuddy
+references

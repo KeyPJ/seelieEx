@@ -1,46 +1,32 @@
 import Data = mihoyo.Data;
 import Character = mihoyo.Character;
 import CharacterDataEx = mihoyo.CharacterDataEx;
-import adapter from "axios-userscript-adapter/dist/esm";
 import {getCharactersNum} from "./query";
-import axios, {AxiosAdapter, AxiosRequestHeaders} from "axios";
-import {getFp, headers, to} from "../common";
+import axios, {AxiosRequestHeaders} from "axios";
+import {to, checkLogin} from "../common";
+import {GameApiConfig} from "../game";
 import {getItemsFromPage} from "../items";
-import {MaterialMatch, loadSeelieItems, sleep, writeMergedToSeelieInventory} from "../inventory-common";
+import {MaterialMatch, loadSeelieItems, sleep, writeMergedToSeelieInventory, buildBaseHeaders, getFpDeviceId} from "../inventory-common";
 // import giItems from "../../data/gi_items.json";
 
-// items 库的定义已迁移至 ../items（叶子模块，避免与 inventory-common 循环依赖）。
-// 此处重导出以保持既有 importer（hsr/hoyo、zzz/hoyo 等）的引用路径不变。
-export {findItemMatch, getItemsFromPage} from "../items";
-export type {SeelieItems, SeelieItemEntry} from "../items";
-
-axios.defaults.adapter = adapter as AxiosAdapter;
-axios.defaults.withCredentials = true;
-
-
-const CHARACTERS_URL = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list'
-
-const ALL_CHARACTERS_URL = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/avatar/list'
-
-const BATCH_COMPUTE_URL = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v3/batch_compute'
-
-// 米游社标准请求头（含设备标识等，参考官网 fetch 调用）
-const buildGenshinHeaders = (fp: string, deviceId: string) => ({
-    "x-rpc-device_fp": fp,
-    "x-rpc-device_id": deviceId,
-    "x-rpc-lrsag": "",
-    "x-rpc-page": "__#",
-    "x-rpc-platform": "4",
-    ...headers,
-});
+// axios.defaults（adapter/withCredentials）已由 ../common 统一设置，此处不再重复。
 
 const requestPageSize = 200;
 
-const getCharacters = async (uid: string, region: string, page = 1) => {
+// 米游社标准请求头（含设备标识等，参考官网 fetch 调用）
+const buildGenshinHeaders = async () => {
+    const {fp, deviceId} = await getFpDeviceId();
+    return {
+        ...buildBaseHeaders(fp, deviceId),
+        "x-rpc-lrsag": "",
+        "x-rpc-page": "__#",
+    };
+};
 
-    let fp = await getFp();
-    const genshinHeaders = buildGenshinHeaders(fp, localStorage.getItem("mysDeviceId") || "");
-    const [err, res] = await to(axios.post(CHARACTERS_URL, JSON.stringify({
+const getCharacters = async (uid: string, region: string, page = 1, cfg: GameApiConfig) => {
+
+    const genshinHeaders = await buildGenshinHeaders();
+    const [err, res] = await to(axios.post(cfg.charactersUrl, JSON.stringify({
         "element_attr_ids": [],
         "weapon_cat_ids": [],
         "page": page,
@@ -60,6 +46,9 @@ const getCharacters = async (uid: string, region: string, page = 1) => {
                 const {list: characterList} = await data as Data<Character>;
                 return characterList;
             }
+            // 非零 retcode（含 -100 未登录）：交给 checkLogin 处理（未登录会提示+跳转计算器页面+抛错）
+            checkLogin(retcode, "原神", cfg.calcPageUrl);
+            console.warn(`[GI] 角色列表获取失败 retcode=${retcode}: ${resData?.message || ""}`);
         }
     }
     localStorage.removeItem("fp")
@@ -71,7 +60,7 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
 };
 
 
-export const getDetailList = async (game_uid: string, region: string) => {
+export const getDetailList = async (game_uid: string, region: string, cfg: GameApiConfig) => {
 
     let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
     let idxs = Array.from(new Array(maxPageSize).keys());
@@ -79,7 +68,7 @@ export const getDetailList = async (game_uid: string, region: string) => {
 
     const characters: Character[] = [];
     for await (let i of idxs) {
-        characters.push.apply(characters, await getCharacters(game_uid, region, i + 1))
+        characters.push.apply(characters, await getCharacters(game_uid, region, i + 1, cfg))
     }
 
     const details = characters.map(c => getCharacterDetail(c, game_uid, region));
@@ -96,13 +85,13 @@ export const getDetailList = async (game_uid: string, region: string) => {
  * 已拥有角色（含武器），v1/sync/avatar/list（需 uid/region）。
  * 分页拉取，单页失败不阻断整体（降级为仅用全量列表）。
  */
-const getOwnedCharactersRaw = async (uid: string, region: string): Promise<any[]> => {
+const getOwnedCharactersRaw = async (uid: string, region: string, cfg: GameApiConfig): Promise<any[]> => {
     let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
     if (maxPageSize < 1) maxPageSize = 1;
     const chars: any[] = [];
     for (let i = 0; i < maxPageSize; i++) {
         try {
-            const list = await getCharacters(uid, region, i + 1);
+            const list = await getCharacters(uid, region, i + 1, cfg);
             if (list && list.length) chars.push(...list);
         } catch (e) {
             console.warn(`[素材同步] 已拥有角色(第${i + 1}页)获取失败:`, (e as Error)?.message || e);
@@ -116,15 +105,13 @@ const getOwnedCharactersRaw = async (uid: string, region: string): Promise<any[]
  * 拉全量角色花名册（含未拥有），v1/avatar/list + is_all:true。
  * 无需 uid/region，返回游戏内全部角色（用于追加未拥有角色做素材清单）。
  */
-export const getAllCharacters = async (): Promise<any[]> => {
-    let fp = await getFp();
-    const deviceId = localStorage.getItem("mysDeviceId") || "";
-    const h = buildGenshinHeaders(fp, deviceId);
+export const getAllCharacters = async (cfg: GameApiConfig): Promise<any[]> => {
+    const h = await buildGenshinHeaders();
     const result: any[] = [];
     const size = 200;
     let page = 1;
     while (true) {
-        const [err, res] = await to(axios.post(ALL_CHARACTERS_URL, JSON.stringify({
+        const [err, res] = await to(axios.post(cfg.allCharactersUrl!, JSON.stringify({
             element_attr_ids: [],
             weapon_cat_ids: [],
             page,
@@ -141,6 +128,7 @@ export const getAllCharacters = async (): Promise<any[]> => {
         }
         const {status, data: resData} = await res;
         if (status != 200 || resData.retcode !== 0) {
+            checkLogin(resData.retcode, "原神", cfg.calcPageUrl);
             console.warn(`[素材同步] 全量角色列表错误 retcode=${resData?.retcode}:`, resData?.message || "");
             break;
         }
@@ -166,9 +154,8 @@ const GI_SPECIAL: Record<number, MaterialMatch> = {
  * 3. 分批次调 v3/batch_compute 计算材料（单次 items 至多 30 条，跨批聚合）
  * 4. 用【外置】的 items 库把 overall_consume 折算写入 seelie 库存（${account}-inventory）
  */
-export const batchUpdateInventoryGI = async (uid: string, region: string) => {
-    let fp = await getFp();
-    const genshinHeaders = buildGenshinHeaders(fp, localStorage.getItem("mysDeviceId") || "");
+export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: GameApiConfig, prefetched?: any[]) => {
+    const genshinHeaders = await buildGenshinHeaders();
 
     // 1. 拉全量角色花名册：
     //    (a) 已拥有角色（含武器）来自 v1/sync/avatar/list（需 uid/region）
@@ -177,11 +164,16 @@ export const batchUpdateInventoryGI = async (uid: string, region: string) => {
     //    avatar_level_current=1 / avatar_promote_level=0 / from_user_sync=false / skill level_current=1
     const SKIP_IDS = [10000117, 10000118, 10000005, 10000007];
 
-    const ownedList = await getOwnedCharactersRaw(uid, region);
+    // 已拥有角色：复用角色同步已拉取的数据（消除重复 list/detail 请求）；无预拉取时回退重新拉取
+    const ownedList = (prefetched && prefetched.length)
+        ? prefetched
+        : await getOwnedCharactersRaw(uid, region, cfg);
+    console.log(`[素材同步] 复用角色同步已拉取 ${ownedList.length} 个已拥有角色${prefetched?.length ? "" : "（回退重新拉取）"}`);
     const ownedMap = new Map<number, any>();
     for (const c of ownedList) ownedMap.set(c.id, c);
 
-    const allList = await getAllCharacters();
+    // 全量花名册（含未拥有角色）：GI 素材计算需要全角色清单，而角色同步只拉已拥有，故此处仍需获取（并非重复请求）
+    const allList = await getAllCharacters(cfg);
     // 全量花名册：未拥有直接用全量数据；已拥有的用 sync 端武器数据补全
     const roster: any[] = allList.map((c: any) => {
         const owned = ownedMap.get(c.id);
@@ -232,7 +224,7 @@ export const batchUpdateInventoryGI = async (uid: string, region: string) => {
 
     // 单次请求一个 chunk：成功返回素材列表，失败(异常/retcode!=0)返回 null
     const doBatch = async (chunk: any[]): Promise<any[] | null> => {
-        const [err, res] = await to(axios.post(BATCH_COMPUTE_URL, JSON.stringify({
+        const [err, res] = await to(axios.post(cfg.computeUrl!, JSON.stringify({
             items: chunk,
             "uid": uid,
             "region": region,
@@ -247,6 +239,7 @@ export const batchUpdateInventoryGI = async (uid: string, region: string) => {
         }
         const {status, data: resData} = await res;
         if (status != 200 || resData.retcode !== 0) {
+            checkLogin(resData.retcode, "原神", cfg.calcPageUrl);
             console.warn(`[素材同步] 批次(${chunk.length}条)返回错误 retcode=${resData?.retcode}:`, resData?.message || "");
             return null;
         }

@@ -6,37 +6,12 @@ import HSRCharacterData = mihoyo.ZZZCharacterData;
 import WeaponGoal = seelie.ZZZWeaponGoal;
 import TalentGoal = seelie.ZZZTalentGoal;
 import {
+    addGoal,
     batchUpdateGoals,
     getNextId,
     getTotalGoal,
-    setGoals
+    updateCharacter,
 } from "../common";
-
-const addGoal = async (data: any) => {
-    let index: number = -1;
-    const goals = await getTotalGoal();
-
-    if (data.character) {
-        index = goals.findIndex(
-            (g: any) => g.character === data.character && g.type === data.type
-        );
-    } else if (data.id) {
-        index = goals.findIndex((g: any) => g.id === data.id);
-    }
-
-    if (index >= 0) {
-        goals[index] = {...goals[index], ...data};
-    } else {
-        const lastId = goals
-            ?.map((g: any) => g.id)
-            ?.filter((id: any) => typeof id == "number")
-            ?.sort((a: number, b: number) => (a < b ? 1 : -1))[0];
-
-        data.id = (lastId || 0) + 1;
-        goals.push(data);
-    }
-    await setGoals(goals);
-};
 
 const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.ZZZSkill[]) => {
     const totalGoal = await getTotalGoal() as Goal[];
@@ -291,18 +266,6 @@ export const batchUpdateTrace = async (all: boolean, basicGoal = 11, dodgeGoal =
     );
 }
 
-
-const updateCharacter = async (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
-    const {current} = character;
-    const {level: levelCurrent, asc: ascCurrent} = current;
-    const {level, asc} = characterStatusGoal;
-
-    const characterGoalNew = {
-        ...character,
-        goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current,
-    }
-    await addGoal(characterGoalNew)
-}
 
 export const batchUpdateCharacter = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
     batchUpdateGoals<CharacterGoal>(

@@ -2,8 +2,9 @@
 // 三条线（GI / HSR / ZZZ）素材同步的公共逻辑抽取。
 // 依赖方向：inventory-common -> {./items, ./common}。
 // items 库刻意放在叶子模块 ./items 而非 ./genshin/hoyo，使 genshin/hoyo 可以单向依赖本模块而不成环。
+import axios from "axios";
 import {SeelieItems, findItemMatch, getItemsFromPage} from "./items";
-import {seelieGetInventory, seelieSetInventory, getFp} from "./common";
+import {seelieGetInventory, seelieSetInventory, getFp, to, checkLogin, headers} from "./common";
 
 /** 素材 id 折算到 seelie 库存的定位信息 */
 export interface MaterialMatch {
@@ -27,6 +28,17 @@ export const getFpDeviceId = async (): Promise<{ fp: string; deviceId: string }>
 };
 
 /**
+ * 米游社请求头公共底座：基础 headers + 设备标识 + platform。
+ * 各游戏再向上追加专属字段（page/lang/geetest/cultivate_source 等）。
+ */
+export const buildBaseHeaders = (fp: string, deviceId: string): Record<string, string> => ({
+    ...headers,
+    "x-rpc-device_fp": fp,
+    "x-rpc-device_id": deviceId,
+    "x-rpc-platform": "4",
+});
+
+/**
  * 从 seelie 页面运行时读取 items 库。
  * @param sourceLabel 日志前缀，如 "[ZZZ素材]"
  * @param pageItems 已取过可传入避免重复读取 DOM
@@ -47,6 +59,40 @@ export const mergeMaterialsMax = (merged: Record<number, number>, flat: Record<s
         if (!Number.isFinite(id) || !Number.isFinite(val)) continue;
         if (!(id in merged) || val > merged[id]) merged[id] = val;
     }
+};
+
+/**
+ * 统一的单角色 calc 请求（HSR/ZZZ 共用）：
+ * POST(body) → 判网络/retcode 错误（含 checkLogin 未登录处理）→ 合并 user_owns_materials 进 merged。
+ * @returns true 成功并入；false 跳过（已 warn）。调用方负责 computed++ / 进度日志 / 节流 sleep。
+ */
+export const postCalcAndMerge = async (
+    url: string,
+    body: any,
+    h: import("axios").AxiosRequestHeaders,
+    label: string,
+    gameName: string,
+    calcPageUrl: string,
+    merged: Record<number, number>,
+    avatarId: string | number,
+): Promise<boolean> => {
+    const [err, res] = await to(axios.post(url, JSON.stringify(body), {
+        timeout: 8000,
+        headers: {...h, "content-type": "application/json"} as unknown as import("axios").AxiosRequestHeaders,
+    }));
+    if (err) {
+        console.warn(`[${label}] 角色 ${avatarId} 计算失败`, err?.message || err);
+        return false;
+    }
+    const {status, data: resData} = await res;
+    if (status !== 200 || resData?.retcode !== 0) {
+        checkLogin(resData?.retcode, gameName, calcPageUrl);
+        console.warn(`[${label}] 角色 ${avatarId} 计算错误 retcode=${resData?.retcode}`);
+        return false;
+    }
+    const mats = resData?.data?.user_owns_materials || {};
+    mergeMaterialsMax(merged, mats);
+    return true;
 };
 
 /** 入库结果条目（三条线统一形状，GI 通过 extra 追加 sort/max） */

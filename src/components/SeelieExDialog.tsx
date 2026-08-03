@@ -3,6 +3,7 @@ import ListboxSelect from "./select/ListboxSelect";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {AdapterManager} from '../adapters/adapterManager';
+import {resetLoginFlag, resetSyncRequestCount, getSyncRequestCount} from '../adapters/common';
 
 function ExDialog({onClose}: { onClose?: () => void }) {
 
@@ -87,6 +88,8 @@ function ExDialog({onClose}: { onClose?: () => void }) {
             alert("账户信息获取失败");
             return;
         }
+        resetLoginFlag(); // 每次同步重置"已提示未登录"标记，保证仅提示/打开一次
+        resetSyncRequestCount(); // 重置请求计数器，统计本次同步发起的请求数
         const {game_uid, region} = currentAccount;
         console.log("开始同步（角色信息 + 素材/库存）");
 
@@ -113,7 +116,7 @@ function ExDialog({onClose}: { onClose?: () => void }) {
             setProgress(40);
             setProgressText("角色目标写入完成，正在同步素材/库存...");
 
-            const invRes = await currentAdapter.batchUpdateInventory(game_uid, region);
+            const invRes = await currentAdapter.batchUpdateInventory(game_uid, region, res);
 
             if (progressInterval) {
                 clearInterval(progressInterval);
@@ -124,6 +127,7 @@ function ExDialog({onClose}: { onClose?: () => void }) {
 
             const skipped = invRes && invRes.skipped;
             console.log("素材/库存同步结果:", invRes);
+            console.log(`[请求计数] 本次同步共发起 ${getSyncRequestCount()} 个 HTTP 请求`);
             console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
             alert(skipped
                 ? `角色信息已同步\n（素材/库存同步暂不支持当前游戏：${invRes.reason || ""}）`
@@ -134,6 +138,7 @@ function ExDialog({onClose}: { onClose?: () => void }) {
                 clearInterval(progressInterval);
             }
             console.error("同步失败:", err);
+            console.log(`[请求计数] 同步中断前已发起 ${getSyncRequestCount()} 个 HTTP 请求`);
             alert("同步失败：" + (err?.message || err));
         } finally {
             setLoading(false);

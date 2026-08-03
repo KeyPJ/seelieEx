@@ -6,42 +6,12 @@ import TalentGoal = seelie.GITalentGoal;
 import WeaponGoal = seelie.GIWeaponGoal;
 import {getCharacterId, getWeaponId} from "./query";
 import {
+    addGoal,
     batchUpdateGoals,
     getNextId,
     getTotalGoal,
-    setGoals
+    updateCharacter,
 } from "../common";
-
-const addGoal = async (data: any) => {
-    let index: number = -1;
-    const goals = await getTotalGoal();
-
-    if (data.character) {
-        index = goals.findIndex(
-            (g: any) => g.character === data.character && g.type === data.type
-        );
-    }
-    // character 未命中但自身携带已有 id 时按 id 回落。
-    // 旧版武器目标的 character 为 ""，迁移写回时 character 已被改成 owner，
-    // 只有按 id 才能原地更新旧条目，否则会新插一条、旧孤儿依旧残留。
-    // 新建目标走 getNextId()（恒为 max+1），不会误命中已有条目。
-    if (index < 0 && typeof data.id === "number") {
-        index = goals.findIndex((g: any) => g.id === data.id);
-    }
-
-    if (index >= 0) {
-        goals[index] = {...goals[index], ...data};
-    } else {
-        const lastId = goals
-            ?.map((g: any) => g.id)
-            ?.filter((id: any) => typeof id == "number")
-            ?.sort((a: number, b: number) => (a < b ? 1 : -1))[0];
-
-        data.id = (lastId || 0) + 1;
-        goals.push(data);
-    }
-    await setGoals(goals);
-};
 
 const TALENT_KEYS = ["normal", "skill", "burst"] as const;
 
@@ -190,7 +160,7 @@ export const addCharacterGoal = async (
             characterGoal = next;
         }
     }
-    await addGoal(characterGoal)
+    await addGoal(characterGoal, true) // fallbackToId=true 兼容旧版武器目标
 };
 
 export async function addCharacter(characterDataEx: CharacterDataEx) {
@@ -286,18 +256,6 @@ export const batchUpdateTalent = async (all: boolean, normal: number, skill: num
     );
 }
 
-
-const updateCharacter = async (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
-    const {current} = character;
-    const {level: levelCurrent, asc: ascCurrent} = current;
-    const {level, asc} = characterStatusGoal;
-
-    const characterGoalNew = {
-        ...character,
-        goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current,
-    }
-    await addGoal(characterGoalNew)
-}
 
 export const batchUpdateCharacter: (all: boolean, characterStatusGoal: seelie.CharacterStatus) => void = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
      batchUpdateGoals<CharacterGoal>(

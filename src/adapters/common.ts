@@ -1,5 +1,6 @@
 import adapter from "axios-userscript-adapter/dist/esm";
 import axios, {AxiosAdapter, AxiosRequestHeaders} from "axios";
+import {ACT_MIHOYO_BASE_URL, DEVICE_FP_URL} from "./apiUrls";
 import Data = mihoyo.Data;
 import Role = mihoyo.Role;
 import Goal = seelie.Goal;
@@ -9,6 +10,57 @@ import {AdapterManager} from "./adapterManager";
 
 axios.defaults.adapter = adapter as AxiosAdapter;
 axios.defaults.withCredentials = true;
+
+// ===== 同步请求计数器 =====
+// 统计「点击同步」后实际发起的 HTTP 请求数（含素材同步的重试）。通过 axios 请求拦截器自动累加，
+// 在 syncAll 开头 resetSyncRequestCount()，结束时 getSyncRequestCount() 读取总数。
+let syncRequestCount = 0;
+export const resetSyncRequestCount = (): void => { syncRequestCount = 0; };
+export const getSyncRequestCount = (): number => syncRequestCount;
+
+axios.interceptors.request.use((config) => {
+    syncRequestCount++;
+    const method = (config.method || "get").toUpperCase();
+    console.log(`[请求计数] #${syncRequestCount} ${method} ${config.url}`);
+    return config;
+});
+
+// ===== 请求异常统一日志 =====
+// 请求发生异常时，统一 console.error「请求 URL + 请求体(body)」，方便排查。覆盖两类：
+//   1) 网络/HTTP 层错误（进入 onRejected）：打印 URL + body + 原始 error；
+//   2) 业务层 retcode 非 0 且非 -100（HTTP 200 但业务失败）：打印 URL + body + message。
+// 特别排除 -100（未登录）：它走 HTTP 200 + retcode -100，由 checkLogin 统一提示并跳转计算器页面，
+// 此处不重复打印，避免刷屏。
+axios.interceptors.response.use(
+    (response) => {
+        const data = response.data;
+        // 仅对携带 retcode 的 JSON 对象响应做业务层判断（排除数组/字符串/非业务响应）
+        if (data && typeof data === "object" && !Array.isArray(data) && "retcode" in data) {
+            const retcode = (data as any).retcode;
+            if (retcode !== 0 && retcode !== -100) {
+                const cfg = response.config;
+                const method = (cfg.method || "get").toUpperCase();
+                console.error(`[请求异常] retcode=${retcode} ${method} ${cfg.url}`);
+                if (cfg.data) console.error(`[请求异常] body:`, cfg.data);
+                else if (cfg.params) console.error(`[请求异常] params:`, cfg.params);
+                const message = (data as any).message;
+                if (message) console.error(`[请求异常] message:`, message);
+            }
+        }
+        return response;
+    },
+    (error) => {
+        const cfg = error?.config;
+        if (cfg) {
+            const method = (cfg.method || "get").toUpperCase();
+            console.error(`[请求异常] ${method} ${cfg.url}`);
+            if (cfg.data) console.error(`[请求异常] body:`, cfg.data);
+            else if (cfg.params) console.error(`[请求异常] params:`, cfg.params);
+        }
+        console.error(error);
+        return Promise.reject(error);
+    }
+);
 
 export async function refreshPage() {
     console.log("刷新页面?");
@@ -39,7 +91,7 @@ function generateCharString(number = 16) {
 }
 
 export const headers = {
-    Referer: "https://act.mihoyo.com/",
+    Referer: ACT_MIHOYO_BASE_URL,
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
 }
 
@@ -58,7 +110,7 @@ export const getFp = async () => {
         localStorage.setItem("mysDeviceId", deviceId);
     }
     if (!fp) {
-        let url = "https://public-data-api.mihoyo.com/device-fp/api/getFp";
+        let url = DEVICE_FP_URL;
         const [err, res] = await to(axios.post(url,
             JSON.stringify({
                 seed_id: generateCharString(),
@@ -185,6 +237,52 @@ export const getNextId = async () => {
     return ids.length > 0 ? Math.max(...ids) + 1 : 1;
 };
 
+/**
+ * 通用 addGoal：按 character+type 或 id 查找已有目标并合并/新建。
+ * @param data 目标数据
+ * @param fallbackToId 是否在 character 未命中时按 id 回落（GI 武器兼容旧数据需要）
+ */
+export const addGoal = async (data: any, fallbackToId = false) => {
+    let index: number = -1;
+    const goals = await getTotalGoal();
+
+    if (data.character) {
+        index = goals.findIndex(
+            (g: any) => g.character === data.character && g.type === data.type
+        );
+    } else if (data.id) {
+        index = goals.findIndex((g: any) => g.id === data.id);
+    }
+    // GI 兼容：character 未命中时按 id 回落（旧版武器目标的 character 为 ""）
+    if (index < 0 && fallbackToId && typeof data.id === "number") {
+        index = goals.findIndex((g: any) => g.id === data.id);
+    }
+
+    if (index >= 0) {
+        goals[index] = {...goals[index], ...data};
+    } else {
+        const lastId = goals
+            ?.map((g: any) => g.id)
+            ?.filter((id: any) => typeof id == "number")
+            ?.sort((a: number, b: number) => (a < b ? 1 : -1))[0];
+        data.id = (lastId || 0) + 1;
+        goals.push(data);
+    }
+    await setGoals(goals);
+};
+
+/** 通用 updateCharacter（三端完全相同） */
+export const updateCharacter = async (character: any, characterStatusGoal: seelie.CharacterStatus) => {
+    const {current} = character;
+    const {level: levelCurrent, asc: ascCurrent} = current;
+    const {level, asc} = characterStatusGoal;
+    const characterGoalNew = {
+        ...character,
+        goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current,
+    }
+    await addGoal(characterGoalNew);
+};
+
 export const batchUpdateGoals = async <T extends Goal>(
     type: string,
     identifierKey: 'character' | 'weapon' | 'talent' | 'cone', // 支持不同游戏的标识字段（角色/武器/天赋）
@@ -256,3 +354,22 @@ export const setInactive: (config: GoalTypeConfig[]) => void = async (config) =>
     const inactive = computeInactive(goals, config); // 调用通用函数
     await setGoalInactive(inactive);
 };
+
+/**
+ * 检查 API 返回的 retcode 是否为 -100（未登录）。
+ * 如果是，弹出提示并打开对应计算器页面，然后抛出错误终止流程。
+ * 用 GM_openInTab 而不是 window.open，避免被浏览器拦截。
+ * 每次只打开一次（用 flag 标记），避免多批次循环中重复弹窗。
+ */
+let _loginPromptShown = false;
+export const checkLogin = (retcode: number, gameName: string, calcUrl: string): void => {
+    if (retcode !== -100) return;
+    if (_loginPromptShown) throw new Error(`${gameName} 登录态已过期`);
+    _loginPromptShown = true;
+    alert(`${gameName} 登录态已过期！\n请前往米游社登录并打开${gameName}计算器页面，\n确保页面加载完成后再回来同步。`);
+    GM_openInTab(calcUrl);
+    throw new Error(`${gameName} 登录态已过期，已打开计算器页面，请重新登录后同步`);
+};
+
+/** 重置登录提示标记（每次 syncAll 开始时调用） */
+export const resetLoginFlag = (): void => { _loginPromptShown = false; };

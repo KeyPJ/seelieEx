@@ -1,6 +1,6 @@
 {
   "name": "genshinSeelieEx",
-  "version": "6.7.0.260803",
+  "version": "6.7.0.260804",
   "scripts": {
     "dev": "vite ",
     "build": "tsc && vite build",

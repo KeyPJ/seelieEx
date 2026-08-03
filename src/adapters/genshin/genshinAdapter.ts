@@ -10,6 +10,7 @@ import {
 } from './seelie';
 import {BaseAdapter} from "../baseAdapter";
 import {withThrottle} from "../inventory-common";
+import {GI_ALL_CHARACTERS_URL, GI_BATCH_COMPUTE_URL, GI_CALC_PAGE_URL, GI_CHARACTERS_URL, GI_ROLE_URL} from "../apiUrls";
 
 
 export class GenshinAdapter extends BaseAdapter implements GameAdapter {
@@ -19,14 +20,17 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
 
     getApiConfig() {
         return {
-            BBS_URL: 'https://act.mihoyo.com/ys/event/calculator/index.html',
-            ROLE_URL: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn'
+            calcPageUrl: GI_CALC_PAGE_URL,
+            roleUrl: GI_ROLE_URL,
+            charactersUrl: GI_CHARACTERS_URL,
+            allCharactersUrl: GI_ALL_CHARACTERS_URL,
+            computeUrl: GI_BATCH_COMPUTE_URL,
         };
     }
 
 
     async getCharacterDetails(uid: string, region: string) {
-        return getGenshinDetailList(uid, region);
+        return getGenshinDetailList(uid, region, this.getApiConfig());
     }
 
     async syncCharacters(res: any[]) {
@@ -82,8 +86,9 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
         return GENSHIN_INACTIVE_CONFIG;
     }
 
-    // 1 分钟节流（避免频繁打米游社 batch_compute）
-    batchUpdateInventory = async (uid: string, region: string) => {
-        return withThrottle("last-sync", "素材同步", batchUpdateInventoryGI, uid, region);
+    // 1 分钟节流（避免频繁打米游社 batch_compute）；prefetched = 角色同步已拉取的已拥有角色，复用以消除重复 list/detail 请求
+    batchUpdateInventory = async (uid: string, region: string, prefetched?: any[]) => {
+        const cfg = this.getApiConfig();
+        return withThrottle("last-sync", "素材同步", (u, r) => batchUpdateInventoryGI(u, r, cfg, prefetched), uid, region);
     }
 }

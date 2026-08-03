@@ -1,89 +1,75 @@
 import Role = mihoyo.Role;
-import Data = mihoyo.Data;
-import adapter from "axios-userscript-adapter/dist/esm";
-import {getCharactersNum} from "./query";
 
-import axios, {AxiosAdapter} from "axios";
+import axios from "axios";
 import Avatar = mihoyo.Avatar;
 import HSRCharacterData = mihoyo.HSRCharacterData;
-import {headers, to} from "../common";
-import {getItemsFromPage} from "../genshin/hoyo";
+import {to, checkLogin} from "../common";
+import {GameApiConfig} from "../game";
+import {getItemsFromPage} from "../items";
 import {
     MaterialMatch,
     getFpDeviceId,
     loadSeelieItems,
-    mergeMaterialsMax,
     sleep,
     writeMergedToSeelieInventory,
+    buildBaseHeaders,
+    postCalcAndMerge,
 } from "../inventory-common";
 
-axios.defaults.adapter = adapter as AxiosAdapter;
-axios.defaults.withCredentials = true;
+// axios.defaults（adapter/withCredentials）已由 ../common 统一设置，此处不再重复。
 
-const CHARACTERS_URL = 'https://api-takumi.mihoyo.com/event/rpgcalc/avatar/list'
-const CHARACTERS_DETAIL_URL = 'https://api-takumi.mihoyo.com/event/rpgcalc/avatar/detail'
+const getCharacters = async (uid: string, region: string, cfg: GameApiConfig): Promise<any[]> => {
 
-const requestPageSize = 50;
-
-const getCharacters = async (uid: string, region: string, page = 1) => {
-
-    let url = CHARACTERS_URL;
-    let game = "hkrpg";
-    let params = `?game=${game}&uid=${uid}&region=${region}&lang=zh-cn&tab_from=TabOwned&page=${page}&size=100`
-    const [err, res] = await to(axios.get(url + params, {
-        headers: headers
-    }));
-    if (!err) {
-        const {status, data: resData} = await res;
-        if (status == 200) {
-            const {retcode, data} = resData;
-            if (retcode === 0) {
-                const {list: characterList} = await data as Data<Avatar>;
-                return characterList;
-            }
-        }
+    const h = await buildHsrHeaders();
+    const params = `?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}`;
+    const [err, res] = await to(axios.get(cfg.charactersUrl + params, {headers: h}));
+    if (err) {
+        console.error("[HSR] 角色列表获取失败", err);
+        throw err;
     }
-    throw err ? err : new Error("角色列表获取失败");
+    const {status, data: resData} = await res;
+    if (status !== 200 || resData?.retcode !== 0) {
+        checkLogin(resData?.retcode, "崩坏：星穹铁道", cfg.calcPageUrl);
+        throw new Error(`[HSR] 角色列表返回错误 retcode=${resData?.retcode}: ${resData?.message || ""}`);
+    }
+    // 返回【全量】角色（含 first_meet_time===0 的未拥有角色），不过滤：
+    // - 「是否拥有」严格以 first_meet_time !== 0 为准（is_own 字段不可靠，不能用于判定）；
+    // - 角色同步用它过滤（见 getDetailList 的 isOwned 标记 + hsrAdapter.syncCharacters）；
+    // - 素材全量计算需要包含所有角色（含未拥有），故此处必须不过滤。
+    return resData?.data?.avatars || [];
 };
 
-const getCharacterDetail = async (character: Avatar, uid: string, region: string) => {
+// 统一角色详情（rpgcultivate/calc/avatar/detail）：返回真实养成状态 cur_level/rank + skills/equipment，角色同步与素材同步共用
+const getCharacterDetail = async (character: any, uid: string, region: string, cfg: GameApiConfig): Promise<HSRCharacterData | null> => {
     const {item_id: id} = character;
-    let game = "hkrpg";
-    const params = `?game=${game}&lang=zh-cn&item_id=${id}&tab_from=TabOwned&change_target_level=0&uid=${uid}&region=${region}`
-    let URL = CHARACTERS_DETAIL_URL;
-
-    const [err, res] = await to(axios.get(URL + params, {
-        headers: headers
-    }));
-    if (!err) {
-        const {status, data: resData} = await res;
-        if (status == 200) {
-            const {retcode, data} = resData;
-            if (retcode === 0) {
-                const characterData = await data as HSRCharacterData;
-                // return {character, ...characterData} as CharacterDataEx;
-                return characterData;
-            }
-        }
-    } else {
-        console.error(err)
+    const h = await buildHsrHeaders();
+    const params = `?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}&item_id=${id}&change_target_level=0`;
+    const [err, res] = await to(axios.get(cfg.charactersDetailUrl! + params, {headers: h}));
+    if (err) {
+        console.warn(`[HSR] 角色 ${id} 详情失败`, err?.message || err);
+        return null;
     }
+    const {status, data: resData} = await res;
+    if (status !== 200 || resData?.retcode !== 0) {
+        checkLogin(resData?.retcode, "崩坏：星穹铁道", cfg.calcPageUrl);
+        console.warn(`[HSR] 角色 ${id} 详情错误 retcode=${resData?.retcode}`);
+        return null;
+    }
+    return resData?.data as HSRCharacterData;
 };
 
-export const getDetailList = async (game_uid: string, region: string) => {
-
-    let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
-    let idxs = Array.from(new Array(maxPageSize).keys());
-
-    const characters: Avatar[] = [];
-    for await (let i of idxs) {
-        characters.push.apply(characters, await getCharacters(game_uid, region, i + 1))
-    }
-
-    const details = characters.map(c => getCharacterDetail(c, game_uid, region));
-    const detailList = [];
-    for await (let d of details) {
-        if (!!d) {
+export const getDetailList = async (game_uid: string, region: string, cfg: GameApiConfig) => {
+    // 单次返回【全量】角色（含未拥有），供「角色同步(仅已拥有)」与「素材全量计算(含未拥有)」共用，避免重复拉取
+    const avatars = await getCharacters(game_uid, region, cfg);
+    const detailPromises = avatars.map(c => getCharacterDetail(c, game_uid, region, cfg));
+    const settled = await Promise.all(detailPromises);
+    const detailList: HSRCharacterData[] = [];
+    for (let i = 0; i < avatars.length; i++) {
+        const d = settled[i];
+        if (d) {
+            // detail 响应本身不含 first_meet_time，故把「是否拥有」从 list 透传过来，
+            // 供 hsrAdapter.syncCharacters 过滤（first_meet_time===0 的未拥有角色不同步进 seelie 目标）。
+            (d as any).isOwned = (avatars[i].first_meet_time ?? 0) !== 0;
             detailList.push(d);
         }
     }
@@ -91,78 +77,49 @@ export const getDetailList = async (game_uid: string, region: string) => {
 }
 
 // ===== HSR 素材/库存同步（对标参考站 syncHSR：calc/compute 单 avatar，逐角色循环）=====
-const HSR_LIST_URL = 'https://api-takumi.mihoyo.com/event/rpgcultivate/eruditewuu/avatar/list';
-const HSR_DETAIL_URL = 'https://api-takumi.mihoyo.com/event/rpgcultivate/calc/avatar/detail';
-const HSR_COMPUTE_URL = 'https://api-takumi.mihoyo.com/event/rpgcultivate/calc/compute';
+// URL 由调用方（hsrAdapter）通过 GameApiConfig（cfg）传入，不再直接 import apiUrls。
 const HSR_REQ_DELAY = 400; // 请求间短间隔(ms)，避免频限
 
 const buildHsrHeaders = async () => {
     const {fp, deviceId} = await getFpDeviceId();
     return {
-        ...headers,
-        "x-rpc-device_fp": fp,
-        "x-rpc-device_id": deviceId,
+        ...buildBaseHeaders(fp, deviceId),
         "x-rpc-lang": "zh-cn",
         "x-rpc-page": "v4.4.4__#/tools/calculation",
-        "x-rpc-platform": "4",
         "x-rpc-view_source": "1",
     } as unknown as import("axios").AxiosRequestHeaders;
 };
 
-// 全角色列表（不含 DS，走 act-api 国服 event 接口；badge_region/badge_uid 放 query）
-const getHsrAllCharacters = async (uid: string, region: string): Promise<any[]> => {
-    const h = await buildHsrHeaders();
-    const params = `?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}`;
-    const [err, res] = await to(axios.get(HSR_LIST_URL + params, {headers: h}));
-    if (err) {
-        console.error("[HSR素材] 角色列表获取失败", err);
-        throw err;
-    }
-    const {status, data: resData} = await res;
-    if (status !== 200 || resData?.retcode !== 0) {
-        throw new Error(`[HSR素材] 角色列表返回错误 retcode=${resData?.retcode}: ${resData?.message || ""}`);
-    }
-    return (resData?.data?.avatar_list || []) as any[];
-};
-
-// 逐角色详情（技能/光锥 point_id + max_level），单条失败不阻塞
-const getHsrCalcDetail = async (item_id: string, uid: string, region: string): Promise<any | null> => {
-    const h = await buildHsrHeaders();
-    const params = `?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}&item_id=${item_id}&change_target_level=0`;
-    const [err, res] = await to(axios.get(HSR_DETAIL_URL + params, {headers: h}));
-    if (err) {
-        console.warn(`[HSR素材] 角色 ${item_id} 详情失败`, err?.message || err);
-        return null;
-    }
-    const {status, data: resData} = await res;
-    if (status !== 200 || resData?.retcode !== 0) {
-        console.warn(`[HSR素材] 角色 ${item_id} 详情错误 retcode=${resData?.retcode}`);
-        return null;
-    }
-    return resData?.data as any;
-};
+// （原 getHsrAllCharacters / getHsrCalcDetail 已合并进 getCharacters / getCharacterDetail，统一走 rpgcultivate 一套）
 
 // HSR 素材 id → seelie type/key/tier 的特例表（其余走页面 items 库匹配；信用点 id=2）
 const HSR_SPECIAL: Record<number, MaterialMatch> = {
     2: {type: "credit", key: "credit", tier: 0},
 };
 
-export const batchUpdateInventoryHSR = async (uid: string, region: string) => {
-    // 1. 全角色列表
-    const allChars = await getHsrAllCharacters(uid, region);
-    if (!allChars.length) throw new Error("[HSR素材] 未获取到任何 HSR 角色");
-    console.log(`[HSR素材] 全角色 ${allChars.length} 个`);
+export const batchUpdateInventoryHSR = async (uid: string, region: string, cfg: GameApiConfig, prefetched?: any[]) => {
+    let details: any[] = [];
+    if (prefetched && prefetched.length) {
+        // 复用角色同步已拉取的【全量】详情（含未拥有角色，first_meet_time=0），
+        // 素材全量计算需要所有角色参与，故直接遍历全部，不做拥有过滤。
+        details = prefetched;
+        console.log(`[HSR素材] 复用角色同步已拉取全量详情 ${details.length} 个，跳过 list/detail 请求`);
+    } else {
+        // 1. 【全量】角色列表（统一走 rpgcultivate/avatar/list，含 first_meet_time=0 的未拥有角色，参与全量计算）
+        const allChars = await getCharacters(uid, region, cfg);
+        if (!allChars.length) throw new Error("[HSR素材] 未获取到任何 HSR 角色");
+        console.log(`[HSR素材] 全角色 ${allChars.length} 个`);
 
-    // 2. 逐角色详情（并行分批，取 skill/equipment 的 item_id 与 max_level），全部强转 cur=1
-    const details: any[] = [];
-    const D_BATCH = 8;
-    for (let i = 0; i < allChars.length; i += D_BATCH) {
-        const slice = allChars.slice(i, i + D_BATCH);
-        const part = await Promise.all(slice.map((c: any) => getHsrCalcDetail(String(c.item_id), uid, region)));
-        details.push(...part.filter(Boolean));
-        if (i + D_BATCH < allChars.length) await sleep(HSR_REQ_DELAY);
+        // 2. 逐角色详情（并行分批，取 skill/equipment 的 item_id 与 max_level），全部强转 cur=1
+        const D_BATCH = 8;
+        for (let i = 0; i < allChars.length; i += D_BATCH) {
+            const slice = allChars.slice(i, i + D_BATCH);
+            const part = await Promise.all(slice.map((c: any) => getCharacterDetail(c, uid, region, cfg)));
+            details.push(...part.filter(Boolean));
+            if (i + D_BATCH < allChars.length) await sleep(HSR_REQ_DELAY);
+        }
+        console.log(`[HSR素材] 拿到详情 ${details.length} 个`);
     }
-    console.log(`[HSR素材] 拿到详情 ${details.length} 个`);
 
     // 3. 逐角色组装 calc/compute 入参（单 avatar）并串行计算，收集 user_owns_materials；跨角色同素材取最大值
     const pageItems = getItemsFromPage();
@@ -205,24 +162,12 @@ export const batchUpdateInventoryHSR = async (uid: string, region: string) => {
             };
         }
 
-        const url = `${HSR_COMPUTE_URL}?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}&noSessionRetry=true`;
-        const [err, res] = await to(axios.post(url, JSON.stringify(body), {
-            timeout: 8000,
-            headers: {...h, "content-type": "application/json"} as unknown as import("axios").AxiosRequestHeaders,
-        }));
-        if (err) {
-            console.warn(`[HSR素材] 角色 ${avatar.item_id} 计算失败`, err?.message || err);
-            continue;
+        const url = `${cfg.computeUrl}?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}&noSessionRetry=true`;
+        const ok = await postCalcAndMerge(url, body, h, "[HSR素材]", "崩坏：星穹铁道", cfg.calcPageUrl, merged, avatar.item_id);
+        if (ok) {
+            computed++;
+            if (computed % 10 === 0) console.log(`[HSR素材] 已计算 ${computed}/${details.length}`);
         }
-        const {status, data: resData} = await res;
-        if (status !== 200 || resData?.retcode !== 0) {
-            console.warn(`[HSR素材] 角色 ${avatar.item_id} 计算错误 retcode=${resData?.retcode}`);
-            continue;
-        }
-        const mats = resData?.data?.user_owns_materials || {};
-        mergeMaterialsMax(merged, mats);
-        computed++;
-        if (computed % 10 === 0) console.log(`[HSR素材] 已计算 ${computed}/${details.length}`);
         await sleep(HSR_REQ_DELAY);
     }
     if (!Object.keys(merged).length) throw new Error("[HSR素材] 未计算出任何素材（请检查接口/items 库）");

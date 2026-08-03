@@ -55,6 +55,32 @@ const getIdMap = (which: CatalogKind): Map<number, string> => {
     return map;
 };
 
+// 角色命途（path）缓存：seelie key -> path（"remembrance" / "elation" / "destruction" / ...）
+let _characterPathMap: Map<string, string> | null = null;
+
+const getCharacterPathMap = (): Map<string, string> => {
+    if (_characterPathMap) return _characterPathMap;
+    const map = new Map<string, string>();
+    const cat = getRuntimeCatalog("characters");
+    if (cat) {
+        for (const [key, entry] of Object.entries(cat)) {
+            const p = entry?.path;
+            if (p && typeof p === 'string') map.set(key, p);
+        }
+    }
+    _characterPathMap = map;
+    return map;
+};
+
+/**
+ * 按 seelie key 读取角色命途（path），如 "remembrance"（忆灵）/ "elation"（欢愉）。
+ * 用于判定角色是否拥有忆灵技/忆灵天赋（remembrance）或欢愉技（elation），
+ * 以便批量修改行迹时精确作用到「有这些类型的角色」，而非依赖 current 近似值。
+ */
+export const getCharacterPath = (key: string): string | undefined => {
+    return getCharacterPathMap().get(key);
+};
+
 /**
  * 运行时目录里的角色总数，供 hoyo.ts 计算分页上界。
  * 懒求值：不能在模块导入期取值，否则 #app 尚未挂载会固定为 0。

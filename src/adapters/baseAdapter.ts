@@ -1,10 +1,10 @@
 import {getAccount} from "./common";
-import {GameAdapter, GoalTypeConfig} from "./game";
+import {GameAdapter, GameApiConfig, GoalTypeConfig} from "./game";
 
 export abstract class BaseAdapter implements GameAdapter {
     abstract getGameName(): string;
 
-    abstract getApiConfig(): { BBS_URL: string; ROLE_URL: string };
+    abstract getApiConfig(): GameApiConfig;
 
     abstract syncCharacters(res: any[]): void;
 
@@ -12,8 +12,8 @@ export abstract class BaseAdapter implements GameAdapter {
 
     // 公共实现：获取账户列表
     async getAccounts() {
-        const {BBS_URL, ROLE_URL} = this.getApiConfig();
-        return await getAccount(ROLE_URL, BBS_URL, this.getGameName());
+        const {calcPageUrl, roleUrl} = this.getApiConfig();
+        return await getAccount(roleUrl, calcPageUrl, this.getGameName());
     }
 
     // 公共实现：批量更新角色

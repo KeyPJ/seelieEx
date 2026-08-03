@@ -9,6 +9,7 @@ import {
 } from './seelie';
 import {BaseAdapter} from "../baseAdapter";
 import {withThrottle} from "../inventory-common";
+import {ZZZ_CALC_PAGE_URL, ZZZ_CALC_URL, ZZZ_CHARACTERS_DETAIL_URL, ZZZ_CHARACTERS_URL, ZZZ_ROLE_URL} from "../apiUrls";
 
 export class ZzzAdapter extends BaseAdapter implements GameAdapter {
 
@@ -18,13 +19,16 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
 
     getApiConfig() {
         return {
-            BBS_URL: 'https://act.mihoyo.com/zzz/gt/character-builder-h/index.html',
-            ROLE_URL: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookieToken?game_biz=nap_cn'
+            calcPageUrl: ZZZ_CALC_PAGE_URL,
+            roleUrl: ZZZ_ROLE_URL,
+            charactersUrl: ZZZ_CHARACTERS_URL,
+            charactersDetailUrl: ZZZ_CHARACTERS_DETAIL_URL,
+            computeUrl: ZZZ_CALC_URL,
         };
     }
 
     async getCharacterDetails(uid: string, region: string) {
-        return getZzzDetailList(uid, region);
+        return getZzzDetailList(uid, region, this.getApiConfig());
     }
 
     async syncCharacters(res: any[]) {
@@ -77,9 +81,10 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
         return ZZZ_INACTIVE_CONFIG;
     }
 
-    // 1 分钟节流（避免频繁打米游社 avatar_calc；独立 key 不干扰 GI/HSR）
-    batchUpdateInventory = async (uid: string, region: string) => {
-        return withThrottle("zzz-last-sync", "ZZZ 素材同步", batchUpdateInventoryZZZ, uid, region);
+    // 1 分钟节流（避免频繁打米游社 avatar_calc；独立 key 不干扰 GI/HSR）；prefetched = 角色同步已拉取详情，复用跳过 list/detail
+    batchUpdateInventory = async (uid: string, region: string, prefetched?: any[]) => {
+        const cfg = this.getApiConfig();
+        return withThrottle("zzz-last-sync", "ZZZ 素材同步", (u, r) => batchUpdateInventoryZZZ(u, r, cfg, prefetched), uid, region);
     }
 
 }

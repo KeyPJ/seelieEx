@@ -4,6 +4,7 @@ import {getDetailList as getHsrDetailList, batchUpdateInventoryHSR} from './hoyo
 import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon, characterStatusList} from './seelie';
 import {BaseAdapter} from "../baseAdapter";
 import {withThrottle} from "../inventory-common";
+import {HSR_AVATAR_DETAIL_URL, HSR_AVATAR_LIST_URL, HSR_CALC_PAGE_URL, HSR_COMPUTE_URL, HSR_ROLE_URL} from "../apiUrls";
 import localforage from "localforage";
 
 export class HsrAdapter extends BaseAdapter implements GameAdapter {
@@ -14,13 +15,16 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
 
     getApiConfig() {
         return {
-            BBS_URL: 'https://act.mihoyo.com/sr/event/cultivation-tool/index.html',
-            ROLE_URL: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hkrpg_cn'
+            calcPageUrl: HSR_CALC_PAGE_URL,
+            roleUrl: HSR_ROLE_URL,
+            charactersUrl: HSR_AVATAR_LIST_URL,         // rpgcultivate/avatar/list（act-api，data.avatars + first_meet_time/is_own 判拥有）
+            charactersDetailUrl: HSR_AVATAR_DETAIL_URL, // rpgcultivate/calc/avatar/detail（真实养成状态，素材计算取 max_level）
+            computeUrl: HSR_COMPUTE_URL,
         };
     }
 
     async getCharacterDetails(uid: string, region: string) {
-        return getHsrDetailList(uid, region);
+        return getHsrDetailList(uid, region, this.getApiConfig());
     }
 
     async syncCharacters(res: any[]) {
@@ -49,6 +53,8 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         console.groupEnd();
         console.groupEnd();
         for (let v of res) {
+            // first_meet_time===0 的未拥有角色不同步进 seelie 目标（isOwned 由 getDetailList 透传）
+            if (!v.isOwned) continue;
             await addCharacter(v)
         }
     }
@@ -57,8 +63,8 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         return {batchUpdateCharacter, batchUpdateWeapon};
     }
 
-    batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number, t: number): void => {
-        batchUpdateTrace(all, normal, skill, burst, t);
+    batchUpdateTalent = (all: boolean, normal: number, skill: number, burst: number, t: number, petSkill = 0, petTalent = 0, elation = 0): void => {
+        batchUpdateTrace(all, normal, skill, burst, t, petSkill, petTalent, elation);
     };
 
     getCharacterStatusList() {
@@ -87,8 +93,9 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         return localforage.setItem(key, value);
     }
 
-    // 1 分钟节流（避免频繁打米游社 calc/compute；独立 key 不干扰 GI 的 last-sync）
-    batchUpdateInventory = async (uid: string, region: string) => {
-        return withThrottle("hsr-last-sync", "HSR 素材同步", batchUpdateInventoryHSR, uid, region);
+    // 1 分钟节流（避免频繁打米游社 calc/compute；独立 key 不干扰 GI 的 last-sync）；prefetched = 角色同步已拉取详情，复用跳过 list/detail
+    batchUpdateInventory = async (uid: string, region: string, prefetched?: any[]) => {
+        const cfg = this.getApiConfig();
+        return withThrottle("hsr-last-sync", "HSR 素材同步", (u, r) => batchUpdateInventoryHSR(u, r, cfg, prefetched), uid, region);
     }
 }

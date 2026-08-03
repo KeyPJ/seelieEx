@@ -1,44 +1,20 @@
 import Goal = seelie.HSRGoal;
 import CharacterStatus = seelie.CharacterStatus;
 import CharacterGoal = seelie.HSRCharacterGoal;
+import SkillStatus = seelie.SkillStatus;
 
-import {getCharacterId, getWeaponId} from "./query";
+import {getCharacterId, getWeaponId, getCharacterPath} from "./query";
 import HSRCharacterData = mihoyo.HSRCharacterData;
 import ConeGoal = seelie.HSRConeGoal;
 import TraceGoal = seelie.HSRTraceGoal;
 import Bonus = seelie.Bonus;
 import {
+    addGoal,
     batchUpdateGoals,
     getNextId,
     getTotalGoal,
-    setGoals
+    updateCharacter,
 } from "../common";
-
-const addGoal = async (data: any) => {
-    let index: number = -1;
-    const goals = await getTotalGoal() as Goal[];
-
-    if (data.character) {
-        index = goals.findIndex(
-            (g: any) => g.character === data.character && g.type === data.type
-        );
-    } else if (data.id) {
-        index = goals.findIndex((g: any) => g.id === data.id);
-    }
-
-    if (index >= 0) {
-        goals[index] = {...goals[index], ...data};
-    } else {
-        const lastId = goals
-            ?.map((g: any) => g.id)
-            ?.filter((id: any) => typeof id == "number")
-            ?.sort((a: number, b: number) => (a < b ? 1 : -1))[0];
-
-        data.id = (lastId || 0) + 1;
-        goals.push(data);
-    }
-    await setGoals(goals);
-};
 let initBonus = {} as Bonus
 
 const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill[], skills_servant: mihoyo.HSRSkill[]) => {
@@ -54,6 +30,12 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
     if (hasServant) {
         [petSkillCurrent, petTalentCurrent] = skills_servant.map(a => a.cur_level);
     }
+    // 依据角色命途（pageItems 运行时目录 path）判定忆灵/欢愉是否适用：
+    // 非对应命途的角色，pet_skill/pet_talent/elation_skill 不初始化（不留 1/1 占位），
+    // 与批量修改 batchUpdateTrace 的 path 守卫保持一致。
+    const path = getCharacterPath(talentCharacter);
+    const isRemembrance = path === "remembrance"; // 忆灵技 / 忆灵天赋
+    const isElation = path === "elation";          // 欢愉技
     let talentGoal: TraceGoal;
     if (talentIdx < 0) {
         const id = await getNextId();
@@ -76,31 +58,36 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
                 current: talentCurrent,
                 goal: talentCurrent
             },
-            pet_skill: {
-                current: petSkillCurrent,
-                goal: petSkillCurrent
-            },
-            pet_talent: {
-                current: petTalentCurrent,
-                goal: petTalentCurrent
-            },
-            elation_skill: {
-                current: elationCurrent ?? 1,
-                goal: elationCurrent ?? 1
-            },
             bonus: initBonus,
-            id
+            id,
+            ...(isRemembrance ? {
+                pet_skill: {
+                    current: petSkillCurrent,
+                    goal: petSkillCurrent
+                },
+                pet_talent: {
+                    current: petTalentCurrent,
+                    goal: petTalentCurrent
+                },
+            } : {}),
+            ...(isElation ? {
+                elation_skill: {
+                    current: elationCurrent ?? 1,
+                    goal: elationCurrent ?? 1
+                },
+            } : {}),
         }
     } else {
         const seelieGoal = totalGoal[talentIdx] as TraceGoal;
-        const {basic, skill, ultimate, talent, pet_skill, pet_talent, elation_skill} = seelieGoal;
+        const {basic, skill, ultimate, talent} = seelieGoal;
         const {goal: basicGoal} = basic;
         const {goal: skillGoal} = skill;
         const {goal: ultimateGoal} = ultimate;
         const {goal: talentGoal2} = talent;
-        const {goal: petSkillGoal} = pet_skill;
-        const {goal: petTalentGoal} = pet_talent;
-        const {goal: elationGoal} = elation_skill ?? {goal: 1};
+        // 安全读取既有 pet/elation goal（可能不存在，因为按 path 初始化时跳过了）
+        const petSkillGoal = seelieGoal.pet_skill?.goal ?? 1;
+        const petTalentGoal = seelieGoal.pet_talent?.goal ?? 1;
+        const elationGoal = seelieGoal.elation_skill?.goal ?? 1;
         talentGoal = {
             ...seelieGoal,
             basic: {
@@ -116,18 +103,22 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
                 current: talentCurrent,
                 goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
             },
-            pet_skill: {
-                current: petSkillCurrent,
-                goal: petSkillCurrent > petSkillGoal ? Math.min(petSkillCurrent, 6) : petSkillGoal
-            },
-            pet_talent: {
-                current: petTalentCurrent,
-                goal: petTalentCurrent > petTalentGoal ? Math.min(petTalentCurrent, 6) : petTalentGoal
-            },
-            elation_skill: {
-                current: elationCurrent ?? 1,
-                goal: (elationCurrent ?? 1) > (elationGoal ?? 1) ? Math.min(elationCurrent ?? 1, 10) : (elationGoal ?? 1)
-            }
+            ...(isRemembrance ? {
+                pet_skill: {
+                    current: petSkillCurrent,
+                    goal: petSkillCurrent > petSkillGoal ? Math.min(petSkillCurrent, 6) : petSkillGoal
+                },
+                pet_talent: {
+                    current: petTalentCurrent,
+                    goal: petTalentCurrent > petTalentGoal ? Math.min(petTalentCurrent, 6) : petTalentGoal
+                },
+            } : {}),
+            ...(isElation ? {
+                elation_skill: {
+                    current: elationCurrent ?? 1,
+                    goal: (elationCurrent ?? 1) > elationGoal ? Math.min(elationCurrent ?? 1, 10) : elationGoal
+                }
+            } : {}),
         }
     }
     await addGoal(talentGoal)
@@ -252,13 +243,25 @@ const initCharacterStatus = (level_current: number) => {
     }
     return initCharacterStatus;
 };
-const updateTrace = async (talent: TraceGoal, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9) => {
+const updateTrace = async (talent: TraceGoal, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9, petSkillGoal = 0, petTalentGoal = 0, elationGoal = 0) => {
     const {
         basic: {current: basicCurrent},
         skill: {current: skillCurrent},
         ultimate: {current: ultimateCurrent},
         talent: {current: talentCurrent}
     } = talent;
+    // 依据角色命途（pageItems 运行时目录 data.characters[key].path）精确判定忆灵/欢愉是否适用，
+    // 而非依赖 current 近似值：只有对应命途的角色才对该类目标生效。
+    const path = getCharacterPath(talent.character);
+    const isRemembrance = path === "remembrance"; // 忆灵技 / 忆灵天赋（pet_skill / pet_talent）
+    const isElation = path === "elation";          // 欢愉技（elation_skill）
+    // 仅当：勾选了上限(cap>0) 且 该角色确属对应命途(applicable) 时，才把目标设为 max(current, cap)；
+    // 其余情况（未勾选 / 非对应命途角色）一律保持原值不动。
+    const applyExtra = (skill: SkillStatus | undefined, goalCap: number, applicable: boolean): SkillStatus => {
+        if (!goalCap || !applicable || !skill) return skill as SkillStatus;
+        const cur = skill.current;
+        return {current: cur, goal: cur > goalCap ? cur : goalCap};
+    };
     const talentNew = {
         ...talent,
         basic: {
@@ -274,35 +277,26 @@ const updateTrace = async (talent: TraceGoal, normalGoal = 6, skillGoal = 9, bur
             current: talentCurrent,
             goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
         },
+        pet_skill: applyExtra(talent.pet_skill, petSkillGoal, isRemembrance),
+        pet_talent: applyExtra(talent.pet_talent, petTalentGoal, isRemembrance),
+        elation_skill: applyExtra(talent.elation_skill, elationGoal, isElation),
     }
     await addGoal(talentNew)
 }
 
-export const batchUpdateTrace = async (all: boolean, normal: number, skill: number, burst: number, t: number) => {
+export const batchUpdateTrace = async (all: boolean, normal: number, skill: number, burst: number, t: number, petSkill = 0, petTalent = 0, elation = 0) => {
     if (normal > 6) {
         normal = 6
     }
     await batchUpdateGoals<TraceGoal>(
         'trace',
         'character', // 天赋目标用character字段标识
-        (trace) => updateTrace(trace, normal, skill, burst, t),
+        (trace) => updateTrace(trace, normal, skill, burst, t, petSkill, petTalent, elation),
         all
     );
 
 }
 
-
-const updateCharacter = async (character: CharacterGoal, characterStatusGoal: CharacterStatus) => {
-    const {current} = character;
-    const {level: levelCurrent, asc: ascCurrent} = current;
-    const {level, asc} = characterStatusGoal;
-
-    const characterGoalNew = {
-        ...character,
-        goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current,
-    }
-    await addGoal(characterGoalNew)
-}
 
 export const batchUpdateCharacter = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
      batchUpdateGoals<CharacterGoal>(
