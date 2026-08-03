@@ -1,5 +1,5 @@
 import {GameAdapter, GameType, GoalTypeConfig} from '../game';
-import {getDetailList as getZzzDetailList} from './hoyo';
+import {getDetailList as getZzzDetailList, batchUpdateInventoryZZZ} from './hoyo';
 import {
     addCharacter,
     batchUpdateCharacter,
@@ -77,9 +77,16 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
     }
 
     batchUpdateInventory = async (uid: string, region: string) => {
-        // 结构化占位：ZZZ 素材同步依赖本地 db 素材库（nap_cultivate_tool + NAP token），暂未实现
-        console.warn("[seelieEx] ZZZ 素材/库存同步尚未实现（需要本地 db 素材库）");
-        return {ok: false, skipped: true, reason: "ZZZ 素材同步尚未实现，需要本地 db 素材库"};
+        // 1 分钟节流（避免频繁打米游社 avatar_calc；独立 key 不干扰 GI/HSR）
+        const last = Number(localStorage.getItem("zzz-last-sync") || 0);
+        if (last && Date.now() - last < 1 * 60 * 1000) {
+            const wait = Math.ceil((1 * 60 * 1000 - (Date.now() - last)) / 1000);
+            alert(`请稍候 ${wait}s 再同步（ZZZ 素材同步 1 分钟节流）`);
+            return {ok: false, skipped: true, reason: "节流"};
+        }
+        const results = await batchUpdateInventoryZZZ(uid, region);
+        localStorage.setItem("zzz-last-sync", Date.now().toString());
+        return results;
     }
 
 }
