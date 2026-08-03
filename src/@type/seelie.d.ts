@@ -34,6 +34,7 @@ declare module seelie {
         character: string;
         current: CharacterStatus;
         goal: CharacterStatus;
+        cons?: number;
     }
 
     export interface GIWeaponGoal extends GIGoal {

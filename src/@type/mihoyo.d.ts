@@ -20,6 +20,14 @@ declare namespace mihoyo {
         element_attr_id: number;
         max_level: number;
         level_current: number;
+        /** 角色突破档位（0~6），来自 v1/sync/avatar/list 根级 */
+        promote_level?: number;
+        /** 命座数（0~6），来自 v1/sync/avatar/list 根级 */
+        constellation_num?: number;
+        /** 技能列表（sync 接口根级透传，旧响应可能缺失） */
+        skill_list?: Skill[];
+        /** 已装备武器（sync 接口根级透传，旧响应可能缺失） */
+        weapon?: Weapon;
     }
 
     export interface Skill {

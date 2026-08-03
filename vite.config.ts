@@ -32,8 +32,6 @@ export default defineConfig({
                 contributionURL: 'https://github.com/KeyPJ/seelieEx',
                 connect: ['api-takumi.mihoyo.com','act-api-takumi.mihoyo.com', 'public-data-api.mihoyo.com'],
                 resource: {
-                    character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json",
-                    weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/weapon.json",
                     hsr_character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_character.json",
                     hsr_weapon: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_weapon.json",
                     zzz_character: "https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/zzz_character.json",

@@ -2,7 +2,7 @@ import Data = mihoyo.Data;
 import Character = mihoyo.Character;
 import CharacterDataEx = mihoyo.CharacterDataEx;
 import adapter from "axios-userscript-adapter/dist/esm";
-import {charactersNum} from "./query";
+import {getCharactersNum} from "./query";
 import axios, {AxiosAdapter, AxiosRequestHeaders} from "axios";
 import {getFp, headers, to} from "../common";
 import {getItemsFromPage} from "../items";
@@ -73,7 +73,7 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
 
 export const getDetailList = async (game_uid: string, region: string) => {
 
-    let maxPageSize = Math.ceil(charactersNum / requestPageSize);
+    let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
     let idxs = Array.from(new Array(maxPageSize).keys());
 
 
@@ -97,7 +97,7 @@ export const getDetailList = async (game_uid: string, region: string) => {
  * 分页拉取，单页失败不阻断整体（降级为仅用全量列表）。
  */
 const getOwnedCharactersRaw = async (uid: string, region: string): Promise<any[]> => {
-    let maxPageSize = Math.ceil(charactersNum / requestPageSize);
+    let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
     if (maxPageSize < 1) maxPageSize = 1;
     const chars: any[] = [];
     for (let i = 0; i < maxPageSize; i++) {
