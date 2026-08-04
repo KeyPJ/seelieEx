@@ -2,7 +2,7 @@
 // @name             genshinSeelieEx
 // @name:zh          原神、崩坏：星穹铁道、绝区零规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          6.7.0.260804
+// @version          6.7.0_260804
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -2772,7 +2772,7 @@ var __publicField = (obj, key, value) => {
     for (let i = 0; i < avatars.length; i++) {
       const d = settled[i];
       if (d) {
-        d.isOwned = (avatars[i].first_meet_time ?? 0) !== 0;
+        d.isOwned = Number(avatars[i].first_meet_time || 0) > 0;
         detailList.push(d);
       }
     }
