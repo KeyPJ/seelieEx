@@ -1,48 +1,60 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Build
 
-# Controls when the workflow will run
 on:
   push:
     branches:
       - main
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# 防止重叠 push 并发触发，导致重复打 Release / 抢提交
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      # Get commit message
+      # 取 commit message，判断是否 build: 发版提交
       - name: Get commit message
         run: |
           COMMIT_MESSAGE=$(git log --format=%s -n 1)
-          echo "commitmsg=${COMMIT_MESSAGE}" >> $GITHUB_ENV
+          echo "commitmsg=${COMMIT_MESSAGE}" >> "$GITHUB_ENV"
       - name: Show commit message
-        run : echo "$commitmsg"
+        run: echo "$commitmsg"
 
-      # Get & check npm publish dist-tag when event is push
+      # 仅 build: 开头才提取版本号并后续构建/发版；其余 push 直接跳过，省时
       - name: Get dist tag
         if: startsWith( env.commitmsg , 'build:' )
         run: |
-          DIST_TAG=`echo $commitmsg | grep -Po '(\d(\.\d)+)'`
-          echo "disttag=v${DIST_TAG}" >> $GITHUB_ENV
+          DIST_TAG=$(echo "$commitmsg" | grep -Po '(\d(\.\d)+)')
+          echo "disttag=v${DIST_TAG}" >> "$GITHUB_ENV"
           echo "$disttag"
 
-      # Runs a single command using the runners shell
-      - name: Build
-        run: npm install && npm install @types/node -D && npm run build
+      # —— 以下仅发版提交执行 ——
+      - name: Setup pnpm
+        if: env.disttag
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
 
-      # Commit
-      - name: commit dist
-        uses: EndBug/add-and-commit@v7
+      - name: Setup Node.js
+        if: env.disttag
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        if: env.disttag
+        run: pnpm install
+
+      - name: Build
+        if: env.disttag
+        run: pnpm run build
+
+      - name: Commit dist
+        uses: EndBug/add-and-commit@v9
         if: env.disttag
         with:
           add: 'dist/index.user.js --force'
@@ -50,13 +62,12 @@ jobs:
           message: 'commit ${{ env.disttag }} release asset'
           branch: main
 
-      # Release
       - name: Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: softprops/action-gh-release@v2
         if: env.disttag
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: ${{ env.disttag }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ env.disttag }}
           prerelease: false
           files: |
             dist/index.user.js
