@@ -21,8 +21,9 @@ function ExDialog({onClose}: { onClose?: () => void }) {
     const [loading, setLoading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [progressText, setProgressText] = useState("");
+    const [syncInventory, setSyncInventory] = useState(true); // 是否同步背包库存（素材/武器/光锥），默认勾选
     const panelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
-    
+
     // 添加对话框根元素的引用
     const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -114,9 +115,14 @@ function ExDialog({onClose}: { onClose?: () => void }) {
 
             currentAdapter.syncCharacters(res);
             setProgress(40);
-            setProgressText("角色目标写入完成，正在同步素材/库存...");
 
-            const invRes = await currentAdapter.batchUpdateInventory(game_uid, region, res);
+            let invRes: any = null;
+            if (syncInventory) {
+                setProgressText("角色目标写入完成，正在同步素材/库存...");
+                invRes = await currentAdapter.batchUpdateInventory(game_uid, region, res);
+            } else {
+                setProgressText("已跳过素材/库存同步");
+            }
 
             if (progressInterval) {
                 clearInterval(progressInterval);
@@ -129,9 +135,11 @@ function ExDialog({onClose}: { onClose?: () => void }) {
             console.log("素材/库存同步结果:", invRes);
             console.log(`[请求计数] 本次同步共发起 ${getSyncRequestCount()} 个 HTTP 请求`);
             console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
-            alert(skipped
-                ? `角色信息已同步\n（素材/库存同步暂不支持当前游戏：${invRes.reason || ""}）`
-                : "同步完毕（角色信息 + 素材/库存）");
+            alert(!syncInventory
+                ? "同步完毕（仅角色信息，已跳过素材/库存同步）"
+                : (skipped
+                    ? `角色信息已同步\n（素材/库存同步暂不支持当前游戏：${invRes.reason || ""}）`
+                    : "同步完毕（角色信息 + 素材/库存）"));
             location.reload();
         } catch (err: any) {
             if (progressInterval) {
@@ -215,6 +223,18 @@ function ExDialog({onClose}: { onClose?: () => void }) {
                                             show={accountShow}
                                         />
                                     </div>
+                                </div>
+                                <div className="flex items-center pt-3">
+                                    <input
+                                        type="checkbox"
+                                        id="syncInventory"
+                                        checked={syncInventory}
+                                        onChange={(e) => setSyncInventory(e.target.checked)}
+                                        className="mr-2 h-4 w-4 accent-blue-500"
+                                    />
+                                    <label htmlFor="syncInventory" className="text-sm text-gray-200 cursor-pointer select-none">
+                                        同步背包库存（时间可能相对较长）
+                                    </label>
                                 </div>
                                 <div className="flex pt-2">
                                     <div className="w-full">
