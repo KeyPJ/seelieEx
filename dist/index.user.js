@@ -2,7 +2,7 @@
 // @name             genshinSeelieEx
 // @name:zh          原神、崩坏：星穹铁道、绝区零规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          6.0.2
+// @version          6.7.0.260804
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -15,16 +15,10 @@
 // @require          https://unpkg.com/react@17.0.2/umd/react.production.min.js
 // @require          https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js
 // @require          https://unpkg.com/localforage@1.10.0/dist/localforage.min.js
-// @resource         character      https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/character.json
-// @resource         hsr_character  https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_character.json
-// @resource         hsr_weapon     https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/hsr_weapon.json
-// @resource         weapon         https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/weapon.json
-// @resource         zzz_character  https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/zzz_character.json
-// @resource         zzz_weapon     https://cdn.jsdelivr.net/gh/KeyPJ/seelieEx@main/src/data/zzz_weapon.json
 // @connect          api-takumi.mihoyo.com
+// @connect          act-api-takumi.mihoyo.com
 // @connect          public-data-api.mihoyo.com
 // @grant            GM.xmlHttpRequest
-// @grant            GM_getResourceText
 // @grant            GM_openInTab
 // @grant            GM_registerMenuCommand
 // @grant            GM_xmlhttpRequest
@@ -34,7 +28,7 @@
 // @copyright        2021, KeyPJ https://github.com/KeyPJ
 // ==/UserScript==
 
-(r=>{const t=document.createElement("style");t.dataset.source="vite-plugin-monkey",t.innerText=r,document.head.appendChild(t)})(' *,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-\\[20\\%\\]{left:20%;right:20%}.inset-y-0{top:0;bottom:0}.left-0{left:0}.right-0{right:0}.top-10{top:2.5rem}.z-10{z-index:10}.z-\\[1200\\]{z-index:1200}.mb-4{margin-bottom:1rem}.mt-1{margin-top:.25rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:.5rem}.mt-4{margin-top:1rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.max-h-60{max-height:15rem}.min-h-min{min-height:-moz-min-content;min-height:min-content}.w-1\\/2{width:50%}.w-1\\/4{width:25%}.w-11{width:2.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-full{width:100%}.min-w-\\[50\\%\\]{min-width:50%}.max-w-md{max-width:28rem}.translate-x-1{--tw-translate-x: .25rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-6{--tw-translate-x: 1.5rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate: 180deg;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-default{cursor:default}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.grid-flow-col{grid-auto-flow:column}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.flex-row{flex-direction:row}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:.5rem}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-blue-400{--tw-border-opacity: 1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.border-gray-600{--tw-border-opacity: 1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.border-gray-700{--tw-border-opacity: 1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.border-purple-700\\/50{border-color:#7e22ce80}.bg-amber-100{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity: 1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-600{--tw-bg-opacity: 1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.bg-purple-800\\/70{background-color:#6b21a8b3}.bg-purple-900\\/30{background-color:#581c874d}.bg-slate-700\\/50{background-color:#33415580}.bg-slate-800\\/90{background-color:#1e293be6}.bg-white{--tw-bg-opacity: 1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-2{padding:.5rem}.p-4{padding:1rem}.px-4{padding-left:1rem;padding-right:1rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.pb-2{padding-bottom:.5rem}.pl-10{padding-left:2.5rem}.pl-3{padding-left:.75rem}.pr-10{padding-right:2.5rem}.pr-2{padding-right:.5rem}.pr-4{padding-right:1rem}.pt-2{padding-top:.5rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:.875rem;line-height:1.25rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.text-amber-600{--tw-text-opacity: 1;color:rgb(217 119 6 / var(--tw-text-opacity, 1))}.text-amber-900{--tw-text-opacity: 1;color:rgb(120 53 15 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity: 1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-gray-100{--tw-text-opacity: 1;color:rgb(243 244 246 / var(--tw-text-opacity, 1))}.text-gray-200{--tw-text-opacity: 1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity: 1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity: 1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.shadow-2xl{--tw-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);--tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.ring-black{--tw-ring-opacity: 1;--tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity, 1))}.ring-opacity-5{--tw-ring-opacity: .05}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition-colors{transition-property:color,background-color,border-color,fill,stroke,-webkit-text-decoration-color;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,-webkit-text-decoration-color;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.ex-flex-col{flex-direction:column}.ex-mx-auto{margin-left:auto;margin-right:auto}.hover\\:bg-amber-100:hover{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.hover\\:bg-blue-500:hover{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.hover\\:bg-purple-700:hover{--tw-bg-opacity: 1;background-color:rgb(126 34 206 / var(--tw-bg-opacity, 1))}.hover\\:text-white:hover{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus-visible\\:border-indigo-500:focus-visible{--tw-border-opacity: 1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\\:ring-white:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity, 1))}.focus-visible\\:ring-opacity-75:focus-visible{--tw-ring-opacity: .75}.focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px}.focus-visible\\:ring-offset-orange-300:focus-visible{--tw-ring-offset-color: #fdba74}@media (min-width: 640px){.sm\\:text-sm{font-size:.875rem;line-height:1.25rem}} ');
+(r=>{const t=document.createElement("style");t.dataset.source="vite-plugin-monkey",t.innerText=r,document.head.appendChild(t)})(' *,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-\\[20\\%\\]{left:20%;right:20%}.inset-y-0{top:0;bottom:0}.left-0{left:0}.right-0{right:0}.top-10{top:2.5rem}.z-10{z-index:10}.z-\\[1200\\]{z-index:1200}.mx-auto{margin-left:auto;margin-right:auto}.mt-1{margin-top:.25rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.h-2\\.5{height:.625rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.max-h-60{max-height:15rem}.min-h-min{min-height:-moz-min-content;min-height:min-content}.w-1\\/2{width:50%}.w-1\\/4{width:25%}.w-11{width:2.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-full{width:100%}.min-w-\\[50\\%\\]{min-width:50%}.max-w-md{max-width:28rem}.translate-x-1{--tw-translate-x: .25rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-6{--tw-translate-x: 1.5rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate: 180deg;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-default{cursor:default}.cursor-not-allowed{cursor:not-allowed}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.grid-flow-col{grid-auto-flow:column}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.flex-row{flex-direction:row}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-2{gap:.5rem}.gap-4{gap:1rem}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-blue-400{--tw-border-opacity: 1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.border-gray-600{--tw-border-opacity: 1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.border-gray-700{--tw-border-opacity: 1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.border-purple-700\\/50{border-color:#7e22ce80}.bg-amber-100{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity: 1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-600{--tw-bg-opacity: 1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity: 1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-purple-800\\/70{background-color:#6b21a8b3}.bg-purple-900\\/30{background-color:#581c874d}.bg-slate-700\\/50{background-color:#33415580}.bg-slate-800\\/90{background-color:#1e293be6}.bg-white{--tw-bg-opacity: 1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-2{padding:.5rem}.p-4{padding:1rem}.px-4{padding-left:1rem;padding-right:1rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.pb-2{padding-bottom:.5rem}.pl-10{padding-left:2.5rem}.pl-3{padding-left:.75rem}.pr-10{padding-right:2.5rem}.pr-2{padding-right:.5rem}.pr-4{padding-right:1rem}.pt-2{padding-top:.5rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.leading-none{line-height:1}.text-amber-600{--tw-text-opacity: 1;color:rgb(217 119 6 / var(--tw-text-opacity, 1))}.text-amber-900{--tw-text-opacity: 1;color:rgb(120 53 15 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity: 1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-gray-100{--tw-text-opacity: 1;color:rgb(243 244 246 / var(--tw-text-opacity, 1))}.text-gray-200{--tw-text-opacity: 1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity: 1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity: 1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.shadow-2xl{--tw-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);--tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.ring-black{--tw-ring-opacity: 1;--tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity, 1))}.ring-opacity-5{--tw-ring-opacity: .05}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,fill,stroke,-webkit-text-decoration-color;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,-webkit-text-decoration-color;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-500{transition-duration:.5s}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.ex-flex-col{flex-direction:column}.ex-mx-auto{margin-left:auto;margin-right:auto}.hover\\:bg-amber-100:hover{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.hover\\:bg-blue-500:hover{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.hover\\:bg-purple-700:hover{--tw-bg-opacity: 1;background-color:rgb(126 34 206 / var(--tw-bg-opacity, 1))}.hover\\:text-gray-300:hover{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.hover\\:text-white:hover{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus-visible\\:border-indigo-500:focus-visible{--tw-border-opacity: 1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\\:ring-white:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity, 1))}.focus-visible\\:ring-opacity-75:focus-visible{--tw-ring-opacity: .75}.focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px}.focus-visible\\:ring-offset-orange-300:focus-visible{--tw-ring-offset-color: #fdba74}@media (min-width: 640px){.sm\\:text-sm{font-size:.875rem;line-height:1.25rem}} ');
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -43,7 +37,6 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 (function(require$$1, ReactDOM2, localforage2) {
-  var _a, _b;
   "use strict";
   const App$1 = "";
   function getDefaultExportFromCjs(x) {
@@ -283,6 +276,65 @@ var __publicField = (obj, key, value) => {
     "hsr.seelie.me": "hsr",
     "zzz.seelie.me": "zzz"
     /* ZZZ */
+  };
+  const getRuntimeCatalog$2 = (which) => {
+    try {
+      const app = document.querySelector("#app");
+      const data2 = app?._vnode?.component?.data;
+      const cat = data2?.[which];
+      if (cat && typeof cat === "object" && !Array.isArray(cat)) {
+        return cat;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+  let _characterIdMap$2 = null;
+  let _weaponIdMap$1 = null;
+  const getIdMap$2 = (which) => {
+    const cached = which === "characters" ? _characterIdMap$2 : _weaponIdMap$1;
+    if (cached)
+      return cached;
+    const map = /* @__PURE__ */ new Map();
+    const cat = getRuntimeCatalog$2(which);
+    if (cat) {
+      for (const [key, entry] of Object.entries(cat)) {
+        if (entry && typeof entry.id === "number" && entry.id > 0) {
+          map.set(entry.id, key);
+        }
+      }
+    }
+    if (which === "characters")
+      _characterIdMap$2 = map;
+    else
+      _weaponIdMap$1 = map;
+    return map;
+  };
+  const getCharactersNum = () => {
+    const cat = getRuntimeCatalog$2("characters");
+    return cat ? Object.keys(cat).length : 0;
+  };
+  const getCharacterId$2 = (input) => {
+    const id = typeof input === "string" ? void 0 : input.id;
+    if (typeof id === "number" && id > 0) {
+      const key = getIdMap$2("characters").get(id);
+      if (key)
+        return key;
+    }
+    console.error(`getCharacterId 查询失败 (input=${JSON.stringify(input)})`);
+    return "";
+  };
+  const getWeaponId$2 = (input) => {
+    const id = typeof input === "string" ? void 0 : input.id;
+    const name = typeof input === "string" ? input : input.name;
+    if (typeof id === "number" && id > 0) {
+      const key = getIdMap$2("weapons").get(id);
+      if (key)
+        return key;
+    }
+    console.error(`getWeaponId ${name}(id=${id}) 查询失败`);
+    return "";
   };
   var axios$3 = { exports: {} };
   var bind$2 = function bind2(fn, thisArg) {
@@ -1733,50 +1785,70 @@ var __publicField = (obj, key, value) => {
       }
     });
   }
-  const characters$2 = JSON.parse(GM_getResourceText("character"));
-  const weapons$2 = JSON.parse(GM_getResourceText("weapon"));
-  const charactersNum$1 = characters$2.length;
-  const getCharacterId$2 = (queryName) => {
-    for (let e of characters$2) {
-      const { id, name } = e;
-      if (queryName == name) {
-        return id;
-      }
-    }
-    console.error(`getCharacterId ${queryName} 查询失败`);
-    return "";
-  };
-  const getWeaponId$2 = (queryName) => {
-    for (let e of weapons$2) {
-      const { id, name } = e;
-      if (queryName == name) {
-        return id;
-      }
-    }
-    console.error(`getWeaponrId ${queryName} 查询失败`);
-    return "";
-  };
-  const elementAttrIds = [
-    { element_attr_id: 1, name: "pyro" },
-    { element_attr_id: 2, name: "anemo" },
-    { element_attr_id: 3, name: "geo" },
-    { element_attr_id: 4, name: "electro" },
-    { element_attr_id: 5, name: "hydro" },
-    { element_attr_id: 6, name: "cryo" },
-    { element_attr_id: 7, name: "dendro" }
-  ];
-  const getElementAttrName = (queryName) => {
-    for (let e of elementAttrIds) {
-      const { element_attr_id, name } = e;
-      if (queryName == element_attr_id) {
-        return name;
-      }
-    }
-    console.error(`getElementAttrName: ${queryName} 查询失败`);
-    return "";
-  };
+  const ACT_MIHOYO_BASE_URL = "https://act.mihoyo.com/";
+  const DEVICE_FP_URL = "https://public-data-api.mihoyo.com/device-fp/api/getFp";
+  const GI_CALC_PAGE_URL = "https://act.mihoyo.com/ys/event/calculator/index.html";
+  const GI_ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
+  const GI_CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list";
+  const GI_ALL_CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/avatar/list";
+  const GI_BATCH_COMPUTE_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v3/batch_compute";
+  const HSR_CALC_PAGE_URL = "https://act.mihoyo.com/sr/event/cultivation-tool/index.html";
+  const HSR_ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hkrpg_cn";
+  const HSR_AVATAR_LIST_URL = "https://api-takumi.mihoyo.com/event/rpgcultivate/avatar/list";
+  const HSR_AVATAR_DETAIL_URL = "https://api-takumi.mihoyo.com/event/rpgcultivate/calc/avatar/detail";
+  const HSR_COMPUTE_URL = "https://api-takumi.mihoyo.com/event/rpgcultivate/calc/compute";
+  const ZZZ_CALC_PAGE_URL = "https://act.mihoyo.com/zzz/gt/character-builder-h/index.html";
+  const ZZZ_ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookieToken?game_biz=nap_cn";
+  const ZZZ_CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/nap_cultivate_tool/user/avatar_basic_list";
+  const ZZZ_CHARACTERS_DETAIL_URL = "https://api-takumi.mihoyo.com/event/nap_cultivate_tool/user/batch_avatar_detail_v2";
+  const ZZZ_CALC_URL = "https://act-api-takumi.mihoyo.com/event/nap_cultivate_tool/user/avatar_calc";
   axios$1.defaults.adapter = xhrAdapter;
   axios$1.defaults.withCredentials = true;
+  let syncRequestCount = 0;
+  const resetSyncRequestCount = () => {
+    syncRequestCount = 0;
+  };
+  const getSyncRequestCount = () => syncRequestCount;
+  axios$1.interceptors.request.use((config) => {
+    syncRequestCount++;
+    const method = (config.method || "get").toUpperCase();
+    console.log(`[请求计数] #${syncRequestCount} ${method} ${config.url}`);
+    return config;
+  });
+  axios$1.interceptors.response.use(
+    (response) => {
+      const data2 = response.data;
+      if (data2 && typeof data2 === "object" && !Array.isArray(data2) && "retcode" in data2) {
+        const retcode = data2.retcode;
+        if (retcode !== 0 && retcode !== -100) {
+          const cfg = response.config;
+          const method = (cfg.method || "get").toUpperCase();
+          console.error(`[请求异常] retcode=${retcode} ${method} ${cfg.url}`);
+          if (cfg.data)
+            console.error(`[请求异常] body:`, cfg.data);
+          else if (cfg.params)
+            console.error(`[请求异常] params:`, cfg.params);
+          const message = data2.message;
+          if (message)
+            console.error(`[请求异常] message:`, message);
+        }
+      }
+      return response;
+    },
+    (error) => {
+      const cfg = error?.config;
+      if (cfg) {
+        const method = (cfg.method || "get").toUpperCase();
+        console.error(`[请求异常] ${method} ${cfg.url}`);
+        if (cfg.data)
+          console.error(`[请求异常] body:`, cfg.data);
+        else if (cfg.params)
+          console.error(`[请求异常] params:`, cfg.params);
+      }
+      console.error(error);
+      return Promise.reject(error);
+    }
+  );
   async function refreshPage() {
     console.log("刷新页面?");
     const confirmed = confirm("确定要刷新页面吗？刷新后将重新加载所有数据。");
@@ -1791,16 +1863,16 @@ var __publicField = (obj, key, value) => {
     return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
   }
   function generateCharString(number = 16) {
-    const characters2 = "abcdef0123456789";
+    const characters = "abcdef0123456789";
     let result = "";
     for (let i = 0; i < number; i++) {
-      const randomIndex = Math.floor(Math.random() * characters2.length);
-      result += characters2[randomIndex];
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters[randomIndex];
     }
     return result;
   }
   const headers = {
-    Referer: "https://act.mihoyo.com/",
+    Referer: ACT_MIHOYO_BASE_URL,
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
   };
   const to = (promise) => promise.then((data2) => {
@@ -1817,7 +1889,7 @@ var __publicField = (obj, key, value) => {
       localStorage.setItem("mysDeviceId", deviceId);
     }
     if (!fp) {
-      let url = "https://public-data-api.mihoyo.com/device-fp/api/getFp";
+      let url = DEVICE_FP_URL;
       const [err, res] = await to(axios$1.post(
         url,
         JSON.stringify({
@@ -1868,6 +1940,33 @@ var __publicField = (obj, key, value) => {
     throw err ? err : new Error("账户信息获取失败");
   };
   const getStorageAccount = () => localStorage.account || "main";
+  const seelieGetInventory = (type, item, tier) => {
+    const account = getStorageAccount();
+    const raw = localStorage.getItem(`${account}-inventory`);
+    if (!raw)
+      return null;
+    try {
+      const arr = JSON.parse(raw);
+      const found = arr.find((a) => a.type === type && a.item === item && a.tier === tier);
+      return found ? found.value : null;
+    } catch {
+      return null;
+    }
+  };
+  const seelieSetInventory = (type, item, tier, value) => {
+    const account = getStorageAccount();
+    const key = `${account}-inventory`;
+    const raw = localStorage.getItem(key);
+    const arr = raw ? JSON.parse(raw) : [];
+    const found = arr.find((a) => a.type === type && a.item === item && a.tier === tier);
+    if (found) {
+      found.value = value;
+    } else {
+      arr.push({ type, item, tier, value });
+    }
+    localStorage.setItem(key, JSON.stringify(arr));
+    localStorage.setItem(`${account}-inv_sync`, Date.now().toString());
+  };
   const getTotalGoal = async () => {
     const currentAdapter = AdapterManager.getCurrentAdapter();
     const key = `${getStorageAccount()}-goals`;
@@ -1880,15 +1979,6 @@ var __publicField = (obj, key, value) => {
     const text = await currentAdapter.getItem(key) || "[]";
     return Object.keys(typeof text === "string" ? JSON.parse(text) : text);
   };
-  const setGoalInactive = async (ids = /* @__PURE__ */ new Set()) => {
-    const inactiveObject = Object.fromEntries(
-      [...ids].map((id) => [id, true])
-    );
-    const currentAdapter = AdapterManager.getCurrentAdapter();
-    const key = `${getStorageAccount()}-inactive`;
-    await currentAdapter.setItem(key, inactiveObject);
-    await refreshPage();
-  };
   const setGoals = async (goals) => {
     const key = `${getStorageAccount()}-goals`;
     const currentAdapter = AdapterManager.getCurrentAdapter();
@@ -1900,6 +1990,38 @@ var __publicField = (obj, key, value) => {
     const ids = goals.map((g2) => g2.id).filter((id) => true);
     return ids.length > 0 ? Math.max(...ids) + 1 : 1;
   };
+  const addGoal = async (data2, fallbackToId = false) => {
+    let index = -1;
+    const goals = await getTotalGoal();
+    if (data2.character) {
+      index = goals.findIndex(
+        (g2) => g2.character === data2.character && g2.type === data2.type
+      );
+    } else if (data2.id) {
+      index = goals.findIndex((g2) => g2.id === data2.id);
+    }
+    if (index < 0 && fallbackToId && typeof data2.id === "number") {
+      index = goals.findIndex((g2) => g2.id === data2.id);
+    }
+    if (index >= 0) {
+      goals[index] = { ...goals[index], ...data2 };
+    } else {
+      const lastId = goals?.map((g2) => g2.id)?.filter((id) => typeof id == "number")?.sort((a, b) => a < b ? 1 : -1)[0];
+      data2.id = (lastId || 0) + 1;
+      goals.push(data2);
+    }
+    await setGoals(goals);
+  };
+  const updateCharacter = async (character, characterStatusGoal) => {
+    const { current } = character;
+    const { level: levelCurrent, asc: ascCurrent } = current;
+    const { level, asc } = characterStatusGoal;
+    const characterGoalNew = {
+      ...character,
+      goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current
+    };
+    await addGoal(characterGoalNew);
+  };
   const batchUpdateGoals = async (type, identifierKey, updateFn, all, ...updateArgs) => {
     const totalGoal = await getTotalGoal();
     const goalInactive = await getGoalInactive();
@@ -1909,54 +2031,156 @@ var __publicField = (obj, key, value) => {
     }
     await refreshPage();
   };
-  const computeInactive = (goals, config) => {
-    var _a2, _b2, _c;
-    const isGoalCompleted = (goal) => goal.goal.level <= goal.current.level;
-    const goalTypeIdentifiers = /* @__PURE__ */ new Map();
-    config.forEach(({ type, identifierKey, isTalent, talentKeys }) => {
-      const filteredGoals = goals.filter((g2) => g2.type === type);
-      if (isTalent && talentKeys) {
-        const completedTalents = filteredGoals.filter(
-          (talent) => talentKeys.every(
-            (key) => talent[key].goal <= talent[key].current
-          )
-        );
-        goalTypeIdentifiers.set(type, new Set(completedTalents.map((g2) => g2[identifierKey].toString())));
-      } else {
-        const goals1 = filteredGoals;
-        const completedGoals = goals1.filter(isGoalCompleted);
-        goalTypeIdentifiers.set(type, new Set(completedGoals.map((g2) => g2[identifierKey].toString())));
+  let _loginPromptShown = false;
+  const checkLogin = (retcode, gameName, calcUrl) => {
+    if (retcode !== -100)
+      return;
+    if (_loginPromptShown)
+      throw new Error(`${gameName} 登录态已过期`);
+    _loginPromptShown = true;
+    alert(`${gameName} 登录态已过期！
+请前往米游社登录并打开${gameName}计算器页面，
+确保页面加载完成后再回来同步。`);
+    GM_openInTab(calcUrl);
+    throw new Error(`${gameName} 登录态已过期，已打开计算器页面，请重新登录后同步`);
+  };
+  const resetLoginFlag = () => {
+    _loginPromptShown = false;
+  };
+  const getItemsFromPage = () => {
+    try {
+      const app = document.querySelector("#app");
+      const data2 = app?._vnode?.component?.data;
+      if (!data2)
+        return null;
+      if (data2.items && typeof data2.items === "object" && !Array.isArray(data2.items)) {
+        return data2.items;
       }
-    });
-    const characterType = (_a2 = config.find((c) => c.type === "character")) == null ? void 0 : _a2.type;
-    const talentType = (_b2 = config.find((c) => c.isTalent)) == null ? void 0 : _b2.type;
-    const weaponType = (_c = config.find((c) => !c.isTalent && c.type !== "character")) == null ? void 0 : _c.type;
-    const characterIds = goalTypeIdentifiers.get(characterType) || /* @__PURE__ */ new Set();
-    const talentIds = goalTypeIdentifiers.get(talentType) || /* @__PURE__ */ new Set();
-    const weaponIds = goalTypeIdentifiers.get(weaponType) || /* @__PURE__ */ new Set();
-    const characterNames = new Set([...talentIds].filter((id) => characterIds.has(id)));
-    return /* @__PURE__ */ new Set([...characterNames, ...weaponIds]);
+      for (const key of Object.keys(data2)) {
+        const v = data2[key];
+        if (v && typeof v === "object" && !Array.isArray(v)) {
+          const sample = Object.values(v)[0];
+          if (sample && typeof sample === "object" && typeof sample.type === "string" && ("id" in sample || "ids" in sample)) {
+            return v;
+          }
+        }
+      }
+      return null;
+    } catch {
+      return null;
+    }
   };
-  const setInactive = async (config) => {
-    const goals = await getTotalGoal();
-    const inactive = computeInactive(goals, config);
-    await setGoalInactive(inactive);
+  const findItemMatch = (items, id) => {
+    for (const [key, info] of Object.entries(items)) {
+      const ids = info.ids ?? (info.id != null ? [info.id] : []);
+      const tier = info.ids ? info.ids.indexOf(id) : 0;
+      if (ids.includes(id)) {
+        return { key, type: info.type, tier };
+      }
+    }
+    return null;
   };
-  axios$1.defaults.adapter = xhrAdapter;
-  axios$1.defaults.withCredentials = true;
-  const CHARACTERS_URL$2 = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list";
-  const requestPageSize$1 = 200;
-  const getCharacters$2 = async (uid, region, page = 1) => {
-    let fp = await getFp();
-    const genshinHeaders = {
-      "x-rpc-device_fp": fp,
-      ...headers
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const sleepWithJitter = (base, jitter = 0) => sleep(base + Math.floor(Math.random() * (jitter + 1)));
+  const getFpDeviceId = async () => {
+    const fp = await getFp();
+    const deviceId = localStorage.getItem("mysDeviceId") || fp;
+    return { fp, deviceId };
+  };
+  const buildBaseHeaders = (fp, deviceId) => ({
+    ...headers,
+    "x-rpc-device_fp": fp,
+    "x-rpc-device_id": deviceId,
+    "x-rpc-platform": "4"
+  });
+  const loadSeelieItems = (sourceLabel, pageItems) => {
+    const lib = pageItems ?? getItemsFromPage();
+    const itemLib = lib || {};
+    console.log(`${sourceLabel} items 来源：${lib ? "页面运行时" : "无（findItemMatch 可能空匹配）"}，共 ${Object.keys(itemLib).length} 条`);
+    return itemLib;
+  };
+  const mergeMaterialsMax = (merged, flat) => {
+    if (!flat)
+      return;
+    for (const [k, v] of Object.entries(flat)) {
+      const id = Number(k);
+      const val = Number(v);
+      if (!Number.isFinite(id) || !Number.isFinite(val))
+        continue;
+      if (!(id in merged) || val > merged[id])
+        merged[id] = val;
+    }
+  };
+  const postCalcAndMerge = async (url, body, h2, label, gameName, calcPageUrl, merged, avatarId) => {
+    const [err, res] = await to(axios$1.post(url, JSON.stringify(body), {
+      timeout: 8e3,
+      headers: { ...h2, "content-type": "application/json" }
+    }));
+    if (err) {
+      console.warn(`[${label}] 角色 ${avatarId} 计算失败`, err?.message || err);
+      return false;
+    }
+    const { status, data: resData } = await res;
+    if (status !== 200 || resData?.retcode !== 0) {
+      checkLogin(resData?.retcode, gameName, calcPageUrl);
+      console.warn(`[${label}] 角色 ${avatarId} 计算错误 retcode=${resData?.retcode}`);
+      return false;
+    }
+    const mats = resData?.data?.user_owns_materials || {};
+    mergeMaterialsMax(merged, mats);
+    return true;
+  };
+  const writeMergedToSeelieInventory = (merged, itemLib, specialMap, sourceLabel, extra) => {
+    const results = [];
+    for (const [idStr, value] of Object.entries(merged)) {
+      const id = Number(idStr);
+      const match = specialMap[id] || findItemMatch(itemLib, id);
+      if (!match) {
+        console.warn(`${sourceLabel} 未匹配素材 id=${id}`);
+        continue;
+      }
+      const { type, key, tier } = match;
+      const f2 = seelieGetInventory(type, key, tier);
+      results.push({
+        type,
+        item: key,
+        tier,
+        value,
+        mod: value - (f2 ?? 0),
+        ...extra ? extra(id, value, match) : {}
+      });
+      seelieSetInventory(type, key, tier, value);
+    }
+    console.log(`${sourceLabel} 已写入 ${results.length} 条素材到 seelie 库存`);
+    return results;
+  };
+  const withThrottle = async (key, label, fn, uid, region, cooldownMs = 6e4) => {
+    const last = Number(localStorage.getItem(key) || 0);
+    if (last && Date.now() - last < cooldownMs) {
+      const wait = Math.ceil((cooldownMs - (Date.now() - last)) / 1e3);
+      alert(`请稍候 ${wait}s 再同步（${label} 1 分钟节流）`);
+      return { ok: false, skipped: true, reason: "节流" };
+    }
+    const results = await fn(uid, region);
+    localStorage.setItem(key, Date.now().toString());
+    return results;
+  };
+  const requestPageSize = 200;
+  const buildGenshinHeaders = async () => {
+    const { fp, deviceId } = await getFpDeviceId();
+    return {
+      ...buildBaseHeaders(fp, deviceId),
+      "x-rpc-lrsag": "",
+      "x-rpc-page": "__#"
     };
-    const [err, res] = await to(axios$1.post(CHARACTERS_URL$2, JSON.stringify({
+  };
+  const getCharacters$2 = async (uid, region, page = 1, cfg) => {
+    const genshinHeaders = await buildGenshinHeaders();
+    const [err, res] = await to(axios$1.post(cfg.charactersUrl, JSON.stringify({
       "element_attr_ids": [],
       "weapon_cat_ids": [],
       "page": page,
-      "size": requestPageSize$1,
+      "size": requestPageSize,
       "uid": uid,
       "region": region,
       "lang": "zh-cn"
@@ -1972,6 +2196,8 @@ var __publicField = (obj, key, value) => {
           const { list: characterList } = await data2;
           return characterList;
         }
+        checkLogin(retcode, "原神", cfg.calcPageUrl);
+        console.warn(`[GI] 角色列表获取失败 retcode=${retcode}: ${resData?.message || ""}`);
       }
     }
     localStorage.removeItem("fp");
@@ -1980,14 +2206,14 @@ var __publicField = (obj, key, value) => {
   const getCharacterDetail$2 = async (character, uid, region) => {
     return { character, ...character };
   };
-  const getDetailList$2 = async (game_uid, region) => {
-    let maxPageSize = Math.ceil(charactersNum$1 / requestPageSize$1);
+  const getDetailList$2 = async (game_uid, region, cfg) => {
+    let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
     let idxs = Array.from(new Array(maxPageSize).keys());
-    const characters2 = [];
+    const characters = [];
     for await (let i of idxs) {
-      characters2.push.apply(characters2, await getCharacters$2(game_uid, region, i + 1));
+      characters.push.apply(characters, await getCharacters$2(game_uid, region, i + 1, cfg));
     }
-    const details = characters2.map((c) => getCharacterDetail$2(c));
+    const details = characters.map((c) => getCharacterDetail$2(c));
     const detailList = [];
     for await (let d of details) {
       if (!!d) {
@@ -1996,30 +2222,201 @@ var __publicField = (obj, key, value) => {
     }
     return detailList;
   };
-  const addGoal$2 = async (data2) => {
-    var _a2, _b2;
-    let index = -1;
-    const goals = await getTotalGoal();
-    if (data2.character) {
-      index = goals.findIndex(
-        (g2) => g2.character === data2.character && g2.type === data2.type
-      );
-    } else if (data2.id) {
-      index = goals.findIndex((g2) => g2.id === data2.id);
+  const getOwnedCharactersRaw = async (uid, region, cfg) => {
+    let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
+    if (maxPageSize < 1)
+      maxPageSize = 1;
+    const chars = [];
+    for (let i = 0; i < maxPageSize; i++) {
+      try {
+        const list = await getCharacters$2(uid, region, i + 1, cfg);
+        if (list && list.length)
+          chars.push(...list);
+      } catch (e) {
+        console.warn(`[素材同步] 已拥有角色(第${i + 1}页)获取失败:`, e?.message || e);
+        break;
+      }
     }
-    if (index >= 0) {
-      goals[index] = { ...goals[index], ...data2 };
-    } else {
-      const lastId = (_b2 = (_a2 = goals == null ? void 0 : goals.map((g2) => g2.id)) == null ? void 0 : _a2.filter((id) => typeof id == "number")) == null ? void 0 : _b2.sort((a, b) => a < b ? 1 : -1)[0];
-      data2.id = (lastId || 0) + 1;
-      goals.push(data2);
-    }
-    await setGoals(goals);
+    return chars;
   };
+  const getAllCharacters = async (cfg) => {
+    const h2 = await buildGenshinHeaders();
+    const result = [];
+    const size = 200;
+    let page = 1;
+    while (true) {
+      const [err, res] = await to(axios$1.post(cfg.allCharactersUrl, JSON.stringify({
+        element_attr_ids: [],
+        weapon_cat_ids: [],
+        page,
+        size,
+        is_all: true,
+        lang: "zh-cn"
+      }), {
+        timeout: 5e3,
+        headers: h2
+      }));
+      if (err) {
+        console.warn(`[素材同步] 全量角色列表(第${page}页)请求异常:`, err?.message || err);
+        break;
+      }
+      const { status, data: resData } = await res;
+      if (status != 200 || resData.retcode !== 0) {
+        checkLogin(resData.retcode, "原神", cfg.calcPageUrl);
+        console.warn(`[素材同步] 全量角色列表错误 retcode=${resData?.retcode}:`, resData?.message || "");
+        break;
+      }
+      const list = resData.data?.list || resData.data?.avatars || [];
+      result.push(...list);
+      if (list.length < size)
+        break;
+      page++;
+    }
+    return result;
+  };
+  const GI_SPECIAL = {
+    104003: { type: "xp", key: "xp", tier: 0 },
+    202: { type: "mora", key: "mora", tier: 0 },
+    104013: { type: "wep_xp", key: "wep_xp", tier: 0 }
+  };
+  const batchUpdateInventoryGI = async (uid, region, cfg, prefetched) => {
+    const genshinHeaders = await buildGenshinHeaders();
+    const SKIP_IDS = [10000117, 10000118, 10000005, 10000007];
+    const ownedList = prefetched && prefetched.length ? prefetched : await getOwnedCharactersRaw(uid, region, cfg);
+    console.log(`[素材同步] 复用角色同步已拉取 ${ownedList.length} 个已拥有角色${prefetched?.length ? "" : "（回退重新拉取）"}`);
+    const ownedMap = /* @__PURE__ */ new Map();
+    for (const c of ownedList)
+      ownedMap.set(c.id, c);
+    const allList = await getAllCharacters(cfg);
+    const roster = allList.map((c) => {
+      const owned = ownedMap.get(c.id);
+      return owned && owned.weapon ? { ...c, weapon: owned.weapon } : c;
+    });
+    let items = roster.filter((c) => !SKIP_IDS.includes(c.id)).map((c) => {
+      const item = {
+        avatar_id: c.id,
+        avatar_level_current: 1,
+        avatar_level_target: 90,
+        avatar_promote_level: 0,
+        element_attr_id: c.element_attr_id,
+        from_user_sync: false,
+        skill_list: (c.skill_list || []).filter((s) => s.level_current < s.max_level && s.max_level === 10).map((s) => ({
+          id: s.group_id,
+          level_current: 1,
+          level_target: 10
+        }))
+      };
+      const w = c.weapon;
+      if (w && w.id && w.level_current < w.max_level) {
+        item.weapon = {
+          id: w.id,
+          level_current: 1,
+          level_target: 90
+        };
+      }
+      return item;
+    });
+    if (items.length === 0) {
+      localStorage.removeItem("fp");
+      throw new Error("未获取到任何角色，无法计算素材");
+    }
+    items = items.filter((a) => a.avatar_level_current != a.avatar_level_target || a.skill_list.length > 0);
+    console.table(items);
+    const BATCH_SIZE = 256;
+    const SPLIT_RETRY_DELAY = 1e3;
+    const consumeRaw = [];
+    const doBatch = async (chunk) => {
+      const [err, res] = await to(axios$1.post(cfg.computeUrl, JSON.stringify({
+        items: chunk,
+        "uid": uid,
+        "region": region,
+        "lang": "zh-cn"
+      }), {
+        timeout: 8e3,
+        headers: genshinHeaders
+      }));
+      if (err) {
+        console.warn(`[素材同步] 批次(${chunk.length}条)请求异常:`, err?.message || err);
+        return null;
+      }
+      const { status, data: resData } = await res;
+      if (status != 200 || resData.retcode !== 0) {
+        checkLogin(resData.retcode, "原神", cfg.calcPageUrl);
+        console.warn(`[素材同步] 批次(${chunk.length}条)返回错误 retcode=${resData?.retcode}:`, resData?.message || "");
+        return null;
+      }
+      return resData.data?.overall_consume || [];
+    };
+    const processChunk = async (chunk) => {
+      const part = await doBatch(chunk);
+      if (part !== null) {
+        console.log(`[素材同步] 批次(${chunk.length}条)完成，本批 ${part.length} 条素材`);
+        return part;
+      }
+      if (chunk.length > 1) {
+        const mid = Math.ceil(chunk.length / 2);
+        const left = chunk.slice(0, mid);
+        const right = chunk.slice(mid);
+        console.warn(`[素材同步] 批次(${chunk.length}条)失败，二分重试 -> ${left.length}+${right.length}，间隔 ${SPLIT_RETRY_DELAY}ms`);
+        await sleep(SPLIT_RETRY_DELAY);
+        const l = await processChunk(left);
+        const r = await processChunk(right);
+        return [...l, ...r];
+      }
+      console.error(`[素材同步] 摘除影响数据(单条始终失败):`, JSON.stringify(chunk[0]));
+      return [];
+    };
+    const total = Math.ceil(items.length / BATCH_SIZE);
+    let idx = 0;
+    for (let i = 0; i < items.length; i += BATCH_SIZE) {
+      const chunk = items.slice(i, i + BATCH_SIZE);
+      idx++;
+      const part = await processChunk(chunk);
+      if (part.length)
+        consumeRaw.push(...part);
+      console.log(`[素材同步] 批次 ${idx}/${total} 处理完毕，累计素材 ${consumeRaw.length} 条`);
+    }
+    if (consumeRaw.length === 0) {
+      localStorage.removeItem("fp");
+      throw new Error("Failed to calculate inventory.");
+    }
+    const merged = {};
+    for (const t of consumeRaw) {
+      const v = t.num + t.lack_num;
+      if (merged[t.id]) {
+        if (v > merged[t.id].value)
+          merged[t.id].value = v;
+      } else {
+        merged[t.id] = { value: v, lackNum: t.lack_num };
+      }
+    }
+    const pageItems = getItemsFromPage();
+    const itemLib = loadSeelieItems("[素材同步]", pageItems);
+    const results = writeMergedToSeelieInventory(
+      Object.fromEntries(
+        Object.entries(merged).map(([k, v]) => [Number(k), v.value])
+      ),
+      itemLib,
+      GI_SPECIAL,
+      "[素材同步]",
+      (id) => ({ sort: 0, max: !merged[id].lackNum })
+    );
+    localStorage.removeItem("fp");
+    return { ok: true, count: results.length, source: pageItems ? "page" : "fallback" };
+  };
+  const TALENT_KEYS = ["normal", "skill", "burst"];
   const addTalentGoal = async (talentCharacter, skill_list) => {
     const totalGoal = await getTotalGoal();
     const talentIdx = totalGoal.findIndex((g2) => g2.type == "talent" && g2.character == talentCharacter);
-    const [normalCurrent, skillCurrent, burstCurrent] = skill_list.filter((a) => a.max_level == 10).sort().map((a) => a.level_current);
+    const combat = (skill_list ?? []).filter((s) => s.max_level === 10);
+    if (combat.length !== TALENT_KEYS.length) {
+      console.warn(`[角色同步] ${talentCharacter} 战斗天赋数量异常: ${combat.length}`, combat);
+    }
+    const lv = {};
+    combat.slice(0, TALENT_KEYS.length).forEach((s, i) => {
+      lv[TALENT_KEYS[i]] = s.level_current;
+    });
+    const normalCurrent = lv.normal ?? 1, skillCurrent = lv.skill ?? 1, burstCurrent = lv.burst ?? 1;
     let talentGoal;
     if (talentIdx < 0) {
       const id = await getNextId();
@@ -2064,31 +2461,41 @@ var __publicField = (obj, key, value) => {
         }
       };
     }
-    await addGoal$2(talentGoal);
+    await addGoal(talentGoal);
   };
-  const addCharacterGoal$2 = async (level_current, nameEn, name, type) => {
-    let totalGoal = await getTotalGoal();
-    let characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
-    let weaponPredicate = (g2) => g2.type == type && g2.weapon == nameEn;
-    const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
-    const characterStatus = initCharacterStatus$2(level_current);
+  const addCharacterGoal$2 = async (status, nameEn, type, extra) => {
+    const totalGoal = await getTotalGoal();
+    const owner = extra?.owner ?? "";
+    const characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
+    const weaponPredicate = (g2) => g2.type == "weapon" && g2.character == owner;
+    const legacyWeaponPredicate = (g2) => g2.type == "weapon" && !g2.character && g2.weapon == nameEn;
+    let characterIdx;
+    if (type == "character") {
+      characterIdx = totalGoal.findIndex(characterPredicate);
+    } else {
+      characterIdx = totalGoal.findIndex(weaponPredicate);
+      if (characterIdx < 0) {
+        characterIdx = totalGoal.findIndex(legacyWeaponPredicate);
+      }
+    }
     let characterGoal;
     function initCharacterGoal(id) {
       return {
         type,
         character: nameEn,
-        current: characterStatus,
-        goal: characterStatus,
+        current: status,
+        goal: { ...status },
+        ...extra?.cons !== void 0 ? { cons: extra.cons } : {},
         id
       };
     }
     function initWeaponGoal(id) {
       return {
         type,
-        character: "",
+        character: owner,
         weapon: nameEn,
-        current: characterStatus,
-        goal: characterStatus,
+        current: status,
+        goal: { ...status },
         id
       };
     }
@@ -2096,41 +2503,60 @@ var __publicField = (obj, key, value) => {
       const id = await getNextId();
       characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
     } else {
-      const seelieGoal = type == "character" ? totalGoal[characterIdx] : totalGoal[characterIdx];
-      const { goal, current } = seelieGoal;
-      const { level: levelCurrent, asc: ascCurrent } = current;
-      const { level: levelGoal, asc: ascGoal } = goal;
-      const { level, asc } = characterStatus;
-      characterGoal = {
-        ...seelieGoal,
-        current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
-        goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal
-      };
+      const oldGoal = totalGoal[characterIdx].goal;
+      const goalLevel = Math.max(oldGoal.level, status.level);
+      const goalAsc = Math.min(Math.max(oldGoal.asc, status.asc), 6);
+      const goal = characterStatusList$2.find((s) => s.level === goalLevel && s.asc === goalAsc) ?? oldGoal;
+      if (type == "character") {
+        const old = totalGoal[characterIdx];
+        const next = {
+          ...old,
+          character: nameEn,
+          current: status,
+          goal: { ...goal }
+        };
+        if (extra?.cons !== void 0 || old.cons !== void 0) {
+          next.cons = Math.max(old.cons ?? 0, extra?.cons ?? 0);
+        }
+        characterGoal = next;
+      } else {
+        const old = totalGoal[characterIdx];
+        const next = {
+          ...old,
+          character: owner,
+          weapon: nameEn,
+          current: status,
+          goal: { ...goal }
+        };
+        characterGoal = next;
+      }
     }
-    await addGoal$2(characterGoal);
+    await addGoal(characterGoal, true);
   };
   async function addCharacter$2(characterDataEx) {
     const { character, skill_list, weapon } = characterDataEx;
-    const { name, element_attr_id } = character;
-    if (weapon) {
-      const { name: name2, level_current: weaponLeveL } = weapon;
-      const weaponId = getWeaponId$2(name2);
-      if (weaponId) {
-        await addCharacterGoal$2(weaponLeveL, weaponId, name2, "weapon");
-      }
-    }
-    const { level_current: characterLevel } = character;
-    const characterId = getCharacterId$2(name);
+    const characterId = getCharacterId$2(character);
     if (!characterId) {
       return;
     }
-    await addCharacterGoal$2(characterLevel, characterId, name, "character");
-    let talentCharacter = characterId;
-    if (characterId == "traveler") {
-      const elementAttrName = getElementAttrName(element_attr_id);
-      talentCharacter = `traveler_${elementAttrName}`;
+    await addCharacterGoal$2(
+      resolveStatus$1(character.level_current, character.promote_level),
+      characterId,
+      "character",
+      { cons: character.constellation_num }
+    );
+    if (weapon) {
+      const weaponId = getWeaponId$2(weapon);
+      if (weaponId) {
+        await addCharacterGoal$2(
+          resolveStatus$1(weapon.level_current),
+          weaponId,
+          "weapon",
+          { owner: characterId }
+        );
+      }
     }
-    await addTalentGoal(talentCharacter, skill_list);
+    await addTalentGoal(characterId, skill_list);
   }
   const characterStatusList$2 = [
     { level: 1, asc: 0, text: "1" },
@@ -2148,22 +2574,11 @@ var __publicField = (obj, key, value) => {
     { level: 80, asc: 6, text: "80 A" },
     { level: 90, asc: 6, text: "90" }
   ];
-  const initCharacterStatus$2 = (level_current) => {
-    let initCharacterStatus2 = characterStatusList$2[0];
-    if (level_current < 20) {
-      return initCharacterStatus2;
-    }
-    for (let characterStatus of characterStatusList$2) {
-      const { level } = characterStatus;
-      if (level_current < level) {
-        return initCharacterStatus2;
-      } else if (level_current == level) {
-        return characterStatus;
-      } else if (level_current > level) {
-        initCharacterStatus2 = characterStatus;
-      }
-    }
-    return initCharacterStatus2;
+  const resolveStatus$1 = (level, promote) => {
+    const closest = characterStatusList$2.filter((s) => s.level <= level).pop() ?? characterStatusList$2[0];
+    const candidates = characterStatusList$2.filter((s) => s.level === closest.level);
+    const hit = typeof promote === "number" ? candidates.find((s) => s.asc === promote) : void 0;
+    return { ...hit ?? candidates[0] };
   };
   const updateTalent = async (talent, normalGoal = 9, skillGoal = 9, burstGoal = 9) => {
     const { normal: { current: normalCurrent }, skill: { current: skillCurrent }, burst: { current: burstCurrent } } = talent;
@@ -2182,7 +2597,7 @@ var __publicField = (obj, key, value) => {
         goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
       }
     };
-    await addGoal$2(talentNew);
+    await addGoal(talentNew);
   };
   const batchUpdateTalent = async (all, normal, skill, burst) => {
     await batchUpdateGoals(
@@ -2193,22 +2608,12 @@ var __publicField = (obj, key, value) => {
       all
     );
   };
-  const updateCharacter$2 = async (character, characterStatusGoal) => {
-    const { current } = character;
-    const { level: levelCurrent, asc: ascCurrent } = current;
-    const { level, asc } = characterStatusGoal;
-    const characterGoalNew = {
-      ...character,
-      goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current
-    };
-    await addGoal$2(characterGoalNew);
-  };
   const batchUpdateCharacter$2 = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "character",
       "character",
       // 角色目标用character字段标识
-      updateCharacter$2,
+      updateCharacter,
       all,
       characterStatusGoal
     ).then(() => {
@@ -2220,7 +2625,7 @@ var __publicField = (obj, key, value) => {
       "weapon",
       "weapon",
       // 武器目标用weapon字段标识
-      (weapon) => updateCharacter$2(weapon, characterStatusGoal),
+      (weapon) => updateCharacter(weapon, characterStatusGoal),
       all,
       characterStatusGoal
     ).then(() => {
@@ -2242,8 +2647,8 @@ var __publicField = (obj, key, value) => {
     }
     // 公共实现：获取账户列表
     async getAccounts() {
-      const { BBS_URL, ROLE_URL } = this.getApiConfig();
-      return await getAccount(ROLE_URL, BBS_URL, this.getGameName());
+      const { calcPageUrl, roleUrl } = this.getApiConfig();
+      return await getAccount(roleUrl, calcPageUrl, this.getGameName());
     }
     async getItem(key) {
       return Promise.resolve(localStorage.getItem(key));
@@ -2278,18 +2683,26 @@ var __publicField = (obj, key, value) => {
         ];
         return GENSHIN_INACTIVE_CONFIG;
       });
+      // 1 分钟节流（避免频繁打米游社 batch_compute）；prefetched = 角色同步已拉取的已拥有角色，复用以消除重复 list/detail 请求
+      __publicField(this, "batchUpdateInventory", async (uid, region, prefetched) => {
+        const cfg = this.getApiConfig();
+        return withThrottle("last-sync", "素材同步", (u, r) => batchUpdateInventoryGI(u, r, cfg, prefetched), uid, region);
+      });
     }
     getGameName() {
       return GameType.GENSHIN;
     }
     getApiConfig() {
       return {
-        BBS_URL: "https://act.mihoyo.com/ys/event/calculator/index.html",
-        ROLE_URL: "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn"
+        calcPageUrl: GI_CALC_PAGE_URL,
+        roleUrl: GI_ROLE_URL,
+        charactersUrl: GI_CHARACTERS_URL,
+        allCharactersUrl: GI_ALL_CHARACTERS_URL,
+        computeUrl: GI_BATCH_COMPUTE_URL
       };
     }
     async getCharacterDetails(uid, region) {
-      return getDetailList$2(uid, region);
+      return getDetailList$2(uid, region, this.getApiConfig());
     }
     async syncCharacters(res) {
       console.group("返回数据");
@@ -2319,121 +2732,224 @@ var __publicField = (obj, key, value) => {
       return characterStatusList$2;
     }
   }
-  const characters$1 = JSON.parse(GM_getResourceText("hsr_character"));
-  const weapons$1 = JSON.parse(GM_getResourceText("hsr_weapon"));
-  const charactersNum = characters$1.length;
-  const getCharacterId$1 = (queryName) => {
-    for (let e of characters$1) {
-      const { id, name } = e;
-      if (queryName == name) {
-        return id;
-      }
+  const getCharacters$1 = async (uid, region, cfg) => {
+    const h2 = await buildHsrHeaders();
+    const params = `?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}`;
+    const [err, res] = await to(axios$1.get(cfg.charactersUrl + params, { headers: h2 }));
+    if (err) {
+      console.error("[HSR] 角色列表获取失败", err);
+      throw err;
     }
-    console.error(`getCharacterId ${queryName} 查询失败`);
-    return "";
-  };
-  const getWeaponId$1 = (queryName) => {
-    for (let e of weapons$1) {
-      const { id, name } = e;
-      if (queryName == name) {
-        return id;
-      }
+    const { status, data: resData } = await res;
+    if (status !== 200 || resData?.retcode !== 0) {
+      checkLogin(resData?.retcode, "崩坏：星穹铁道", cfg.calcPageUrl);
+      throw new Error(`[HSR] 角色列表返回错误 retcode=${resData?.retcode}: ${resData?.message || ""}`);
     }
-    console.error(`getWeaponrId ${queryName} 查询失败`);
-    return "";
+    return resData?.data?.avatars || [];
   };
-  axios$1.defaults.adapter = xhrAdapter;
-  axios$1.defaults.withCredentials = true;
-  const CHARACTERS_URL$1 = "https://api-takumi.mihoyo.com/event/rpgcalc/avatar/list";
-  const CHARACTERS_DETAIL_URL$1 = "https://api-takumi.mihoyo.com/event/rpgcalc/avatar/detail";
-  const requestPageSize = 50;
-  const getCharacters$1 = async (uid, region, page = 1) => {
-    let url = CHARACTERS_URL$1;
-    let game = "hkrpg";
-    let params = `?game=${game}&uid=${uid}&region=${region}&lang=zh-cn&tab_from=TabOwned&page=${page}&size=100`;
-    const [err, res] = await to(axios$1.get(url + params, {
-      headers
-    }));
-    if (!err) {
-      const { status, data: resData } = await res;
-      if (status == 200) {
-        const { retcode, data: data2 } = resData;
-        if (retcode === 0) {
-          const { list: characterList } = await data2;
-          return characterList;
-        }
-      }
-    }
-    throw err ? err : new Error("角色列表获取失败");
-  };
-  const getCharacterDetail$1 = async (character, uid, region) => {
+  const getCharacterDetail$1 = async (character, uid, region, cfg) => {
     const { item_id: id } = character;
-    let game = "hkrpg";
-    const params = `?game=${game}&lang=zh-cn&item_id=${id}&tab_from=TabOwned&change_target_level=0&uid=${uid}&region=${region}`;
-    let URL = CHARACTERS_DETAIL_URL$1;
-    const [err, res] = await to(axios$1.get(URL + params, {
-      headers
-    }));
-    if (!err) {
-      const { status, data: resData } = await res;
-      if (status == 200) {
-        const { retcode, data: data2 } = resData;
-        if (retcode === 0) {
-          const characterData = await data2;
-          return characterData;
-        }
-      }
-    } else {
-      console.error(err);
+    const h2 = await buildHsrHeaders();
+    const params = `?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}&item_id=${id}&change_target_level=0`;
+    const [err, res] = await to(axios$1.get(cfg.charactersDetailUrl + params, { headers: h2 }));
+    if (err) {
+      console.warn(`[HSR] 角色 ${id} 详情失败`, err?.message || err);
+      return null;
     }
+    const { status, data: resData } = await res;
+    if (status !== 200 || resData?.retcode !== 0) {
+      checkLogin(resData?.retcode, "崩坏：星穹铁道", cfg.calcPageUrl);
+      console.warn(`[HSR] 角色 ${id} 详情错误 retcode=${resData?.retcode}`);
+      return null;
+    }
+    return resData?.data;
   };
-  const getDetailList$1 = async (game_uid, region) => {
-    let maxPageSize = Math.ceil(charactersNum / requestPageSize);
-    let idxs = Array.from(new Array(maxPageSize).keys());
-    const characters2 = [];
-    for await (let i of idxs) {
-      characters2.push.apply(characters2, await getCharacters$1(game_uid, region, i + 1));
-    }
-    const details = characters2.map((c) => getCharacterDetail$1(c, game_uid, region));
+  const getDetailList$1 = async (game_uid, region, cfg) => {
+    const avatars = await getCharacters$1(game_uid, region, cfg);
+    const detailPromises = avatars.map((c) => getCharacterDetail$1(c, game_uid, region, cfg));
+    const settled = await Promise.all(detailPromises);
     const detailList = [];
-    for await (let d of details) {
-      if (!!d) {
+    for (let i = 0; i < avatars.length; i++) {
+      const d = settled[i];
+      if (d) {
+        d.isOwned = (avatars[i].first_meet_time ?? 0) !== 0;
         detailList.push(d);
       }
     }
     return detailList;
   };
-  const addGoal$1 = async (data2) => {
-    var _a2, _b2;
-    let index = -1;
-    const goals = await getTotalGoal();
-    if (data2.character) {
-      index = goals.findIndex(
-        (g2) => g2.character === data2.character && g2.type === data2.type
-      );
-    } else if (data2.id) {
-      index = goals.findIndex((g2) => g2.id === data2.id);
-    }
-    if (index >= 0) {
-      goals[index] = { ...goals[index], ...data2 };
+  const HSR_REQ_DELAY = 400;
+  const buildHsrHeaders = async () => {
+    const { fp, deviceId } = await getFpDeviceId();
+    return {
+      ...buildBaseHeaders(fp, deviceId),
+      "x-rpc-lang": "zh-cn",
+      "x-rpc-page": "v4.4.4__#/tools/calculation",
+      "x-rpc-view_source": "1"
+    };
+  };
+  const HSR_SPECIAL = {
+    2: { type: "credit", key: "credit", tier: 0 }
+  };
+  const batchUpdateInventoryHSR = async (uid, region, cfg, prefetched) => {
+    let details = [];
+    if (prefetched && prefetched.length) {
+      details = prefetched;
+      console.log(`[HSR素材] 复用角色同步已拉取全量详情 ${details.length} 个，跳过 list/detail 请求`);
     } else {
-      const lastId = (_b2 = (_a2 = goals == null ? void 0 : goals.map((g2) => g2.id)) == null ? void 0 : _a2.filter((id) => typeof id == "number")) == null ? void 0 : _b2.sort((a, b) => a < b ? 1 : -1)[0];
-      data2.id = (lastId || 0) + 1;
-      goals.push(data2);
+      const allChars = await getCharacters$1(uid, region, cfg);
+      if (!allChars.length)
+        throw new Error("[HSR素材] 未获取到任何 HSR 角色");
+      console.log(`[HSR素材] 全角色 ${allChars.length} 个`);
+      const D_BATCH = 8;
+      for (let i = 0; i < allChars.length; i += D_BATCH) {
+        const slice = allChars.slice(i, i + D_BATCH);
+        const part = await Promise.all(slice.map((c) => getCharacterDetail$1(c, uid, region, cfg)));
+        details.push(...part.filter(Boolean));
+        if (i + D_BATCH < allChars.length)
+          await sleep(HSR_REQ_DELAY);
+      }
+      console.log(`[HSR素材] 拿到详情 ${details.length} 个`);
     }
-    await setGoals(goals);
+    const pageItems = getItemsFromPage();
+    const itemLib = loadSeelieItems("[HSR素材]", pageItems);
+    const source = pageItems ? "page" : "none";
+    const h2 = await buildHsrHeaders();
+    const merged = {};
+    let computed = 0;
+    for (const d of details) {
+      const avatar = d.avatar || {};
+      const allSkills = [
+        ...d.skills || [],
+        ...d.skills_other || [],
+        ...d.skills_servant || [],
+        ...d.skills_special || []
+      ];
+      const body = {
+        game: "hkrpg",
+        avatar: {
+          item_id: String(avatar.item_id),
+          cur_level: 1,
+          target_level: avatar.max_level || 80
+        },
+        skill_list: allSkills.map((s) => ({
+          item_id: String(s.point_id),
+          cur_level: 1,
+          target_level: s.max_level || 1
+        })),
+        uid,
+        region
+      };
+      if (d.equipment && d.equipment.item_id) {
+        body.equipment = {
+          item_id: String(d.equipment.item_id),
+          cur_level: 1,
+          target_level: d.equipment.max_level || 80
+        };
+      }
+      const url = `${cfg.computeUrl}?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}&noSessionRetry=true`;
+      const ok = await postCalcAndMerge(url, body, h2, "[HSR素材]", "崩坏：星穹铁道", cfg.calcPageUrl, merged, avatar.item_id);
+      if (ok) {
+        computed++;
+        if (computed % 10 === 0)
+          console.log(`[HSR素材] 已计算 ${computed}/${details.length}`);
+      }
+      await sleep(HSR_REQ_DELAY);
+    }
+    if (!Object.keys(merged).length)
+      throw new Error("[HSR素材] 未计算出任何素材（请检查接口/items 库）");
+    const results = writeMergedToSeelieInventory(merged, itemLib, HSR_SPECIAL, "[HSR素材]");
+    return { ok: true, count: results.length, source };
+  };
+  const getRuntimeCatalog$1 = (which) => {
+    try {
+      const app = document.querySelector("#app");
+      const data2 = app?._vnode?.component?.data;
+      const cat = data2?.[which];
+      if (cat && typeof cat === "object" && !Array.isArray(cat)) {
+        return cat;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+  let _characterIdMap$1 = null;
+  let _coneIdMap = null;
+  const getIdMap$1 = (which) => {
+    const cached = which === "characters" ? _characterIdMap$1 : _coneIdMap;
+    if (cached)
+      return cached;
+    const map = /* @__PURE__ */ new Map();
+    const cat = getRuntimeCatalog$1(which);
+    if (cat) {
+      for (const [key, entry] of Object.entries(cat)) {
+        if (entry && typeof entry.id === "number" && entry.id > 0) {
+          map.set(entry.id, key);
+        }
+      }
+    }
+    if (which === "characters")
+      _characterIdMap$1 = map;
+    else
+      _coneIdMap = map;
+    return map;
+  };
+  let _characterPathMap = null;
+  const getCharacterPathMap = () => {
+    if (_characterPathMap)
+      return _characterPathMap;
+    const map = /* @__PURE__ */ new Map();
+    const cat = getRuntimeCatalog$1("characters");
+    if (cat) {
+      for (const [key, entry] of Object.entries(cat)) {
+        const p2 = entry?.path;
+        if (p2 && typeof p2 === "string")
+          map.set(key, p2);
+      }
+    }
+    _characterPathMap = map;
+    return map;
+  };
+  const getCharacterPath = (key) => {
+    return getCharacterPathMap().get(key);
+  };
+  const getCharacterId$1 = (input) => {
+    const id = typeof input === "string" ? void 0 : input.id;
+    if (typeof id === "number" && id > 0) {
+      const key = getIdMap$1("characters").get(id);
+      if (key)
+        return key;
+    }
+    console.error(`getCharacterId 查询失败 (input=${JSON.stringify(input)})`);
+    return "";
+  };
+  const getWeaponId$1 = (input) => {
+    const id = typeof input === "string" ? void 0 : input.id;
+    if (typeof id === "number" && id > 0) {
+      const key = getIdMap$1("cones").get(id);
+      if (key)
+        return key;
+    }
+    console.error(`getWeaponId 查询失败 (input=${JSON.stringify(input)})`);
+    return "";
   };
   let initBonus = {};
   const addTraceGoal$1 = async (talentCharacter, skill_list, skills_servant) => {
     const totalGoal = await getTotalGoal();
     const talentIdx = totalGoal.findIndex((g2) => g2.type == "trace" && g2.character == talentCharacter);
-    skill_list.sort((a, b) => a.point_id > b.point_id ? 1 : 0);
-    const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = skill_list.map((a) => a.cur_level);
+    const combatSkills = skill_list.filter((s) => s.point_type === 2).sort((a, b) => parseInt(a.point_id) - parseInt(b.point_id));
+    const elationSkill = skill_list.find((s) => s.point_type === 4);
+    const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = combatSkills.map((a) => a.cur_level);
+    const elationCurrent = elationSkill?.cur_level;
     let [petSkillCurrent, petTalentCurrent] = [1, 1];
     let hasServant = skills_servant && skills_servant.length > 0;
     if (hasServant) {
       [petSkillCurrent, petTalentCurrent] = skills_servant.map((a) => a.cur_level);
     }
+    const path = getCharacterPath(talentCharacter);
+    const isRemembrance = path === "remembrance";
+    const isElation = path === "elation";
     let talentGoal;
     if (talentIdx < 0) {
       const id = await getNextId();
@@ -2456,31 +2972,40 @@ var __publicField = (obj, key, value) => {
           current: talentCurrent,
           goal: talentCurrent
         },
-        pet_skill: {
-          current: petSkillCurrent,
-          goal: petSkillCurrent
-        },
-        pet_talent: {
-          current: petSkillCurrent,
-          goal: petSkillCurrent
-        },
         bonus: initBonus,
-        id
+        id,
+        ...isRemembrance ? {
+          pet_skill: {
+            current: petSkillCurrent,
+            goal: petSkillCurrent
+          },
+          pet_talent: {
+            current: petTalentCurrent,
+            goal: petTalentCurrent
+          }
+        } : {},
+        ...isElation ? {
+          elation_skill: {
+            current: elationCurrent ?? 1,
+            goal: elationCurrent ?? 1
+          }
+        } : {}
       };
     } else {
       const seelieGoal = totalGoal[talentIdx];
-      const { basic, skill, ultimate, talent, pet_skill, pet_talent } = seelieGoal;
+      const { basic, skill, ultimate, talent } = seelieGoal;
       const { goal: basicGoal } = basic;
       const { goal: skillGoal } = skill;
       const { goal: ultimateGoal } = ultimate;
       const { goal: talentGoal2 } = talent;
-      const { goal: petSkillGoal } = pet_skill;
-      const { goal: petTalentGoal } = pet_talent;
+      const petSkillGoal = seelieGoal.pet_skill?.goal ?? 1;
+      const petTalentGoal = seelieGoal.pet_talent?.goal ?? 1;
+      const elationGoal = seelieGoal.elation_skill?.goal ?? 1;
       talentGoal = {
         ...seelieGoal,
         basic: {
           current: baseCurrent,
-          goal: baseCurrent > basicGoal ? Math.min(petSkillCurrent, 6) : basicGoal
+          goal: baseCurrent > basicGoal ? Math.min(baseCurrent, 6) : basicGoal
         },
         skill: {
           current: skillCurrent,
@@ -2494,24 +3019,32 @@ var __publicField = (obj, key, value) => {
           current: talentCurrent,
           goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
         },
-        pet_skill: {
-          current: petSkillCurrent,
-          goal: petSkillCurrent > petSkillGoal ? Math.min(petSkillCurrent, 6) : petSkillGoal
-        },
-        pet_talent: {
-          current: petTalentCurrent,
-          goal: petTalentCurrent > petTalentGoal ? Math.min(petTalentCurrent, 6) : petTalentGoal
-        }
+        ...isRemembrance ? {
+          pet_skill: {
+            current: petSkillCurrent,
+            goal: petSkillCurrent > petSkillGoal ? Math.min(petSkillCurrent, 6) : petSkillGoal
+          },
+          pet_talent: {
+            current: petTalentCurrent,
+            goal: petTalentCurrent > petTalentGoal ? Math.min(petTalentCurrent, 6) : petTalentGoal
+          }
+        } : {},
+        ...isElation ? {
+          elation_skill: {
+            current: elationCurrent ?? 1,
+            goal: (elationCurrent ?? 1) > elationGoal ? Math.min(elationCurrent ?? 1, 10) : elationGoal
+          }
+        } : {}
       };
     }
-    await addGoal$1(talentGoal);
+    await addGoal(talentGoal);
   };
-  const addCharacterGoal$1 = async (level_current, nameEn, name, type) => {
+  const addCharacterGoal$1 = async (level_current, nameEn, name, type, eidolon) => {
     const totalGoal = await getTotalGoal();
     let characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
     let weaponPredicate = (g2) => g2.type == type && g2.cone == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
-    const characterStatus = initCharacterStatus$1(level_current);
+    const characterStatus = initCharacterStatus(level_current);
     let characterGoal;
     function initCharacterGoal(id) {
       return {
@@ -2520,7 +3053,7 @@ var __publicField = (obj, key, value) => {
         current: characterStatus,
         goal: characterStatus,
         id,
-        eidolon: 0
+        eidolon: eidolon ?? 0
       };
     }
     function initWeaponGoal(id) {
@@ -2542,30 +3075,35 @@ var __publicField = (obj, key, value) => {
       const { level: levelCurrent, asc: ascCurrent } = current;
       const { level: levelGoal, asc: ascGoal } = goal;
       const { level, asc } = characterStatus;
-      characterGoal = {
+      const merged = {
         ...seelieGoal,
         current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
         goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal
       };
+      if (type == "character" && (eidolon !== void 0 || seelieGoal.eidolon !== void 0)) {
+        merged.eidolon = Math.max(seelieGoal.eidolon ?? 0, eidolon ?? 0);
+      }
+      characterGoal = merged;
     }
-    await addGoal$1(characterGoal);
+    await addGoal(characterGoal);
   };
   async function addCharacter$1(characterDataEx) {
     const { avatar: character, skills: skill_list, skills_servant, equipment: weapon } = characterDataEx;
-    const { item_name: name } = character;
+    const { item_name: name, item_id: itemId, rank } = character;
     if (weapon) {
-      const { item_name: name2, cur_level: weaponLeveL } = weapon;
-      const weaponId = getWeaponId$1(name2);
+      const { item_name: weaponName, item_id: weaponItemId, cur_level: weaponLeveL } = weapon;
+      const weaponId = getWeaponId$1({ id: parseInt(weaponItemId) });
       if (weaponId) {
-        await addCharacterGoal$1(weaponLeveL, weaponId, name2, "cone");
+        await addCharacterGoal$1(weaponLeveL, weaponId, weaponName, "cone");
       }
     }
     const { cur_level: characterLevel } = character;
-    const characterId = getCharacterId$1(name);
+    const characterId = getCharacterId$1({ id: parseInt(itemId) });
     if (!characterId || characterId.includes("trailblazer")) {
       return;
     }
-    await addCharacterGoal$1(characterLevel, characterId, name, "character");
+    const eidolon = parseInt(rank ?? "") || 0;
+    await addCharacterGoal$1(characterLevel, characterId, name, "character", eidolon);
     await addTraceGoal$1(characterId, skill_list, skills_servant);
   }
   const characterStatusList$1 = [
@@ -2584,7 +3122,7 @@ var __publicField = (obj, key, value) => {
     { level: 70, asc: 6, text: "70 A" },
     { level: 80, asc: 6, text: "80" }
   ];
-  const initCharacterStatus$1 = (level_current) => {
+  const initCharacterStatus = (level_current) => {
     let initCharacterStatus2 = characterStatusList$1[0];
     if (level_current < 20) {
       return initCharacterStatus2;
@@ -2601,13 +3139,22 @@ var __publicField = (obj, key, value) => {
     }
     return initCharacterStatus2;
   };
-  const updateTrace$1 = async (talent, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9) => {
+  const updateTrace$1 = async (talent, normalGoal = 6, skillGoal = 9, burstGoal = 9, talentGoal2 = 9, petSkillGoal = 0, petTalentGoal = 0, elationGoal = 0) => {
     const {
       basic: { current: basicCurrent },
       skill: { current: skillCurrent },
       ultimate: { current: ultimateCurrent },
       talent: { current: talentCurrent }
     } = talent;
+    const path = getCharacterPath(talent.character);
+    const isRemembrance = path === "remembrance";
+    const isElation = path === "elation";
+    const applyExtra = (skill, goalCap, applicable) => {
+      if (!goalCap || !applicable || !skill)
+        return skill;
+      const cur = skill.current;
+      return { current: cur, goal: cur > goalCap ? cur : goalCap };
+    };
     const talentNew = {
       ...talent,
       basic: {
@@ -2625,11 +3172,14 @@ var __publicField = (obj, key, value) => {
       talent: {
         current: talentCurrent,
         goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
-      }
+      },
+      pet_skill: applyExtra(talent.pet_skill, petSkillGoal, isRemembrance),
+      pet_talent: applyExtra(talent.pet_talent, petTalentGoal, isRemembrance),
+      elation_skill: applyExtra(talent.elation_skill, elationGoal, isElation)
     };
-    await addGoal$1(talentNew);
+    await addGoal(talentNew);
   };
-  const batchUpdateTrace$1 = async (all, normal, skill, burst, t) => {
+  const batchUpdateTrace$1 = async (all, normal, skill, burst, t, petSkill = 0, petTalent = 0, elation = 0) => {
     if (normal > 6) {
       normal = 6;
     }
@@ -2637,25 +3187,15 @@ var __publicField = (obj, key, value) => {
       "trace",
       "character",
       // 天赋目标用character字段标识
-      (trace) => updateTrace$1(trace, normal, skill, burst, t),
+      (trace) => updateTrace$1(trace, normal, skill, burst, t, petSkill, petTalent, elation),
       all
     );
-  };
-  const updateCharacter$1 = async (character, characterStatusGoal) => {
-    const { current } = character;
-    const { level: levelCurrent, asc: ascCurrent } = current;
-    const { level, asc } = characterStatusGoal;
-    const characterGoalNew = {
-      ...character,
-      goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current
-    };
-    await addGoal$1(characterGoalNew);
   };
   const batchUpdateCharacter$1 = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "character",
       "character",
-      updateCharacter$1,
+      updateCharacter,
       all,
       characterStatusGoal
     ).then(() => {
@@ -2666,7 +3206,7 @@ var __publicField = (obj, key, value) => {
     batchUpdateGoals(
       "cone",
       "cone",
-      (weapon) => updateCharacter$1(weapon, characterStatusGoal),
+      (weapon) => updateCharacter(weapon, characterStatusGoal),
       all,
       characterStatusGoal
     ).then(() => {
@@ -2676,8 +3216,8 @@ var __publicField = (obj, key, value) => {
   class HsrAdapter extends BaseAdapter {
     constructor() {
       super(...arguments);
-      __publicField(this, "batchUpdateTalent", (all, normal, skill, burst, t) => {
-        batchUpdateTrace$1(all, normal, skill, burst, t);
+      __publicField(this, "batchUpdateTalent", (all, normal, skill, burst, t, petSkill = 0, petTalent = 0, elation = 0) => {
+        batchUpdateTrace$1(all, normal, skill, burst, t, petSkill, petTalent, elation);
       });
       __publicField(this, "getInactiveConfig", () => {
         const HSR_INACTIVE_CONFIG = [
@@ -2695,18 +3235,28 @@ var __publicField = (obj, key, value) => {
         ];
         return HSR_INACTIVE_CONFIG;
       });
+      // 1 分钟节流（避免频繁打米游社 calc/compute；独立 key 不干扰 GI 的 last-sync）；prefetched = 角色同步已拉取详情，复用跳过 list/detail
+      __publicField(this, "batchUpdateInventory", async (uid, region, prefetched) => {
+        const cfg = this.getApiConfig();
+        return withThrottle("hsr-last-sync", "HSR 素材同步", (u, r) => batchUpdateInventoryHSR(u, r, cfg, prefetched), uid, region);
+      });
     }
     getGameName() {
       return GameType.HSR;
     }
     getApiConfig() {
       return {
-        BBS_URL: "https://act.mihoyo.com/sr/event/cultivation-tool/index.html",
-        ROLE_URL: "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hkrpg_cn"
+        calcPageUrl: HSR_CALC_PAGE_URL,
+        roleUrl: HSR_ROLE_URL,
+        charactersUrl: HSR_AVATAR_LIST_URL,
+        // rpgcultivate/avatar/list（act-api，data.avatars + first_meet_time/is_own 判拥有）
+        charactersDetailUrl: HSR_AVATAR_DETAIL_URL,
+        // rpgcultivate/calc/avatar/detail（真实养成状态，素材计算取 max_level）
+        computeUrl: HSR_COMPUTE_URL
       };
     }
     async getCharacterDetails(uid, region) {
-      return getDetailList$1(uid, region);
+      return getDetailList$1(uid, region, this.getApiConfig());
     }
     async syncCharacters(res) {
       console.group("返回数据");
@@ -2734,6 +3284,8 @@ var __publicField = (obj, key, value) => {
       console.groupEnd();
       console.groupEnd();
       for (let v of res) {
+        if (!v.isOwned)
+          continue;
         await addCharacter$1(v);
       }
     }
@@ -2750,12 +3302,8 @@ var __publicField = (obj, key, value) => {
       return localforage2.setItem(key, value);
     }
   }
-  axios$1.defaults.adapter = xhrAdapter;
-  axios$1.defaults.withCredentials = true;
-  const CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/nap_cultivate_tool/user/avatar_basic_list";
-  const CHARACTERS_DETAIL_URL = "https://api-takumi.mihoyo.com/event/nap_cultivate_tool/user/batch_avatar_detail_v2";
-  const getCharacters = async (uid, region, page = 1) => {
-    let url = CHARACTERS_URL;
+  const getCharacters = async (uid, region, page = 1, cfg) => {
+    let url = cfg.charactersUrl;
     let params = `?uid=${uid}&region=${region}`;
     let fp = await getFp();
     const [err, res] = await to(axios$1.get(url + params, {
@@ -2773,14 +3321,16 @@ var __publicField = (obj, key, value) => {
           const { list: characterList } = await data2;
           return characterList;
         }
+        checkLogin(retcode, "绝区零", cfg.calcPageUrl);
+        console.warn(`[ZZZ] 角色列表获取失败 retcode=${retcode}: ${resData?.message || ""}`);
       }
     }
     alert("请确认已登录活动页面且绑定账户!");
     throw err ? err : new Error("角色列表获取失败");
   };
-  const getCharacterDetail = async (ids, uid, region) => {
+  const getCharacterDetail = async (ids, uid, region, cfg) => {
     const params = `?uid=${uid}&region=${region}`;
-    let URL = CHARACTERS_DETAIL_URL;
+    let URL = cfg.charactersDetailUrl;
     let fp = await getFp();
     let avatarList = ids.map((id) => ({
       avatar_id: id,
@@ -2809,72 +3359,154 @@ var __publicField = (obj, key, value) => {
           const { list: characterList } = await data2;
           return characterList;
         }
+        checkLogin(retcode, "绝区零", cfg.calcPageUrl);
+        console.warn(`[ZZZ] 角色详情获取失败 retcode=${retcode}: ${resData?.message || ""}`);
       }
     } else {
       console.error(err);
     }
     return [];
   };
-  const getDetailList = async (game_uid, region) => {
+  const getDetailList = async (game_uid, region, cfg) => {
     let maxPageSize = 1;
     let idxs = Array.from(new Array(maxPageSize).keys());
-    const characters2 = [];
+    const characters = [];
     for await (let i of idxs) {
-      let characterData = await getCharacters(game_uid, region, i + 1);
-      characters2.push.apply(characters2, characterData.filter((a) => a.unlocked).map((a) => a.avatar));
+      let characterData = await getCharacters(game_uid, region, i + 1, cfg);
+      characters.push.apply(characters, characterData.filter((a) => a.unlocked).map((a) => a.avatar));
     }
-    let ids = characters2.map((a) => a.id);
+    let ids = characters.map((a) => a.id);
     const batchSize = 10;
     const allResults = [];
     for (let i = 0; i < ids.length; i += batchSize) {
       const batchIds = ids.slice(i, i + batchSize);
-      const batchResults = await getCharacterDetail(batchIds, game_uid, region);
+      const batchResults = await getCharacterDetail(batchIds, game_uid, region, cfg);
       allResults.push(...batchResults);
     }
     return allResults;
   };
-  const characters = JSON.parse(GM_getResourceText("zzz_character"));
-  const weapons = JSON.parse(GM_getResourceText("zzz_weapon"));
-  characters.length;
-  const getCharacterId = (queryName) => {
-    for (let e of characters) {
-      const { id, name } = e;
-      if (queryName == name) {
-        return id;
+  const ZZZ_REQ_DELAY = 800;
+  const ZZZ_REQ_JITTER = 400;
+  const buildZzzHeaders = async () => {
+    const { fp, deviceId } = await getFpDeviceId();
+    return {
+      ...buildBaseHeaders(fp, deviceId),
+      "x-rpc-cultivate_source": "pc",
+      "x-rpc-geetest_ext": JSON.stringify({ gameId: 8, page: "v2.6.8_apps-h_#", viewSource: 1, actionSource: 132 }),
+      "x-rpc-is_teaser": "1",
+      "x-rpc-lang": "zh-cn",
+      "x-rpc-lrsag": "",
+      "x-rpc-page": "v2.6.8_apps-h_#"
+    };
+  };
+  const ZZZ_SPECIAL = {
+    10: { type: "denny", key: "denny", tier: 0 }
+  };
+  const ZZZ_CALC_SKILLS = [
+    { skill_type: 0, level: 12, init_level: 1 },
+    { skill_type: 1, level: 12, init_level: 1 },
+    { skill_type: 2, level: 12, init_level: 1 },
+    { skill_type: 3, level: 12, init_level: 1 },
+    { skill_type: 5, level: 7, init_level: 1 },
+    { skill_type: 6, level: 12, init_level: 1 }
+  ];
+  const batchUpdateInventoryZZZ = async (uid, region, cfg, prefetched) => {
+    const raw = prefetched && prefetched.length ? prefetched : await getCharacters(uid, region, 1, cfg);
+    const list = raw.filter((d) => d.unlocked !== false);
+    if (!list.length)
+      throw new Error("[ZZZ素材] 未获取到任何 ZZZ 角色");
+    console.log(`[ZZZ素材] 已加载 ${list.length} 个角色（${prefetched?.length ? "复用角色同步数据" : "仅全量 list"}）`);
+    const pageItems = getItemsFromPage();
+    const itemLib = loadSeelieItems("[ZZZ素材]", pageItems);
+    const source = pageItems ? "page" : "none";
+    const h2 = await buildZzzHeaders();
+    const merged = {};
+    let computed = 0;
+    for (const d of list) {
+      await sleepWithJitter(ZZZ_REQ_DELAY, ZZZ_REQ_JITTER);
+      const avatar = d.avatar || d;
+      const avatarId = avatar?.id ?? d.id;
+      const skills = ZZZ_CALC_SKILLS.map((s) => ({ ...s }));
+      const weaponId = d.signature_weapon_id || d.weapon?.id || avatar?.weapon?.id;
+      const body = {
+        avatar_id: String(avatarId),
+        avatar_level: 60,
+        avatar_current_level: 1,
+        avatar_current_promotes: 0,
+        skills,
+        weapon_info: weaponId ? {
+          weapon_id: String(weaponId),
+          weapon_level: 60,
+          weapon_promotes: 0,
+          weapon_init_level: 0
+        } : void 0
+      };
+      const url = `${cfg.computeUrl}?uid=${uid}&region=${region}`;
+      const ok = await postCalcAndMerge(url, body, h2, "[ZZZ素材]", "绝区零", cfg.calcPageUrl, merged, avatarId);
+      if (ok) {
+        computed++;
+        if (computed % 10 === 0)
+          console.log(`[ZZZ素材] 已计算 ${computed}/${list.length}`);
       }
     }
-    console.error(`getCharacterId ${queryName} 查询失败`);
-    return "";
+    if (!Object.keys(merged).length)
+      throw new Error("[ZZZ素材] 未计算出任何素材（请检查接口/items 库）");
+    const results = writeMergedToSeelieInventory(merged, itemLib, ZZZ_SPECIAL, "[ZZZ素材]");
+    return { ok: true, count: results.length, source };
   };
-  const getWeaponId = (queryName) => {
-    for (let e of weapons) {
-      const { id, name } = e;
-      if (queryName == name) {
-        return id;
+  const getRuntimeCatalog = (which) => {
+    try {
+      const app = document.querySelector("#app");
+      const data2 = app?._vnode?.component?.data;
+      const cat = data2?.[which];
+      if (cat && typeof cat === "object" && !Array.isArray(cat)) {
+        return cat;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+  let _characterIdMap = null;
+  let _weaponIdMap = null;
+  const getIdMap = (which) => {
+    const cached = which === "characters" ? _characterIdMap : _weaponIdMap;
+    if (cached)
+      return cached;
+    const map = /* @__PURE__ */ new Map();
+    const cat = getRuntimeCatalog(which);
+    if (cat) {
+      for (const [key, entry] of Object.entries(cat)) {
+        if (entry && typeof entry.id === "number" && entry.id > 0) {
+          map.set(entry.id, key);
+        }
       }
     }
-    console.error(`getWeaponrId ${queryName} 查询失败`);
+    if (which === "characters")
+      _characterIdMap = map;
+    else
+      _weaponIdMap = map;
+    return map;
+  };
+  const getCharacterId = (input) => {
+    const id = typeof input === "string" ? void 0 : input.id;
+    if (typeof id === "number" && id > 0) {
+      const key = getIdMap("characters").get(id);
+      if (key)
+        return key;
+    }
+    console.error(`getCharacterId 查询失败 (input=${JSON.stringify(input)})`);
     return "";
   };
-  const addGoal = async (data2) => {
-    var _a2, _b2;
-    let index = -1;
-    const goals = await getTotalGoal();
-    if (data2.character) {
-      index = goals.findIndex(
-        (g2) => g2.character === data2.character && g2.type === data2.type
-      );
-    } else if (data2.id) {
-      index = goals.findIndex((g2) => g2.id === data2.id);
+  const getWeaponId = (input) => {
+    const id = typeof input === "string" ? void 0 : input.id;
+    if (typeof id === "number" && id > 0) {
+      const key = getIdMap("weapons").get(id);
+      if (key)
+        return key;
     }
-    if (index >= 0) {
-      goals[index] = { ...goals[index], ...data2 };
-    } else {
-      const lastId = (_b2 = (_a2 = goals == null ? void 0 : goals.map((g2) => g2.id)) == null ? void 0 : _a2.filter((id) => typeof id == "number")) == null ? void 0 : _b2.sort((a, b) => a < b ? 1 : -1)[0];
-      data2.id = (lastId || 0) + 1;
-      goals.push(data2);
-    }
-    await setGoals(goals);
+    console.error(`getWeaponId 查询失败 (input=${JSON.stringify(input)})`);
+    return "";
   };
   const addTraceGoal = async (talentCharacter, skill_list) => {
     const totalGoal = await getTotalGoal();
@@ -2958,33 +3590,46 @@ var __publicField = (obj, key, value) => {
     }
     await addGoal(talentGoal);
   };
-  const addCharacterGoal = async (level_current, nameEn, name, type) => {
-    let totalGoal = await getTotalGoal();
-    let characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
-    let weaponPredicate = (g2) => g2.type == type && g2.weapon == nameEn;
+  const resolveStatus = (level, promote) => {
+    const closest = characterStatusList.filter((s) => s.level <= level).pop() ?? characterStatusList[0];
+    const candidates = characterStatusList.filter((s) => s.level === closest.level);
+    if (typeof promote !== "number") {
+      return { ...closest };
+    }
+    const cap = promote * 10;
+    const ascended = cap > closest.level;
+    return { ...ascended ? candidates[candidates.length - 1] : candidates[0] };
+  };
+  const addCharacterGoal = async (status, nameEn, type, extra) => {
+    const totalGoal = await getTotalGoal();
+    const cons = extra?.cons;
+    const owner = extra?.owner ?? "";
+    const characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
+    const weaponPredicate = (g2) => g2.type == type && g2.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
-    const characterStatus = initCharacterStatus(level_current);
-    let characterGoal;
+    const characterStatus = status;
     function initCharacterGoal(id) {
       return {
         type: "character",
         character: nameEn,
         current: characterStatus,
-        goal: characterStatus,
+        goal: { ...characterStatus },
         id,
-        cons: 0
+        cons: cons ?? 0
       };
     }
     function initWeaponGoal(id) {
+      const ws = { ...characterStatus, craft: 0 };
       return {
         type: "weapon",
-        character: "",
+        character: owner,
         weapon: nameEn,
-        current: characterStatus,
-        goal: characterStatus,
+        current: ws,
+        goal: { ...ws },
         id
       };
     }
+    let characterGoal;
     if (characterIdx < 0) {
       const id = await getNextId();
       characterGoal = type == "character" ? initCharacterGoal(id) : initWeaponGoal(id);
@@ -2994,31 +3639,43 @@ var __publicField = (obj, key, value) => {
       const { level: levelCurrent, asc: ascCurrent } = current;
       const { level: levelGoal, asc: ascGoal } = goal;
       const { level, asc } = characterStatus;
-      characterGoal = {
+      const merged = {
         ...seelieGoal,
         current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
         goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal
       };
+      if (type == "character" && (cons !== void 0 || seelieGoal.cons !== void 0)) {
+        merged.cons = Math.max(seelieGoal.cons ?? 0, cons ?? 0);
+      }
+      characterGoal = merged;
     }
     await addGoal(characterGoal);
   };
   async function addCharacter(characterDataEx) {
     const { avatar: character, weapon } = characterDataEx;
-    const { name_mi18n: name, skills: skill_list } = character;
+    const { level: characterLevel, rank, promotes } = character;
     if (weapon) {
-      const { name: name2, level: weaponLeveL } = weapon;
-      const weaponId = getWeaponId(name2);
+      const { level: weaponLevel, promotes: weaponPromotes } = weapon;
+      const weaponId = getWeaponId(weapon);
       if (weaponId) {
-        await addCharacterGoal(weaponLeveL, weaponId, name2, "weapon");
+        await addCharacterGoal(
+          resolveStatus(weaponLevel, weaponPromotes),
+          weaponId,
+          "weapon"
+        );
       }
     }
-    const { level: characterLevel } = character;
-    const characterId = getCharacterId(name);
-    if (!characterId || characterId.includes("trailblazer")) {
+    const characterId = getCharacterId(character);
+    if (!characterId) {
       return;
     }
-    await addCharacterGoal(characterLevel, characterId, name, "character");
-    await addTraceGoal(characterId, skill_list);
+    await addCharacterGoal(
+      resolveStatus(characterLevel, promotes),
+      characterId,
+      "character",
+      { cons: rank }
+    );
+    await addTraceGoal(characterId, character.skills);
   }
   const characterStatusList = [
     { level: 1, asc: 0, text: "1" },
@@ -3032,23 +3689,6 @@ var __publicField = (obj, key, value) => {
     { level: 50, asc: 4, text: "50 A" },
     { level: 60, asc: 5, text: "60" }
   ];
-  const initCharacterStatus = (level_current) => {
-    let initCharacterStatus2 = characterStatusList[0];
-    if (level_current < 20) {
-      return initCharacterStatus2;
-    }
-    for (let characterStatus of characterStatusList) {
-      const { level } = characterStatus;
-      if (level_current < level) {
-        return initCharacterStatus2;
-      } else if (level_current == level) {
-        return characterStatus;
-      } else if (level_current > level) {
-        initCharacterStatus2 = characterStatus;
-      }
-    }
-    return initCharacterStatus2;
-  };
   const updateTrace = async (talent, basicGoal = 11, dodgeGoal = 11, assistGoal = 11, specialGoal = 11, chainGoal = 11, coreGoal = 6) => {
     const {
       basic: { current: baseCurrent },
@@ -3099,16 +3739,6 @@ var __publicField = (obj, key, value) => {
       all
     );
   };
-  const updateCharacter = async (character, characterStatusGoal) => {
-    const { current } = character;
-    const { level: levelCurrent, asc: ascCurrent } = current;
-    const { level, asc } = characterStatusGoal;
-    const characterGoalNew = {
-      ...character,
-      goal: level >= levelCurrent && asc >= ascCurrent ? characterStatusGoal : current
-    };
-    await addGoal(characterGoalNew);
-  };
   const batchUpdateCharacter = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "character",
@@ -3155,18 +3785,26 @@ var __publicField = (obj, key, value) => {
         ];
         return ZZZ_INACTIVE_CONFIG;
       });
+      // 1 分钟节流（避免频繁打米游社 avatar_calc；独立 key 不干扰 GI/HSR）；prefetched = 角色同步已拉取详情，复用跳过 list/detail
+      __publicField(this, "batchUpdateInventory", async (uid, region, prefetched) => {
+        const cfg = this.getApiConfig();
+        return withThrottle("zzz-last-sync", "ZZZ 素材同步", (u, r) => batchUpdateInventoryZZZ(u, r, cfg, prefetched), uid, region);
+      });
     }
     getGameName() {
       return GameType.ZZZ;
     }
     getApiConfig() {
       return {
-        BBS_URL: "https://act.mihoyo.com/zzz/gt/character-builder-h/index.html",
-        ROLE_URL: "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookieToken?game_biz=nap_cn"
+        calcPageUrl: ZZZ_CALC_PAGE_URL,
+        roleUrl: ZZZ_ROLE_URL,
+        charactersUrl: ZZZ_CHARACTERS_URL,
+        charactersDetailUrl: ZZZ_CHARACTERS_DETAIL_URL,
+        computeUrl: ZZZ_CALC_URL
       };
     }
     async getCharacterDetails(uid, region) {
-      return getDetailList(uid, region);
+      return getDetailList(uid, region, this.getApiConfig());
     }
     async syncCharacters(res) {
       console.group("返回数据");
@@ -3295,41 +3933,64 @@ var __publicField = (obj, key, value) => {
       // 原神天赋类型
       labels: ["普通攻击", "元素战技", "元素爆发"],
       // 对应标签
-      maxLevel: 10
+      maxLevel: 10,
       // 原神天赋最大等级
+      extraTypes: []
+      // 原神无忆灵/欢愉技
     },
     [GameType.HSR]: {
       talentTypes: ["normal", "skill", "burst", "t"],
       // HSR行迹类型
       labels: ["普通攻击", "战技", "终结技", "天赋"],
       // HSR标签
-      maxLevel: 10
+      maxLevel: 10,
       // HSR行迹最大等级
+      // 勾选即批量设目标为该技能上限；仅对确实拥有该类型的角色生效
+      extraTypes: [{
+        key: "pet_skill",
+        label: "忆灵技",
+        max: 6
+      }, {
+        key: "pet_talent",
+        label: "忆灵天赋",
+        max: 6
+      }, {
+        key: "elation_skill",
+        label: "欢愉技",
+        max: 10
+      }]
     },
     [GameType.ZZZ]: {
       talentTypes: ["basic", "dodge", "assist", "special", "chain", "core"],
       // ZZZ技能类型
       labels: ["普通攻击", "闪避技", "支援技", "特殊技", "连携技", "核心被动"],
       // ZZZ标签
-      maxLevel: 12
+      maxLevel: 12,
       // ZZZ技能最大等级
+      extraTypes: []
+      // ZZZ无忆灵/欢愉技
     }
   };
   function TalentGoalTab() {
     const currentGame = AdapterManager.getCurrentGameType();
+    const config = TALENT_CONFIG[currentGame] || TALENT_CONFIG[GameType.GENSHIN];
     const {
       talentTypes,
       labels,
-      maxLevel
-    } = TALENT_CONFIG[currentGame] || TALENT_CONFIG[GameType.GENSHIN];
+      maxLevel,
+      extraTypes
+    } = config;
+    const safeExtra = extraTypes || [];
     const [talentGoalLevel, setTalentGoalLevel] = require$$1.useState(Object.fromEntries(talentTypes.map((type) => [type, maxLevel - 1])));
     const [selectAllRoles, setSelectAllRoles] = require$$1.useState(true);
+    const [extraChecked, setExtraChecked] = require$$1.useState(Object.fromEntries((extraTypes || []).map((e) => [e.key, true])));
     const talentLevels = Array.from({
       length: maxLevel
     }, (_, i) => i + 1).reverse();
     const handleBatchUpdate = () => {
       const levels = talentTypes.map((type) => talentGoalLevel[type]);
-      AdapterManager.getCurrentAdapter().batchUpdateTalent(!selectAllRoles, ...levels);
+      const extra = safeExtra.map((e) => extraChecked[e.key] ? e.max : 0);
+      AdapterManager.getCurrentAdapter().batchUpdateTalent(!selectAllRoles, ...levels, ...extra);
     };
     return /* @__PURE__ */ jsxs("div", {
       children: [" ", /* @__PURE__ */ jsxs("div", {
@@ -3358,6 +4019,22 @@ var __publicField = (obj, key, value) => {
             show: (num) => `${num}`
           })]
         }, type))]
+      }), safeExtra.length > 0 && /* @__PURE__ */ jsxs("div", {
+        className: "flex flex-wrap items-center gap-4 pt-2",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "text-sm",
+          children: "忆灵/欢愉（勾选=批量设上限）："
+        }), safeExtra.map((e) => /* @__PURE__ */ jsxs("label", {
+          className: "flex items-center gap-1 text-sm",
+          children: [/* @__PURE__ */ jsx("input", {
+            type: "checkbox",
+            checked: !!extraChecked[e.key],
+            onChange: (ev) => setExtraChecked((prev) => ({
+              ...prev,
+              [e.key]: ev.target.checked
+            }))
+          }), e.label, "(max ", e.max, ")"]
+        }, e.key))]
       }), /* @__PURE__ */ jsxs("div", {
         className: "flex pt-2",
         children: [" ", /* @__PURE__ */ jsxs("div", {
@@ -3371,10 +4048,9 @@ var __publicField = (obj, key, value) => {
       })]
     });
   }
-  function ExDialog(props) {
-    const {
-      onClose
-    } = props;
+  function ExDialog({
+    onClose
+  }) {
     const currentAdapter = AdapterManager.getCurrentAdapter();
     require$$1.useEffect(() => {
       console.log(`当前游戏：${currentAdapter.getGameName()}`);
@@ -3384,8 +4060,11 @@ var __publicField = (obj, key, value) => {
     const [isFirstPanelOpen, setIsFirstPanelOpen] = require$$1.useState(false);
     const [isSecondPanelOpen, setIsSecondPanelOpen] = require$$1.useState(false);
     const [activeTab, setActiveTab] = require$$1.useState(0);
-    const [isSyncing, setIsSyncing] = require$$1.useState(false);
+    const [loading, setLoading] = require$$1.useState(false);
+    const [progress, setProgress] = require$$1.useState(0);
+    const [progressText, setProgressText] = require$$1.useState("");
     const panelRefs = [require$$1.useRef(null), require$$1.useRef(null)];
+    const dialogRef = require$$1.useRef(null);
     require$$1.useEffect(() => {
       const handleClickOutside = (e) => {
         if (panelRefs[0].current && !panelRefs[0].current.contains(e.target) && isFirstPanelOpen) {
@@ -3398,6 +4077,10 @@ var __publicField = (obj, key, value) => {
       document.addEventListener("click", handleClickOutside);
       return () => document.removeEventListener("click", handleClickOutside);
     }, [isFirstPanelOpen, isSecondPanelOpen]);
+    const handleMouseLeave = () => {
+      setIsFirstPanelOpen(false);
+      setIsSecondPanelOpen(false);
+    };
     const handleRoleSelectChange = (idx) => {
       setCurrentAccount(accountList[idx]);
     };
@@ -3419,51 +4102,86 @@ var __publicField = (obj, key, value) => {
         alert("账户信息获取失败");
       });
     };
-    const syncCharacterInfo = () => {
+    const syncAll = async () => {
       if (!currentAccount) {
         console.error("账户信息获取失败");
         alert("账户信息获取失败");
         return;
       }
-      console.log("开始同步角色信息");
-      setIsSyncing(true);
+      resetLoginFlag();
+      resetSyncRequestCount();
       const {
         game_uid,
         region
       } = currentAccount;
-      currentAdapter.getCharacterDetails(game_uid, region).then(async (res) => {
-        await currentAdapter.syncCharacters(res);
+      console.log("开始同步（角色信息 + 素材/库存）");
+      setLoading(true);
+      setProgress(5);
+      setProgressText("正在获取角色详情...");
+      let progressInterval = null;
+      try {
+        const res = await currentAdapter.getCharacterDetails(game_uid, region);
+        setProgress(30);
+        setProgressText("正在写入角色/天赋目标...");
+        progressInterval = setInterval(() => {
+          setProgress((prev) => {
+            if (prev < 85)
+              return prev + 2;
+            return prev;
+          });
+        }, 3e3);
+        currentAdapter.syncCharacters(res);
+        setProgress(40);
+        setProgressText("角色目标写入完成，正在同步素材/库存...");
+        const invRes = await currentAdapter.batchUpdateInventory(game_uid, region, res);
+        if (progressInterval) {
+          clearInterval(progressInterval);
+          progressInterval = null;
+        }
+        setProgress(100);
+        setProgressText("同步完成");
+        const skipped = invRes && invRes.skipped;
+        console.log("素材/库存同步结果:", invRes);
+        console.log(`[请求计数] 本次同步共发起 ${getSyncRequestCount()} 个 HTTP 请求`);
         console.log("米游社数据无法判断是否突破,请自行比较整数等级是否已突破");
-        console.log("角色信息同步完毕");
-        await refreshPage();
-      }).catch((err) => {
+        alert(skipped ? `角色信息已同步
+（素材/库存同步暂不支持当前游戏：${invRes.reason || ""}）` : "同步完毕（角色信息 + 素材/库存）");
+        location.reload();
+      } catch (err) {
+        if (progressInterval) {
+          clearInterval(progressInterval);
+        }
         console.error("同步失败:", err);
-        GM_openInTab(currentAdapter.getApiConfig().BBS_URL);
-      }).finally(() => {
-        setIsSyncing(false);
-      });
+        console.log(`[请求计数] 同步中断前已发起 ${getSyncRequestCount()} 个 HTTP 请求`);
+        alert("同步失败：" + (err?.message || err));
+      } finally {
+        setLoading(false);
+        setProgress(0);
+        setProgressText("");
+      }
     };
     function classNames2(...classes) {
       return classes.filter(Boolean).join(" ");
     }
-    const handleMouseLeave = () => {
-      setIsFirstPanelOpen(false);
-      setIsSecondPanelOpen(false);
-      onClose();
-    };
-    const batchInActive = () => {
-      setInactive(currentAdapter.getInactiveConfig());
-    };
     return /* @__PURE__ */ jsxs("div", {
-      className: "fixed top-10 inset-x-[20%] ex-mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl",
+      ref: dialogRef,
+      className: "fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl",
       onMouseLeave: handleMouseLeave,
-      children: [/* @__PURE__ */ jsx("h1", {
-        className: "text-3xl font-bold underline pt-4 text-white",
-        children: "SeelieEX"
+      children: [/* @__PURE__ */ jsxs("div", {
+        className: "flex items-center justify-between px-4 pt-4",
+        children: [/* @__PURE__ */ jsx("h1", {
+          className: "text-3xl font-bold underline text-white",
+          children: "SeelieEX"
+        }), /* @__PURE__ */ jsx("button", {
+          className: "text-white text-2xl leading-none hover:text-gray-300",
+          onClick: onClose,
+          "aria-label": "关闭",
+          children: "×"
+        })]
       }), /* @__PURE__ */ jsx("div", {
         className: "w-full p-4",
         children: /* @__PURE__ */ jsxs("div", {
-          className: "w-full max-w-md p-2 ex-mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50",
+          className: "w-full max-w-md p-2 mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50",
           children: [/* @__PURE__ */ jsxs("div", {
             ref: panelRefs[0],
             className: "mt-2 border border-gray-700 rounded-lg bg-slate-700/50",
@@ -3471,7 +4189,7 @@ var __publicField = (obj, key, value) => {
               className: "flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors",
               onClick: () => setIsFirstPanelOpen(!isFirstPanelOpen),
               children: [/* @__PURE__ */ jsx("span", {
-                children: "角色信息同步"
+                children: "同步"
               }), /* @__PURE__ */ jsx("svg", {
                 className: `w-5 h-5 text-purple-300 transition-transform ${isFirstPanelOpen ? "transform rotate-180" : ""}`,
                 fill: "none",
@@ -3512,18 +4230,29 @@ var __publicField = (obj, key, value) => {
                 })]
               }), /* @__PURE__ */ jsx("div", {
                 className: "flex pt-2",
-                children: /* @__PURE__ */ jsxs("div", {
+                children: /* @__PURE__ */ jsx("div", {
                   className: "w-full",
-                  children: [/* @__PURE__ */ jsx("button", {
-                    className: "text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded transition-colors",
-                    onClick: syncCharacterInfo,
-                    disabled: isSyncing,
-                    children: isSyncing ? "同步中..." : "同步mihoyo角色信息"
-                  }), isSyncing && /* @__PURE__ */ jsx("div", {
-                    className: "mt-2 text-blue-300",
-                    children: "正在同步角色信息，请稍候..."
-                  })]
+                  children: /* @__PURE__ */ jsx("button", {
+                    className: `px-4 py-2 rounded transition-colors ${loading ? "text-gray-300 bg-gray-600 cursor-not-allowed" : "text-white bg-blue-600 hover:bg-blue-500"}`,
+                    onClick: syncAll,
+                    disabled: loading,
+                    children: loading ? "同步中..." : "同步"
+                  })
                 })
+              }), loading && /* @__PURE__ */ jsxs("div", {
+                className: "mt-3",
+                children: [/* @__PURE__ */ jsx("div", {
+                  className: "w-full bg-gray-700 rounded-full h-2.5",
+                  children: /* @__PURE__ */ jsx("div", {
+                    className: "bg-blue-500 h-2.5 rounded-full transition-all duration-500 ease-out",
+                    style: {
+                      width: `${progress}%`
+                    }
+                  })
+                }), /* @__PURE__ */ jsx("p", {
+                  className: "text-xs text-gray-300 mt-1",
+                  children: progressText
+                })]
               })]
             })]
           }), /* @__PURE__ */ jsxs("div", {
@@ -3546,16 +4275,9 @@ var __publicField = (obj, key, value) => {
                   d: "M19 9l-7 7-7-7"
                 })
               })]
-            }), isSecondPanelOpen && /* @__PURE__ */ jsxs("div", {
+            }), isSecondPanelOpen && /* @__PURE__ */ jsx("div", {
               className: "px-4 pt-4 pb-2 text-sm text-gray-100",
-              children: [/* @__PURE__ */ jsx("div", {
-                className: "mb-4",
-                children: /* @__PURE__ */ jsx("button", {
-                  className: "w-full text-white bg-blue-500 py-2 px-4 rounded transition-colors",
-                  onClick: batchInActive,
-                  children: "一键激活/取消未达标目标"
-                })
-              }), /* @__PURE__ */ jsxs("div", {
+              children: /* @__PURE__ */ jsxs("div", {
                 className: "mt-4",
                 children: [/* @__PURE__ */ jsx("div", {
                   className: "flex border-b border-gray-600",
@@ -3574,7 +4296,7 @@ var __publicField = (obj, key, value) => {
                     batchUpdateCharacter: currentAdapter.batchUpdateWeapon
                   })]
                 })]
-              })]
+              })
             })]
           })]
         })
@@ -3601,7 +4323,7 @@ var __publicField = (obj, key, value) => {
   let seelieEx = document.createElement("div");
   seelieEx.id = "seelieEx";
   seelieEx.className = "flex";
-  (_b = (_a = document.getElementById("app")) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.append(seelieEx);
+  document.getElementById("app")?.parentElement?.append(seelieEx);
   ReactDOM2.render(/* @__PURE__ */ jsx(require$$1.StrictMode, {
     children: /* @__PURE__ */ jsx(App, {})
   }), document.getElementById("seelieEx"));
