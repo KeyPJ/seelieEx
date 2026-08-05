@@ -15,9 +15,21 @@ import {
     getTotalGoal,
     updateCharacter,
 } from "../common";
-let initBonus = {} as Bonus
+// 由米游社 skills_other 生成 seelie bonus（额外能力/已激活点）映射。
+// key = point_id（与 seelie 完全一致）；value = 是否已点亮（cur_level>0）。
+// 需排除 point_type===2 的节点（战技/秘技 Point05 类，不计入额外能力；
+// 验证见 references/seelie hsr data.txt：char1501 的 bonus = skills_other 去掉 type2 的 1501007 后剩余 13 个）。
+const buildBonus = (skillsOther?: mihoyo.HSRSkill[]): Bonus => {
+    const bonus: Bonus = {};
+    for (const s of skillsOther ?? []) {
+        // point_type 接口返回可能是字符串（如 "2"），必须 Number 化再比较，否则字符串 "2" === 2 为 false 会漏排除
+        if (Number(s.point_type) === 2) continue;
+        bonus[String(s.point_id)] = Number(s.cur_level) > 0;
+    }
+    return bonus;
+};
 
-const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill[], skills_servant: mihoyo.HSRSkill[]) => {
+const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill[], skills_servant: mihoyo.HSRSkill[], skills_other?: mihoyo.HSRSkill[]) => {
     const totalGoal = await getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "trace" && g.character == talentCharacter);
     // 按 point_type 筛选：type=2 是 4 个战斗技能，type=4 是欢愉技
@@ -36,6 +48,7 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
     const path = getCharacterPath(talentCharacter);
     const isRemembrance = path === "remembrance"; // 忆灵技 / 忆灵天赋
     const isElation = path === "elation";          // 欢愉技
+    const builtBonus = buildBonus(skills_other);
     let talentGoal: TraceGoal;
     if (talentIdx < 0) {
         const id = await getNextId();
@@ -58,7 +71,7 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
                 current: talentCurrent,
                 goal: talentCurrent
             },
-            bonus: initBonus,
+            bonus: builtBonus,
             id,
             ...(isRemembrance ? {
                 pet_skill: {
@@ -90,6 +103,9 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
         const elationGoal = seelieGoal.elation_skill?.goal ?? 1;
         talentGoal = {
             ...seelieGoal,
+            // 合并米游社 skills_other 推导的已激活点：既有 bonus 保留（含用户自定义/活动节点），
+            // 标准节点以米游社当前点亮状态覆盖（cur_level>0 → true）。
+            bonus: {...seelieGoal.bonus, ...builtBonus},
             basic: {
                 current: baseCurrent,
                 goal: baseCurrent > basicGoal ? Math.min(baseCurrent, 6) : basicGoal
@@ -182,7 +198,7 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
 
 export async function addCharacter(characterDataEx: HSRCharacterData) {
 
-    const {avatar: character, skills: skill_list, skills_servant, equipment: weapon} = characterDataEx;
+    const {avatar: character, skills: skill_list, skills_servant, skills_other, equipment: weapon} = characterDataEx;
     const {item_name: name, item_id: itemId, rank} = character;
 
     if (weapon) {
@@ -205,7 +221,7 @@ export async function addCharacter(characterDataEx: HSRCharacterData) {
     const eidolon = parseInt(rank ?? "") || 0;
     await addCharacterGoal(characterLevel, characterId, name, "character", eidolon);
 
-    await addTraceGoal(characterId, skill_list, skills_servant);
+    await addTraceGoal(characterId, skill_list, skills_servant, skills_other);
 
 }
 

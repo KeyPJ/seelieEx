@@ -91,13 +91,11 @@ declare module seelie {
         goal: CharacterStatus;
     }
 
+    // HSR 额外能力（已激活点）映射：key = 节点 point_id（与米游社 skills_other.point_id 1:1 对应），
+    // value = 是否已点亮。运行时实际存储为扁平 boolean map（见 references/seelie hsr data.txt 的 trace goal.bonus），
+    // 旧版误写为 {type:string; done:boolean} 对象，已修正。
     export interface Bonus {
-        [K: string]: BonusTrace
-    }
-
-    export interface BonusTrace {
-        type: string
-        done: boolean
+        [K: string]: boolean
     }
 
     //hsr end
