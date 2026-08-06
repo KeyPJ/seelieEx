@@ -84,7 +84,8 @@ export const addCharacterGoal = async (
     const owner = extra?.owner ?? "";
     const characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     // 武器按「所属角色」去重（与原站一致）：换武器即更新该角色的武器目标，而不是残留旧武器
-    const weaponPredicate = (g: Goal) => g.type == "weapon" && g.character == owner;
+    // 关联模式(owner 非空)：按「角色 + 武器」去重；不关联模式(owner 空)：按武器型号去重并清空旧关联
+    const weaponPredicate = (g: Goal) => g.type == "weapon" && (owner ? g.character == owner : g.weapon == nameEn);
     // 旧版兼容：老数据的武器目标写的是 character: ""（按武器名去重），owner 谓词永远命中不了，
     // 会给老用户多留一条孤儿目标。owner 未命中时按「空 character + 同武器名」回捞旧条目，
     // 合并时把 character 回填成 owner，完成一次性迁移。
@@ -164,7 +165,7 @@ export const addCharacterGoal = async (
     await addGoal(characterGoal, true) // fallbackToId=true 兼容旧版武器目标
 };
 
-export async function addCharacter(characterDataEx: CharacterDataEx, recorder?: OwnershipRecorder) {
+export async function addCharacter(characterDataEx: CharacterDataEx, recorder?: OwnershipRecorder, associateWeapon = true) {
 
     const {character, skill_list, weapon} = characterDataEx;
 
@@ -194,10 +195,10 @@ export async function addCharacter(characterDataEx: CharacterDataEx, recorder?: 
             // 武器突破继续由 level_current 推导（weapon_level 是随稀有度变化的 promotion 阶，不能当 asc）
             await addCharacterGoal(
                 resolveStatus(weapon.level_current),
-                weaponId, "weapon", {owner: characterId}
+                weaponId, "weapon", {owner: associateWeapon ? characterId : undefined}
             );
-            // 记录"角色→当前穿戴武器"，供同步末尾回收过期归属
-            if (recorder) {
+            // 记录"角色→当前穿戴武器"，供同步末尾回收过期归属（仅关联模式）
+            if (associateWeapon && recorder) {
                 if (!recorder.worn.has(characterId)) recorder.worn.set(characterId, new Set());
                 recorder.worn.get(characterId)!.add(weaponId);
             }

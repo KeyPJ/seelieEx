@@ -120,11 +120,12 @@ export const addCharacterGoal = async (
     status: CharacterStatus,
     nameEn: string,
     type: "character" | "weapon",
-    extra?: { cons?: number; owner?: string }
+    extra?: { cons?: number; owner?: string },
+    associate = true
 ) => {
     const totalGoal = await getTotalGoal() as Goal[];
     const cons = extra?.cons;
-    const owner = extra?.owner ?? "";
+    const owner = associate ? (extra?.owner ?? "") : "";
     const characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
     const weaponPredicate = (g: Goal) => g.type == type && g.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
@@ -168,8 +169,8 @@ export const addCharacterGoal = async (
             current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
         };
-        // 武器/光锥：合并时回填关联角色，修复历史遗留的空 character 孤儿记录（新增走 initWeaponGoal 已带 owner）
-        if (type != "character" && owner) {
+        // 武器/光锥：合并时回填/清空关联角色（关联模式置 owner，不关联模式清空为 ""，修复历史孤儿）
+        if (type != "character") {
             merged.character = owner;
         }
         // 命座只增不减
@@ -192,7 +193,7 @@ export const addCharacterGoal = async (
     await addGoal(characterGoal)
 };
 
-export async function addCharacter(characterDataEx: HSRCharacterData, recorder?: OwnershipRecorder) {
+export async function addCharacter(characterDataEx: HSRCharacterData, recorder?: OwnershipRecorder, associateWeapon = true) {
 
     const {avatar: character, weapon} = characterDataEx;
     const {level: characterLevel, rank, promotes} = character;
@@ -202,14 +203,15 @@ export async function addCharacter(characterDataEx: HSRCharacterData, recorder?:
         const {level: weaponLevel, promotes: weaponPromotes} = weapon;
         const weaponId = getWeaponId(weapon);
         if (weaponId) {
-            // 武器无 promotes 字段，沿用等级推导；craft 默认 0；owner=角色，关联「武器关联角色」页（与 GI 一致）
+            // 武器无 promotes 字段，沿用等级推导；craft 默认 0；owner=角色，关联「武器关联角色」页（与 GI 一致）；不关联时置空
             await addCharacterGoal(
                 resolveStatus(weaponLevel, weaponPromotes),
                 weaponId, "weapon",
-                {owner: characterId}
+                {owner: associateWeapon ? characterId : undefined},
+                associateWeapon
             );
-            // 记录"角色→当前穿戴武器"，供同步末尾回收过期归属
-            if (recorder) {
+            // 记录"角色→当前穿戴武器"，供同步末尾回收过期归属（仅关联模式）
+            if (associateWeapon && recorder) {
                 if (!recorder.worn.has(characterId)) recorder.worn.set(characterId, new Set());
                 recorder.worn.get(characterId)!.add(weaponId);
             }

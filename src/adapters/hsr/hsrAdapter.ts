@@ -28,7 +28,7 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         return getHsrDetailList(uid, region, this.getApiConfig());
     }
 
-    async syncCharacters(res: any[]) {
+    async syncCharacters(res: any[], associateWeapon = true) {
         console.group("返回数据");
         console.groupCollapsed("角色");
         console.table(res.map((a) => a.avatar));
@@ -57,10 +57,12 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         for (let v of res) {
             // first_meet_time===0 的未拥有角色不同步进 seelie 目标（isOwned 由 getDetailList 透传）
             if (!v.isOwned) continue;
-            await addCharacter(v, recorder)
+            await addCharacter(v, recorder, associateWeapon)
         }
-        // 同步末尾校准：回收「角色已脱下」的武器/光锥过期归属
-        await reconcileWeaponOwnership(recorder.synced, recorder.worn);
+        // 同步末尾校准：回收「角色已脱下」的武器/光锥过期归属（仅关联模式需要）
+        if (associateWeapon) {
+            await reconcileWeaponOwnership(recorder.synced, recorder.worn);
+        }
     }
 
     protected importSeelieMethods() {

@@ -42,8 +42,8 @@ export interface GameAdapter {
     // 获取角色详情列表
     getCharacterDetails: (uid: string, region: string) => Promise<any[]>;
 
-    // 同步角色信息到规划工具
-    syncCharacters: (details: any[]) => void;
+    // 同步角色信息到规划工具；associateWeapon=false 时不同步「武器关联角色」
+    syncCharacters: (details: any[], associateWeapon?: boolean) => void;
 
     // 获取游戏名称
     getGameName: () => string;

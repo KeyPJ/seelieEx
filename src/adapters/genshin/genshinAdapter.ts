@@ -34,7 +34,7 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
         return getGenshinDetailList(uid, region, this.getApiConfig());
     }
 
-    async syncCharacters(res: any[]) {
+    async syncCharacters(res: any[], associateWeapon = true) {
         console.group("返回数据");
 
         console.groupCollapsed("角色");
@@ -55,10 +55,12 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
         console.groupEnd();
         const recorder: OwnershipRecorder = {synced: new Set(), worn: new Map()};
         for (let v of res) {
-            await addCharacter(v, recorder)
+            await addCharacter(v, recorder, associateWeapon)
         }
-        // 同步末尾校准：回收「角色已脱下」的武器/光锥过期归属
-        await reconcileWeaponOwnership(recorder.synced, recorder.worn);
+        // 同步末尾校准：回收「角色已脱下」的武器/光锥过期归属（仅关联模式需要）
+        if (associateWeapon) {
+            await reconcileWeaponOwnership(recorder.synced, recorder.worn);
+        }
     }
 
     protected importSeelieMethods() {

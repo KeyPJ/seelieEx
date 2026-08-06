@@ -90,6 +90,7 @@ function ExDialog({onClose}: { onClose?: () => void }) {
     const [progress, setProgress] = useState(0);
     const [progressText, setProgressText] = useState("");
     const [syncInventory, setSyncInventory] = useState(true); // 是否同步背包库存（素材/武器/光锥），默认勾选
+    const [associateWeapon, setAssociateWeapon] = useState(true); // 是否同步角色武器关联（可能影响批量规划），默认勾选
     const panelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
 
     // 添加对话框根元素的引用
@@ -170,7 +171,7 @@ function ExDialog({onClose}: { onClose?: () => void }) {
                 });
             }, 3000);
 
-            await currentAdapter.syncCharacters(res);
+            await currentAdapter.syncCharacters(res, associateWeapon);
             setProgress(40);
 
             let invRes: any = null;
@@ -268,6 +269,18 @@ function ExDialog({onClose}: { onClose?: () => void }) {
                                 />
                                 <label htmlFor="syncInventory" className="text-sm text-gray-200 cursor-pointer select-none">
                                     同步背包库存（时间可能相对较长）
+                                </label>
+                            </div>
+                            <div className="flex items-center pt-3">
+                                <input
+                                    type="checkbox"
+                                    id="associateWeapon"
+                                    checked={associateWeapon}
+                                    onChange={(e) => setAssociateWeapon(e.target.checked)}
+                                    className="mr-2 h-4 w-4 accent-blue-500"
+                                />
+                                <label htmlFor="associateWeapon" className="text-sm text-gray-200 cursor-pointer select-none">
+                                    同步角色武器关联（可能影响批量规划）
                                 </label>
                             </div>
                             <div className="flex pt-2">

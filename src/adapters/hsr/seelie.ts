@@ -142,10 +142,12 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
     await addGoal(talentGoal)
 };
 
-export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string, eidolon?: number, owner?: string) => {
+export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string, eidolon?: number, owner?: string, associate = true) => {
     const totalGoal = await getTotalGoal() as Goal[];
+    const linkOwner = associate ? (owner ?? "") : "";
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
-    let weaponPredicate = (g: Goal) => g.type == type && g.cone == nameEn && (owner ? (g.character == owner || !g.character) : !g.character);
+    // 关联模式(linkOwner 非空)：按「角色 + 光锥」去重；不关联模式(linkOwner 空)：按光锥型号去重并清空旧关联
+    let weaponPredicate = (g: Goal) => g.type == type && g.cone == nameEn && (linkOwner ? (g.character == linkOwner || !g.character) : true);
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
     const characterStatus: CharacterStatus = initCharacterStatus(level_current);
     let characterGoal: Goal
@@ -166,7 +168,7 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
 
         return {
             type,
-            character: owner ?? "",
+            character: linkOwner ?? "",
             cone: nameEn,
             current: characterStatus,
             goal: characterStatus,
@@ -189,9 +191,9 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
             current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
         };
-        // 武器/光锥：合并时回填关联角色，修复历史遗留的空 character 孤儿记录（新增走 initWeaponGoal 已带 owner）
-        if (type != "character" && owner) {
-            merged.character = owner;
+        // 武器/光锥：合并时回填/清空关联角色（关联模式置 owner，不关联模式清空为 ""，修复历史孤儿）
+        if (type != "character") {
+            merged.character = linkOwner;
         }
         // 命座只增不减（光锥无 eidolon 字段，不注入）
         if (type == "character" && (eidolon !== undefined || (seelieGoal as CharacterGoal).eidolon !== undefined)) {
@@ -213,7 +215,7 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
     await addGoal(characterGoal)
 };
 
-export async function addCharacter(characterDataEx: HSRCharacterData, recorder?: OwnershipRecorder) {
+export async function addCharacter(characterDataEx: HSRCharacterData, recorder?: OwnershipRecorder, associateWeapon = true) {
 
     const {avatar: character, skills: skill_list, skills_servant, skills_other, equipment: weapon} = characterDataEx;
     const {item_name: name, item_id: itemId, rank} = character;
@@ -224,10 +226,10 @@ export async function addCharacter(characterDataEx: HSRCharacterData, recorder?:
         // 米游社 item_id 为字符串（如 "23060"），运行时目录 id 为数字，反查前必须 parseInt
         const weaponId = getWeaponId({id: parseInt(weaponItemId)});
         if (weaponId) {
-            // owner=角色，关联「武器关联角色」页（与 GI 一致）
-            await addCharacterGoal(weaponLeveL, weaponId, weaponName, "cone", undefined, characterId);
-            // 记录"角色→当前穿戴光锥"，供同步末尾回收过期归属
-            if (recorder) {
+            // owner=角色，关联「武器关联角色」页（与 GI 一致）；不关联时置空
+            await addCharacterGoal(weaponLeveL, weaponId, weaponName, "cone", undefined, associateWeapon ? characterId : undefined, associateWeapon);
+            // 记录"角色→当前穿戴光锥"，供同步末尾回收过期归属（仅关联模式）
+            if (associateWeapon && recorder) {
                 if (!recorder.worn.has(characterId)) recorder.worn.set(characterId, new Set());
                 recorder.worn.get(characterId)!.add(weaponId);
             }
