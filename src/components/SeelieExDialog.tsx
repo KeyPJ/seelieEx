@@ -170,7 +170,7 @@ function ExDialog({onClose}: { onClose?: () => void }) {
                 });
             }, 3000);
 
-            currentAdapter.syncCharacters(res);
+            await currentAdapter.syncCharacters(res);
             setProgress(40);
 
             let invRes: any = null;

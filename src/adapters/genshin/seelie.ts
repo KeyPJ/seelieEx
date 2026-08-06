@@ -10,6 +10,7 @@ import {
     batchUpdateGoals,
     getNextId,
     getTotalGoal,
+    OwnershipRecorder,
     updateCharacter,
 } from "../common";
 
@@ -163,7 +164,7 @@ export const addCharacterGoal = async (
     await addGoal(characterGoal, true) // fallbackToId=true 兼容旧版武器目标
 };
 
-export async function addCharacter(characterDataEx: CharacterDataEx) {
+export async function addCharacter(characterDataEx: CharacterDataEx, recorder?: OwnershipRecorder) {
 
     const {character, skill_list, weapon} = characterDataEx;
 
@@ -177,6 +178,8 @@ export async function addCharacter(characterDataEx: CharacterDataEx) {
     if (!characterId) {
         return
     }
+    // 角色确认参与本次同步（用于同步末尾回收"已脱下武器"的过期归属）
+    recorder?.synced.add(characterId);
     // 角色：突破档直接用接口的 promote_level，命座用 constellation_num
     await addCharacterGoal(
         resolveStatus(character.level_current, character.promote_level),
@@ -193,6 +196,11 @@ export async function addCharacter(characterDataEx: CharacterDataEx) {
                 resolveStatus(weapon.level_current),
                 weaponId, "weapon", {owner: characterId}
             );
+            // 记录"角色→当前穿戴武器"，供同步末尾回收过期归属
+            if (recorder) {
+                if (!recorder.worn.has(characterId)) recorder.worn.set(characterId, new Set());
+                recorder.worn.get(characterId)!.add(weaponId);
+            }
         }
     }
 

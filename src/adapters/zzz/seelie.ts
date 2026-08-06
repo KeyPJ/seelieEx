@@ -10,6 +10,8 @@ import {
     batchUpdateGoals,
     getNextId,
     getTotalGoal,
+    OwnershipRecorder,
+    setGoals,
     updateCharacter,
 } from "../common";
 
@@ -166,35 +168,58 @@ export const addCharacterGoal = async (
             current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
         };
+        // 武器/光锥：合并时回填关联角色，修复历史遗留的空 character 孤儿记录（新增走 initWeaponGoal 已带 owner）
+        if (type != "character" && owner) {
+            merged.character = owner;
+        }
         // 命座只增不减
         if (type == "character" && (cons !== undefined || (seelieGoal as CharacterGoal).cons !== undefined)) {
             merged.cons = Math.max((seelieGoal as CharacterGoal).cons ?? 0, cons ?? 0);
         }
-        characterGoal = merged;
+        // 原地更新命中记录并写回；同时清除同 weapon/cone 的重复孤儿，
+        // 避免「未关联角色」(character="") 与「已关联」(character=owner) 重复显示。
+        // 不再走 addGoal 的 character+type 模糊查找（旧记录 character 为空会查不到 → 误判为新建 → 重复）。
+        totalGoal[characterIdx] = merged;
+        const keyField: "character" | "cone" | "weapon" = type == "character" ? "character" : "weapon";
+        for (let i = totalGoal.length - 1; i >= 0; i--) {
+            if (i !== characterIdx && totalGoal[i].type === type && (totalGoal[i] as any)[keyField] === nameEn) {
+                totalGoal.splice(i, 1);
+            }
+        }
+        await setGoals(totalGoal);
+        return;
     }
     await addGoal(characterGoal)
 };
 
-export async function addCharacter(characterDataEx: HSRCharacterData) {
+export async function addCharacter(characterDataEx: HSRCharacterData, recorder?: OwnershipRecorder) {
 
     const {avatar: character, weapon} = characterDataEx;
     const {level: characterLevel, rank, promotes} = character;
 
-    if (weapon) {
+    const characterId = getCharacterId(character);
+    if (weapon && characterId) {
         const {level: weaponLevel, promotes: weaponPromotes} = weapon;
         const weaponId = getWeaponId(weapon);
         if (weaponId) {
-            // 武器无 promotes 字段，沿用等级推导；craft 默认 0
+            // 武器无 promotes 字段，沿用等级推导；craft 默认 0；owner=角色，关联「武器关联角色」页（与 GI 一致）
             await addCharacterGoal(
                 resolveStatus(weaponLevel, weaponPromotes),
-                weaponId, "weapon"
+                weaponId, "weapon",
+                {owner: characterId}
             );
+            // 记录"角色→当前穿戴武器"，供同步末尾回收过期归属
+            if (recorder) {
+                if (!recorder.worn.has(characterId)) recorder.worn.set(characterId, new Set());
+                recorder.worn.get(characterId)!.add(weaponId);
+            }
         }
     }
-    const characterId = getCharacterId(character);
     if (!characterId) {
         return
     }
+    // 角色确认参与本次同步；用于同步末尾回收"已脱下武器"的过期归属
+    recorder?.synced.add(characterId);
     // 角色：突破档用真实 promotes，命座用 rank 写入 cons
     await addCharacterGoal(
         resolveStatus(characterLevel, promotes),

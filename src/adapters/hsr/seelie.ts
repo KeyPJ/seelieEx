@@ -13,6 +13,8 @@ import {
     batchUpdateGoals,
     getNextId,
     getTotalGoal,
+    OwnershipRecorder,
+    setGoals,
     updateCharacter,
 } from "../common";
 // 由米游社 skills_other 生成 seelie bonus（额外能力/已激活点）映射。
@@ -140,10 +142,10 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
     await addGoal(talentGoal)
 };
 
-export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string, eidolon?: number) => {
+export const addCharacterGoal = async (level_current: number, nameEn: String, name: string, type: string, eidolon?: number, owner?: string) => {
     const totalGoal = await getTotalGoal() as Goal[];
     let characterPredicate = (g: Goal) => g.type == type && g.character == nameEn;
-    let weaponPredicate = (g: Goal) => g.type == type && g.cone == nameEn;
+    let weaponPredicate = (g: Goal) => g.type == type && g.cone == nameEn && (owner ? (g.character == owner || !g.character) : !g.character);
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
     const characterStatus: CharacterStatus = initCharacterStatus(level_current);
     let characterGoal: Goal
@@ -164,7 +166,7 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
 
         return {
             type,
-            character: "",
+            character: owner ?? "",
             cone: nameEn,
             current: characterStatus,
             goal: characterStatus,
@@ -187,36 +189,59 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
             current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
             goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
         };
+        // 武器/光锥：合并时回填关联角色，修复历史遗留的空 character 孤儿记录（新增走 initWeaponGoal 已带 owner）
+        if (type != "character" && owner) {
+            merged.character = owner;
+        }
         // 命座只增不减（光锥无 eidolon 字段，不注入）
         if (type == "character" && (eidolon !== undefined || (seelieGoal as CharacterGoal).eidolon !== undefined)) {
             merged.eidolon = Math.max((seelieGoal as CharacterGoal).eidolon ?? 0, eidolon ?? 0);
         }
-        characterGoal = merged as CharacterGoal;
+        // 原地更新命中记录并写回；同时清除同 weapon/cone 的重复孤儿，
+        // 避免「未关联角色」(character="") 与「已关联」(character=owner) 重复显示。
+        // 不再走 addGoal 的 character+type 模糊查找（旧记录 character 为空会查不到 → 误判为新建 → 重复）。
+        totalGoal[characterIdx] = merged;
+        const keyField: "character" | "cone" | "weapon" = type == "character" ? "character" : type == "cone" ? "cone" : "weapon";
+        for (let i = totalGoal.length - 1; i >= 0; i--) {
+            if (i !== characterIdx && totalGoal[i].type === type && (totalGoal[i] as any)[keyField] === nameEn) {
+                totalGoal.splice(i, 1);
+            }
+        }
+        await setGoals(totalGoal);
+        return;
     }
     await addGoal(characterGoal)
 };
 
-export async function addCharacter(characterDataEx: HSRCharacterData) {
+export async function addCharacter(characterDataEx: HSRCharacterData, recorder?: OwnershipRecorder) {
 
     const {avatar: character, skills: skill_list, skills_servant, skills_other, equipment: weapon} = characterDataEx;
     const {item_name: name, item_id: itemId, rank} = character;
+    const characterId = getCharacterId({id: parseInt(itemId)});
 
-    if (weapon) {
+    if (weapon && characterId) {
         const {item_name: weaponName, item_id: weaponItemId, cur_level: weaponLeveL} = weapon;
         // 米游社 item_id 为字符串（如 "23060"），运行时目录 id 为数字，反查前必须 parseInt
         const weaponId = getWeaponId({id: parseInt(weaponItemId)});
         if (weaponId) {
-            await addCharacterGoal(weaponLeveL, weaponId, weaponName, "cone");
+            // owner=角色，关联「武器关联角色」页（与 GI 一致）
+            await addCharacterGoal(weaponLeveL, weaponId, weaponName, "cone", undefined, characterId);
+            // 记录"角色→当前穿戴光锥"，供同步末尾回收过期归属
+            if (recorder) {
+                if (!recorder.worn.has(characterId)) recorder.worn.set(characterId, new Set());
+                recorder.worn.get(characterId)!.add(weaponId);
+            }
         }
     }
     const {cur_level: characterLevel} = character;
-    const characterId = getCharacterId({id: parseInt(itemId)});
     // 开拓者一律跳过（沿用既有行为）。运行时目录 5 条开拓者的 id 是男主(8001/8003/8005/8007/8009)、
     // alt_id 是女主(8002/8004/8006/8008/8010)；getIdMap 只映射 entry.id，
     // 故女主号的 item_id 反查为空串，而男主号会命中 trailblazer_* ——必须保留 includes 兜底才能性别无关地跳过。
     if (!characterId || characterId.includes("trailblazer")) {
         return
     }
+    // 角色确认参与本次同步（开拓者已早退）；用于同步末尾回收"已脱下武器"的过期归属
+    recorder?.synced.add(characterId);
     // 命座：detail 的 avatar.rank 是字符串（如 "0"），转数字后交由 addCharacterGoal 做「只增不减」合并
     const eidolon = parseInt(rank ?? "") || 0;
     await addCharacterGoal(characterLevel, characterId, name, "character", eidolon);

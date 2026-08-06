@@ -405,6 +405,39 @@ export const addGoal = async (data: any, fallbackToId = false) => {
     await setGoals(goals);
 };
 
+/** 武器/光锥归属回收用的收集器：synced=本次实际同步到的角色；worn=角色→其当前穿戴的武器/光锥 key 集合 */
+export interface OwnershipRecorder {
+    synced: Set<string>;
+    worn: Map<string, Set<string>>;
+}
+
+/**
+ * 同步末尾校准武器/光锥归属：解决「角色脱下武器后旧归属残留」。
+ * 规则：对每条 weapon/cone goal，若其 character 指向角色 C：
+ *   - C 本次未参与同步（状态未知）→ 保留，避免误清；
+ *   - C 本次同步了但仍穿戴该武器/光锥 → 保留（addCharacter 已写对）；
+ *   - C 本次同步了但已不再穿戴 → 清空 character（释放过期归属）。
+ * 不触碰角色目标与武器自身养成数据，仅回收"关联角色"字段。
+ */
+export const reconcileWeaponOwnership = async (
+    syncedCharacters: Set<string>,
+    wornByCharacter: Map<string, Set<string>>
+) => {
+    const goals = await getTotalGoal() as Goal[];
+    let changed = false;
+    for (const g of goals) {
+        if (g.type !== "weapon" && g.type !== "cone") continue;
+        const c = (g as any).character;
+        if (!c) continue;
+        if (!syncedCharacters.has(c)) continue;
+        const key = g.type === "cone" ? (g as any).cone : (g as any).weapon;
+        if (wornByCharacter.get(c)?.has(key)) continue;
+        (g as any).character = "";
+        changed = true;
+    }
+    if (changed) await setGoals(goals);
+};
+
 /** 通用 updateCharacter（三端完全相同） */
 export const updateCharacter = async (character: any, characterStatusGoal: seelie.CharacterStatus) => {
     const {current} = character;

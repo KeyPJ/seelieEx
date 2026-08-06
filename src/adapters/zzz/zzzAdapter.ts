@@ -10,6 +10,7 @@ import {
 import {BaseAdapter} from "../baseAdapter";
 import {withThrottle} from "../inventory-common";
 import {ZZZ_CALC_PAGE_URL, ZZZ_CALC_URL, ZZZ_CHARACTERS_DETAIL_URL, ZZZ_CHARACTERS_URL, ZZZ_ROLE_URL} from "../apiUrls";
+import {reconcileWeaponOwnership, OwnershipRecorder} from "../common";
 
 export class ZzzAdapter extends BaseAdapter implements GameAdapter {
 
@@ -50,9 +51,12 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
         console.groupEnd();
 
         console.groupEnd();
+        const recorder: OwnershipRecorder = {synced: new Set(), worn: new Map()};
         for (let v of res) {
-            await addCharacter(v)
+            await addCharacter(v, recorder)
         }
+        // 同步末尾校准：回收「角色已脱下」的武器/光锥过期归属
+        await reconcileWeaponOwnership(recorder.synced, recorder.worn);
     }
 
     protected importSeelieMethods() {

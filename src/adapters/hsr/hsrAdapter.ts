@@ -5,6 +5,7 @@ import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon,
 import {BaseAdapter} from "../baseAdapter";
 import {withThrottle} from "../inventory-common";
 import {HSR_AVATAR_DETAIL_URL, HSR_AVATAR_LIST_URL, HSR_CALC_PAGE_URL, HSR_COMPUTE_URL, HSR_ROLE_URL} from "../apiUrls";
+import {reconcileWeaponOwnership, OwnershipRecorder} from "../common";
 import localforage from "localforage";
 
 export class HsrAdapter extends BaseAdapter implements GameAdapter {
@@ -52,11 +53,14 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
         });
         console.groupEnd();
         console.groupEnd();
+        const recorder: OwnershipRecorder = {synced: new Set(), worn: new Map()};
         for (let v of res) {
             // first_meet_time===0 的未拥有角色不同步进 seelie 目标（isOwned 由 getDetailList 透传）
             if (!v.isOwned) continue;
-            await addCharacter(v)
+            await addCharacter(v, recorder)
         }
+        // 同步末尾校准：回收「角色已脱下」的武器/光锥过期归属
+        await reconcileWeaponOwnership(recorder.synced, recorder.worn);
     }
 
     protected importSeelieMethods() {
