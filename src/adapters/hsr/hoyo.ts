@@ -61,19 +61,23 @@ const getCharacterDetail = async (character: any, uid: string, region: string, c
 export const getDetailList = async (game_uid: string, region: string, cfg: GameApiConfig) => {
     // 单次返回【全量】角色（含未拥有），供「角色同步(仅已拥有)」与「素材全量计算(含未拥有)」共用，避免重复拉取
     const avatars = await getCharacters(game_uid, region, cfg);
-    const detailPromises = avatars.map(c => getCharacterDetail(c, game_uid, region, cfg));
-    const settled = await Promise.all(detailPromises);
     const detailList: HSRCharacterData[] = [];
-    for (let i = 0; i < avatars.length; i++) {
-        const d = settled[i];
-        if (d) {
-            // detail 响应本身不含 first_meet_time，故把「是否拥有」从 list 透传过来，
-            // 供 hsrAdapter.syncCharacters 过滤（first_meet_time===0 的未拥有角色不同步进 seelie 目标）。
-            // 注意：接口返回的是字符串（"0" / "1784969041"），必须转 number 再判断。
-            // 用 > 0 而非 !== 0：语义为「首次相遇时间戳为正数即拥有」，且能防御脏值/负数（NaN>0 与 负数>0 均为 false，安全按未拥有跳过）。
-            (d as any).isOwned = Number(avatars[i].first_meet_time || 0) > 0;
-            detailList.push(d);
+    const D_BATCH = 8;
+    for (let i = 0; i < avatars.length; i += D_BATCH) {
+        const slice = avatars.slice(i, i + D_BATCH);
+        const settled = await Promise.all(slice.map(c => getCharacterDetail(c, game_uid, region, cfg)));
+        for (let j = 0; j < slice.length; j++) {
+            const d = settled[j];
+            if (d) {
+                // detail 响应本身不含 first_meet_time，故把「是否拥有」从 list 透传过来，
+                // 供 hsrAdapter.syncCharacters 过滤（first_meet_time===0 的未拥有角色不同步进 seelie 目标）。
+                // 注意：接口返回的是字符串（"0" / "1784969041"），必须转 number 再判断。
+                // 用 > 0 而非 !== 0：语义为「首次相遇时间戳为正数即拥有」，且能防御脏值/负数（NaN>0 与 负数>0 均为 false，安全按未拥有跳过）。
+                (d as any).isOwned = Number(slice[j].first_meet_time || 0) > 0;
+                detailList.push(d);
+            }
         }
+        if (i + D_BATCH < avatars.length) await sleep(HSR_REQ_DELAY);
     }
     return detailList;
 }

@@ -63,6 +63,7 @@ const getCharacterDetail = async (character: Character, uid: string, region: str
 export const getDetailList = async (game_uid: string, region: string, cfg: GameApiConfig) => {
 
     let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
+    if (maxPageSize < 1) maxPageSize = 1;
     let idxs = Array.from(new Array(maxPageSize).keys());
 
 

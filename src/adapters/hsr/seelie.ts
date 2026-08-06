@@ -16,6 +16,8 @@ import {
     OwnershipRecorder,
     setGoals,
     updateCharacter,
+    mergeLevel,
+    mergeCharacterStatus,
 } from "../common";
 // 由米游社 skills_other 生成 seelie bonus（额外能力/已激活点）映射。
 // key = point_id（与 seelie 完全一致）；value = 是否已点亮（cur_level>0）。
@@ -35,8 +37,9 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
     const totalGoal = await getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "trace" && g.character == talentCharacter);
     // 按 point_type 筛选：type=2 是 4 个战斗技能，type=4 是欢愉技
-    const combatSkills = skill_list.filter(s => s.point_type === 2).sort((a, b) => parseInt(a.point_id) - parseInt(b.point_id));
-    const elationSkill = skill_list.find(s => s.point_type === 4);
+    // 注意：接口返回的 point_type 可能是字符串（"2"/"4"），必须 Number() 化再比较（与 buildBonus 一致）
+    const combatSkills = skill_list.filter(s => Number(s.point_type) === 2).sort((a, b) => parseInt(a.point_id) - parseInt(b.point_id));
+    const elationSkill = skill_list.find(s => Number(s.point_type) === 4);
     const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = combatSkills.map(a => a.cur_level);
     const elationCurrent = elationSkill?.cur_level;
     let [petSkillCurrent, petTalentCurrent] = [1, 1]
@@ -110,16 +113,16 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.HSRSkill
             bonus: {...seelieGoal.bonus, ...builtBonus},
             basic: {
                 current: baseCurrent,
-                goal: baseCurrent > basicGoal ? Math.min(baseCurrent, 6) : basicGoal
+                goal: mergeLevel(baseCurrent, basicGoal, 6)
             }, skill: {
                 current: skillCurrent,
-                goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
+                goal: mergeLevel(skillCurrent, skillGoal)
             }, ultimate: {
                 current: ultimateCurrent,
-                goal: ultimateCurrent > ultimateGoal ? ultimateCurrent : ultimateGoal
+                goal: mergeLevel(ultimateCurrent, ultimateGoal)
             }, talent: {
                 current: talentCurrent,
-                goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
+                goal: mergeLevel(talentCurrent, talentGoal2)
             },
             ...(isRemembrance ? {
                 pet_skill: {
@@ -186,10 +189,11 @@ export const addCharacterGoal = async (level_current: number, nameEn: String, na
         const {level: levelGoal, asc: ascGoal} = goal;
         const {level, asc} = characterStatus;
 
+        const {current: mergedCurrent, goal: mergedGoal} = mergeCharacterStatus(characterStatus, current, goal);
         const merged: any = {
             ...seelieGoal,
-            current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
-            goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
+            current: mergedCurrent,
+            goal: mergedGoal,
         };
         // 武器/光锥：合并时回填/清空关联角色（关联模式置 owner，不关联模式清空为 ""，修复历史孤儿）
         if (type != "character") {
@@ -309,16 +313,16 @@ const updateTrace = async (talent: TraceGoal, normalGoal = 6, skillGoal = 9, bur
         ...talent,
         basic: {
             current: basicCurrent,
-            goal: basicCurrent > normalGoal ? basicCurrent : normalGoal
+            goal: mergeLevel(basicCurrent, normalGoal, 6)
         }, skill: {
             current: skillCurrent,
-            goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
+            goal: mergeLevel(skillCurrent, skillGoal)
         }, ultimate: {
             current: ultimateCurrent,
-            goal: ultimateCurrent > burstGoal ? ultimateCurrent : burstGoal
+            goal: mergeLevel(ultimateCurrent, burstGoal)
         }, talent: {
             current: talentCurrent,
-            goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
+            goal: mergeLevel(talentCurrent, talentGoal2)
         },
         pet_skill: applyExtra(talent.pet_skill, petSkillGoal, isRemembrance),
         pet_talent: applyExtra(talent.pet_talent, petTalentGoal, isRemembrance),

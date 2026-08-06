@@ -13,20 +13,24 @@ import {
     OwnershipRecorder,
     setGoals,
     updateCharacter,
+    mergeLevel,
+    mergeCharacterStatus,
 } from "../common";
 
 const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.ZZZSkill[]) => {
     const totalGoal = await getTotalGoal() as Goal[];
     const talentIdx = totalGoal.findIndex(g => g.type == "talent" && g.character == talentCharacter);
-    // 创建排序权重映射
-    const typeOrder = [0, 2, 6, 1, 3, 5];
-    skill_list.sort((a, b) => {
-        const aIndex = typeOrder.indexOf(a.skill_type);
-        const bIndex = typeOrder.indexOf(b.skill_type);
-        return aIndex - bIndex;
-    });
+    const levelByType = (t: number): number => {
+        const s = (skill_list ?? []).find(x => x.skill_type === t);
+        return s ? Number(s.level) : 0;
+    };
 
-    const [baseCurrent, dodgeCurrent, assistCurrent, specialCurrent, chainCurrent, coreCurrent] = skill_list.map(a => a.level);
+    const baseCurrent = levelByType(0);
+    const dodgeCurrent = levelByType(2);
+    const assistCurrent = levelByType(6);
+    const specialCurrent = levelByType(1);
+    const chainCurrent = levelByType(3);
+    const coreCurrent = levelByType(5);
     let talentGoal: TalentGoal;
     let coreValue = coreCurrent - 1;
     if (talentIdx < 0) {
@@ -73,24 +77,24 @@ const addTraceGoal = async (talentCharacter: string, skill_list: mihoyo.ZZZSkill
             ...seelieGoal,
             basic: {
                 current: baseCurrent,
-                goal: baseCurrent > basicGoal ? baseCurrent : basicGoal
+                goal: mergeLevel(baseCurrent, basicGoal)
             }, dodge: {
                 current: dodgeCurrent,
-                goal: dodgeCurrent > dodgeGoal ? dodgeCurrent : dodgeGoal
+                goal: mergeLevel(dodgeCurrent, dodgeGoal)
             }, assist: {
                 current: assistCurrent,
-                goal: assistCurrent > assistGoal ? assistCurrent : assistGoal
+                goal: mergeLevel(assistCurrent, assistGoal)
             }, special: {
                 current: specialCurrent,
-                goal: specialCurrent > specialGoal ? specialCurrent : specialGoal
+                goal: mergeLevel(specialCurrent, specialGoal)
             },
             chain: {
                 current: chainCurrent,
-                goal: chainCurrent > chainGoal ? chainCurrent : chainGoal
+                goal: mergeLevel(chainCurrent, chainGoal)
             },
             core: {
                 current: coreValue,
-                goal: coreValue > coreGoal ? coreValue : coreGoal
+                goal: mergeLevel(coreValue, coreGoal)
             }
         }
     }
@@ -164,11 +168,12 @@ export const addCharacterGoal = async (
         const {level: levelCurrent, asc: ascCurrent} = current;
         const {level: levelGoal, asc: ascGoal} = goal;
         const {level, asc} = characterStatus;
-        const merged: any = {
-            ...seelieGoal,
-            current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
-            goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal,
-        };
+    const {current: mergedCurrent, goal: mergedGoal} = mergeCharacterStatus(characterStatus, current, goal);
+    const merged: any = {
+        ...seelieGoal,
+        current: mergedCurrent,
+        goal: mergedGoal,
+    };
         // 武器/光锥：合并时回填/清空关联角色（关联模式置 owner，不关联模式清空为 ""，修复历史孤儿）
         if (type != "character") {
             merged.character = owner;
@@ -226,7 +231,7 @@ export async function addCharacter(characterDataEx: HSRCharacterData, recorder?:
     await addCharacterGoal(
         resolveStatus(characterLevel, promotes),
         characterId, "character",
-        {cons: rank}
+        {cons: Number(rank) || 0}
     );
 
     await addTraceGoal(characterId, character.skills);
@@ -258,24 +263,24 @@ const updateTrace = async (talent: TalentGoal, basicGoal = 11, dodgeGoal = 11, a
         ...talent,
         basic: {
             current: baseCurrent,
-            goal: baseCurrent > basicGoal ? baseCurrent : basicGoal
+            goal: mergeLevel(baseCurrent, basicGoal)
         }, dodge: {
             current: dodgeCurrent,
-            goal: dodgeCurrent > dodgeGoal ? dodgeCurrent : dodgeGoal
+            goal: mergeLevel(dodgeCurrent, dodgeGoal)
         }, assist: {
             current: assistCurrent,
-            goal: assistCurrent > assistGoal ? assistCurrent : assistGoal
+            goal: mergeLevel(assistCurrent, assistGoal)
         }, special: {
             current: specialCurrent,
-            goal: specialCurrent > specialGoal ? specialCurrent : specialGoal
+            goal: mergeLevel(specialCurrent, specialGoal)
         },
         chain: {
             current: chainCurrent,
-            goal: chainCurrent > chainGoal ? chainCurrent : chainGoal
+            goal: mergeLevel(chainCurrent, chainGoal)
         },
         core: {
             current: coreCurrent,
-            goal: coreCurrent > coreGoal ? coreCurrent : coreGoal
+            goal: mergeLevel(coreCurrent, coreGoal)
         }
     }
     await addGoal(talentNew)

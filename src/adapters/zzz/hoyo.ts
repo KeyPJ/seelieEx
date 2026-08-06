@@ -45,11 +45,10 @@ const getCharacters = async (uid: string, region: string, page = 1, cfg: GameApi
             console.warn(`[ZZZ] 角色列表获取失败 retcode=${retcode}: ${resData?.message || ""}`);
         }
     }
-    alert("请确认已登录活动页面且绑定账户!")
     throw err ? err : new Error("角色列表获取失败");
 };
 
-const getCharacterDetail = async (ids: number[], uid: string, region: string, cfg: GameApiConfig) => {
+const getCharacterDetail = async (ids: number[], uid: string, region: string, cfg: GameApiConfig): Promise<CharacterData[] | null> => {
     const params = `?uid=${uid}&region=${region}`
     let URL = cfg.charactersDetailUrl!;
     let fp = await getFp();
@@ -84,7 +83,7 @@ const getCharacterDetail = async (ids: number[], uid: string, region: string, cf
     } else {
         console.error(err)
     }
-    return [] as CharacterData[]
+    return null
 };
 
 export const getDetailList = async (game_uid: string, region: string, cfg: GameApiConfig) => {
@@ -100,14 +99,22 @@ export const getDetailList = async (game_uid: string, region: string, cfg: GameA
 
     let ids = characters.map(a => a.id);
 
-    // 将ids分成10个一组进行请求
+    // 将ids分成10个一组进行请求；单批失败不再静默丢弃，累计后告警
     const batchSize = 10;
     const allResults: CharacterData[] = [];
+    let dropped = 0;
 
     for (let i = 0; i < ids.length; i += batchSize) {
         const batchIds = ids.slice(i, i + batchSize);
         const batchResults = await getCharacterDetail(batchIds, game_uid, region, cfg);
-        allResults.push(...batchResults);
+        if (batchResults) {
+            allResults.push(...batchResults);
+        } else {
+            dropped += batchIds.length;
+        }
+    }
+    if (dropped) {
+        console.warn(`[ZZZ] ${dropped} 个角色详情获取失败，已跳过（不影响其余角色同步）`);
     }
 
     return allResults;

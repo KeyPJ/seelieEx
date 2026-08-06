@@ -162,6 +162,9 @@ export const getAccount = async (gameBiz: string, openUrl: string, gameType: str
                 const {list: accountList} = data as Data<Role>;
                 return accountList;
             }
+            // 统一登录态处理：retcode=-100 走 checkLogin（once-flag 防重复弹窗 + 打开计算器页 + 抛错）
+            checkLogin(retcode, gameType, openUrl);
+            console.warn(`[账户] 获取失败 retcode=${retcode}: ${resData?.message || ""}`);
         }
     }
     alert(`请确认已登录活动页面且绑定${gameType}账户!`);
@@ -458,6 +461,28 @@ export const updateCharacter = async (character: any, characterStatusGoal: seeli
     }
     await addGoal(characterGoalNew);
 };
+
+/**
+ * 技能/天赋等级「只增不减」合并：current 高于旧 goal 时取 current（可选 cap 封顶），否则保留旧 goal。
+ * 用于三端 updateTrace/updateTalent 与 addTraceGoal 合并分支，统一重复的 `x > g ? x : g` 三元表达式。
+ */
+export const mergeLevel = (current: number, oldGoal: number, cap?: number): number => {
+    if (current > oldGoal) return cap !== undefined ? Math.min(current, cap) : current;
+    return oldGoal;
+};
+
+/**
+ * 角色/武器档位「只增不减」合并（hsr/zzz 共用）：newStatus 在 level 与 asc 都 >= 旧值时整体提升，否则保留旧值。
+ * 返回新的 current 与 goal（结构分离，便于并入 merged 对象）。仅依赖 level/asc，不要求 text 等附带字段。
+ */
+export const mergeCharacterStatus = (
+    next: { level: number; asc: number },
+    oldCurrent: { level: number; asc: number },
+    oldGoal: { level: number; asc: number }
+): { current: { level: number; asc: number }; goal: { level: number; asc: number } } => ({
+    current: next.level >= oldCurrent.level && next.asc >= oldCurrent.asc ? next : oldCurrent,
+    goal: next.level >= oldGoal.level && next.asc >= oldGoal.asc ? next : oldGoal,
+});
 
 export const batchUpdateGoals = async <T extends Goal>(
     type: string,

@@ -12,6 +12,7 @@ import {
     getTotalGoal,
     OwnershipRecorder,
     updateCharacter,
+    mergeLevel,
 } from "../common";
 
 const TALENT_KEYS = ["normal", "skill", "burst"] as const;
@@ -244,13 +245,13 @@ const updateTalent = async (talent: TalentGoal, normalGoal = 9, skillGoal = 9, b
         ...talent,
         normal: {
             current: normalCurrent,
-            goal: normalCurrent > normalGoal ? normalCurrent : normalGoal
+            goal: mergeLevel(normalCurrent, normalGoal)
         }, skill: {
             current: skillCurrent,
-            goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
+            goal: mergeLevel(skillCurrent, skillGoal)
         }, burst: {
             current: burstCurrent,
-            goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
+            goal: mergeLevel(burstCurrent, burstGoal)
         }
     }
     await addGoal(talentNew)
