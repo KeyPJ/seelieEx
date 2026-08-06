@@ -10,7 +10,7 @@ import {
 } from './seelie';
 import {BaseAdapter} from "../baseAdapter";
 import {withThrottle} from "../inventory-common";
-import {GI_ALL_CHARACTERS_URL, GI_BATCH_COMPUTE_URL, GI_CALC_PAGE_URL, GI_CHARACTERS_URL, GI_ROLE_URL} from "../apiUrls";
+import {GI_ALL_CHARACTERS_URL, GI_BATCH_COMPUTE_URL, GI_CALC_PAGE_URL, GI_CHARACTERS_URL} from "../apiUrls";
 import {reconcileWeaponOwnership, OwnershipRecorder} from "../common";
 
 
@@ -22,7 +22,7 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
     getApiConfig() {
         return {
             calcPageUrl: GI_CALC_PAGE_URL,
-            roleUrl: GI_ROLE_URL,
+            gameBiz: 'hk4e_cn',
             charactersUrl: GI_CHARACTERS_URL,
             allCharactersUrl: GI_ALL_CHARACTERS_URL,
             computeUrl: GI_BATCH_COMPUTE_URL,

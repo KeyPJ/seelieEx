@@ -9,7 +9,7 @@ import {
 } from './seelie';
 import {BaseAdapter} from "../baseAdapter";
 import {withThrottle} from "../inventory-common";
-import {ZZZ_CALC_PAGE_URL, ZZZ_CALC_URL, ZZZ_CHARACTERS_DETAIL_URL, ZZZ_CHARACTERS_URL, ZZZ_ROLE_URL} from "../apiUrls";
+import {ZZZ_CALC_PAGE_URL, ZZZ_CALC_URL, ZZZ_CHARACTERS_DETAIL_URL, ZZZ_CHARACTERS_URL} from "../apiUrls";
 import {reconcileWeaponOwnership, OwnershipRecorder} from "../common";
 
 export class ZzzAdapter extends BaseAdapter implements GameAdapter {
@@ -21,7 +21,7 @@ export class ZzzAdapter extends BaseAdapter implements GameAdapter {
     getApiConfig() {
         return {
             calcPageUrl: ZZZ_CALC_PAGE_URL,
-            roleUrl: ZZZ_ROLE_URL,
+            gameBiz: 'nap_cn',
             charactersUrl: ZZZ_CHARACTERS_URL,
             charactersDetailUrl: ZZZ_CHARACTERS_DETAIL_URL,
             computeUrl: ZZZ_CALC_URL,

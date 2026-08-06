@@ -1,6 +1,6 @@
 import adapter from "axios-userscript-adapter/dist/esm";
 import axios, {AxiosAdapter, AxiosRequestHeaders} from "axios";
-import {ACT_MIHOYO_BASE_URL, DEVICE_FP_URL} from "./apiUrls";
+import {ACT_MIHOYO_BASE_URL, DEVICE_FP_URL, ROLE_URL} from "./apiUrls";
 import Data = mihoyo.Data;
 import Role = mihoyo.Role;
 import Goal = seelie.Goal;
@@ -140,23 +140,32 @@ export const getFp = async () => {
     }
 };
 
-export const getAccount = async (roleUrl: string, openUrl: string, gameType: string) => {
-    // try {
-    const [err, res] = await to(axios.get(roleUrl, {
-        headers: headers
-    }));
-    if (!err) {
-        const {status, data: resData} = await res;
-        if (status == 200) {
+// 账户接口专用请求头（参考 references/1.md 抓包：getUserGameRolesByCookie* 需带 device_id / lrsag / mi_referrer）
+const buildRoleHeaders = (): AxiosRequestHeaders => {
+    const deviceId = localStorage.getItem("mysDeviceId") || getGuid();
+    return {
+        ...headers,
+        "x-rpc-device_id": deviceId,
+        "x-rpc-lrsag": "",
+        "x-rpc-mi_referrer": ACT_MIHOYO_BASE_URL,
+    } as unknown as AxiosRequestHeaders;
+};
+
+export const getAccount = async (gameBiz: string, openUrl: string, gameType: string) => {
+    const roleUrl = `${ROLE_URL}?game_biz=${gameBiz}`;
+    const [err, res] = await to(axios.get(roleUrl, {headers: buildRoleHeaders()}));
+    if (!err && res) {
+        const {status, data: resData} = res;
+        if (status === 200) {
             const {retcode, data} = resData;
             if (retcode === 0) {
-                const {list: accountList} = await data as Data<Role>;
+                const {list: accountList} = data as Data<Role>;
                 return accountList;
             }
         }
     }
-    alert(`请确认已登录活动页面且绑定${gameType}账户!`)
-    GM_openInTab(openUrl)
+    alert(`请确认已登录活动页面且绑定${gameType}账户!`);
+    GM_openInTab(openUrl);
     throw err ? err : new Error("账户信息获取失败");
 };
 

@@ -23,8 +23,8 @@ export type GoalTypeConfig = {
 export interface GameApiConfig {
     /** 计算器页面 URL（checkLogin 打开页面 / getAccount openUrl） */
     calcPageUrl: string;
-    /** 绑定角色列表 API */
-    roleUrl: string;
+    /** 游戏 biz 标识（GI=hk4e_cn / HSR=hkrpg_cn / ZZZ=nap_cn，用于拼接 ROLE_URL 的 ?game_biz=xxx） */
+    gameBiz: string;
     /** 已拥有角色列表 API（角色同步主流程） */
     charactersUrl: string;
     /** 角色详情 API（角色同步主流程；GI 暂无独立详情接口可省略） */

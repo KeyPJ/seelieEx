@@ -12,8 +12,8 @@ export abstract class BaseAdapter implements GameAdapter {
 
     // 公共实现：获取账户列表
     async getAccounts() {
-        const {calcPageUrl, roleUrl} = this.getApiConfig();
-        return await getAccount(roleUrl, calcPageUrl, this.getGameName());
+        const {calcPageUrl, gameBiz} = this.getApiConfig();
+        return await getAccount(gameBiz, calcPageUrl, this.getGameName());
     }
 
     // 公共实现：批量更新角色

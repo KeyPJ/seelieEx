@@ -4,7 +4,7 @@ import {getDetailList as getHsrDetailList, batchUpdateInventoryHSR} from './hoyo
 import {addCharacter, batchUpdateCharacter, batchUpdateTrace, batchUpdateWeapon, characterStatusList} from './seelie';
 import {BaseAdapter} from "../baseAdapter";
 import {withThrottle} from "../inventory-common";
-import {HSR_AVATAR_DETAIL_URL, HSR_AVATAR_LIST_URL, HSR_CALC_PAGE_URL, HSR_COMPUTE_URL, HSR_ROLE_URL} from "../apiUrls";
+import {HSR_AVATAR_DETAIL_URL, HSR_AVATAR_LIST_URL, HSR_CALC_PAGE_URL, HSR_COMPUTE_URL} from "../apiUrls";
 import {reconcileWeaponOwnership, OwnershipRecorder} from "../common";
 import localforage from "localforage";
 
@@ -17,7 +17,7 @@ export class HsrAdapter extends BaseAdapter implements GameAdapter {
     getApiConfig() {
         return {
             calcPageUrl: HSR_CALC_PAGE_URL,
-            roleUrl: HSR_ROLE_URL,
+            gameBiz: 'hkrpg_cn',
             charactersUrl: HSR_AVATAR_LIST_URL,         // rpgcultivate/avatar/list（act-api，data.avatars + first_meet_time/is_own 判拥有）
             charactersDetailUrl: HSR_AVATAR_DETAIL_URL, // rpgcultivate/calc/avatar/detail（真实养成状态，素材计算取 max_level）
             computeUrl: HSR_COMPUTE_URL,
