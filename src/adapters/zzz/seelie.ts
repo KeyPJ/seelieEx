@@ -282,7 +282,7 @@ export const batchUpdateCharacter = async (all: boolean, characterStatusGoal: Ch
 export const batchUpdateWeapon = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
     batchUpdateGoals<WeaponGoal>(
         'weapon',
-        'weapon', // 武器目标用weapon字段标识
+        'id', // 武器 inactive 标识用 goal.id（与 seelie getInactiveConfig / computeInactive 一致）
         (weapon) => updateCharacter(weapon as unknown as CharacterGoal, characterStatusGoal),
         all,
         characterStatusGoal

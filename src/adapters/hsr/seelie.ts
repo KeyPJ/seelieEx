@@ -329,7 +329,7 @@ export const batchUpdateCharacter = async (all: boolean, characterStatusGoal: Ch
 export const batchUpdateWeapon = async (all: boolean, characterStatusGoal: CharacterStatus,) => {
     batchUpdateGoals<ConeGoal>(
         'cone',
-        'cone',
+        'id', // 光锥 inactive 标识用 goal.id（与 seelie getInactiveConfig / computeInactive 一致）
         (weapon) => updateCharacter(weapon as unknown as CharacterGoal, characterStatusGoal),
         all,
         characterStatusGoal

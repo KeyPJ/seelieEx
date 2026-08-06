@@ -81,7 +81,7 @@ export class GenshinAdapter extends BaseAdapter implements GameAdapter {
                 isTalent: true,
                 talentKeys: ['normal', 'skill', 'burst'] // 原神天赋类型：普通攻击/元素战技/元素爆发
             }, // 天赋目标（标识字段：character）
-            { type: "weapon", identifierKey: "id" } // 武器目标（标识字段：weapon）
+            { type: "weapon", identifierKey: "id" } // 武器目标（标识字段：goal.id，与 seelie computeInactive 一致）
         ];
         return GENSHIN_INACTIVE_CONFIG;
     }

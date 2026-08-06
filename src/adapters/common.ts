@@ -5,7 +5,7 @@ import Data = mihoyo.Data;
 import Role = mihoyo.Role;
 import Goal = seelie.Goal;
 import GICharacterGoal = seelie.GICharacterGoal;
-import {GoalTypeConfig} from "./game";
+import {GoalTypeConfig, GameType} from "./game";
 import {AdapterManager} from "./adapterManager";
 
 axios.defaults.adapter = adapter as AxiosAdapter;
@@ -224,6 +224,140 @@ export const setGoalInactive = async (ids = new Set()) => {
     await refreshPage();
 }
 
+/**
+ * 增量合并 inactive 状态（不会清空其它条目）。
+ * @param updates 形如 { [identifierKey]: boolean }，true=设为 inactive，false=取消 inactive（移除）。
+ * 注意：inactive 存储的 key 是目标标识符（角色名 / 武器id / 光锥id），不是 goal 的数字 id。
+ */
+export const mergeGoalInactive = async (updates: Record<string, boolean>) => {
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    const key = `${getStorageAccount()}-inactive`;
+    const text = await currentAdapter.getItem(key) || "{}";
+    const currentObj = (typeof text === 'string' ? JSON.parse(text) : text) || {};
+    const merged = {...currentObj};
+    for (const rawId of Object.keys(updates)) {
+        if (updates[rawId]) merged[rawId] = true;
+        else delete merged[rawId];
+    }
+    await currentAdapter.setItem(key, merged);
+    await refreshPage();
+}
+
+/**
+ * 计算「完全达成」的实体标识符列表（用于「一键激活/取消规划」）。
+ * - 角色(goalType='character')：角色自身等级目标达成 且 该角色所有天赋子技能均达成（cur>=target）。
+ * - 武器/光锥(goalType='weapon'|'cone')：武器自身等级目标达成（cur>=target）。
+ * 标识符取 batchUpdateGoals 实际过滤用的字段：角色=character(名)，武器=weapon，光锥=cone。
+ * 注意：用 >=（达到或超越目标）判定达成，与 seelie 自身 isGoalCompleted(goal.level<=current.level) 一致；
+ * 严格相等只是其中特例。
+ */
+/**
+ * 按实体聚合目标，判断每个实体是否「完全达成」。
+ * - 角色：自身等级目标 + 所有天赋子技能（basic/skill/burst…）均 cur>=target 才算达成
+ * - 武器/光锥：自身等级目标 cur>=target 即达成
+ * 标识符字段必须与 seelie 自身 computeInactive 一致（取自 getInactiveConfig）：
+ *   角色=character(名)，武器/光锥=id（注意：不是 g.weapon/g.cone，否则写入的 -inactive key 与 seelie 读取对不上）。
+ * 返回 completed（已达标）与 incomplete（未达标，任一子目标 cur<target）两组标识符。
+ */
+export const getEntityCompletion = async (
+    goalType: 'character' | 'weapon' | 'cone',
+    tiers?: number[]
+): Promise<{ completed: string[], incomplete: string[] }> => {
+    const adapter = AdapterManager.getCurrentAdapter();
+    const goals = await getTotalGoal() as any[];
+    const config = adapter.getInactiveConfig();
+    // 标识符字段直接取自 getInactiveConfig，保证与 seelie 的 -inactive 读取口径一致
+    const cfgEntry = config.find(c => c.type === goalType);
+    const identifierField: string = cfgEntry?.identifierKey || (goalType === 'character' ? 'character' : 'id');
+    const talentConfig = config.find(c => c.isTalent);
+    const talentType = talentConfig?.type;
+    const talentKeys = talentConfig?.talentKeys || [];
+
+    // 按实体标识符分组（角色名 / 武器id / 光锥id）
+    const byEntity = new Map<string, any[]>();
+    const ensure = (id: string) => {
+        if (!byEntity.has(id)) byEntity.set(id, []);
+        return byEntity.get(id)!;
+    };
+    for (const g of goals) {
+        if (g.type === goalType) ensure(String(g[identifierField])).push(g);
+        if (goalType === 'character' && talentType && g.type === talentType) {
+            ensure(String(g.character)).push(g);
+        }
+    }
+
+    // 稀有度过滤：tiers 为 undefined → 不过滤（兼容旧调用，处理所有 tier）；
+    // tiers 为 [] → 启用过滤但无匹配 → 该角色/武器行整体跳过（不处理任何 tier）；
+    // tiers 为 [5]/[4]/[5,4] → 仅保留对应 tier。tier 取自页面运行时目录。
+    // 无法判定 tier 的实体（不在目录中）一律忽略，避免误伤。
+    const tierMap = tiers !== undefined ? getTierMap(goalType) : null;
+
+    const completed: string[] = [];
+    const incomplete: string[] = [];
+    for (const [id, gs] of byEntity) {
+        // 稀有度过滤：用实体名查 tierMap。角色=id（角色名）；武器=g.weapon；光锥=g.cone。
+        // 三者均与 getTierMap 的 key（顶层代码名）一致，避免武器/光锥因 id 口径不同而全部被过滤跳过。
+        const tierKey = goalType === 'character'
+            ? id
+            : (gs[0] ? gs[0][goalType === 'weapon' ? 'weapon' : 'cone'] : undefined);
+        if (tierMap && (tierKey === undefined || tierMap[tierKey] === undefined || !tiers!.includes(tierMap[tierKey]))) continue;
+        const levelGoals = gs.filter(g => g.type === goalType);
+        const talentGoals = talentType ? gs.filter(g => g.type === talentType) : [];
+        let done = true;
+        for (const lg of levelGoals) {
+            if (!(Number(lg.current?.level) >= Number(lg.goal?.level))) { done = false; break; }
+        }
+        if (done && talentGoals.length > 0) {
+            for (const tg of talentGoals) {
+                for (const k of talentKeys) {
+                    const sk = tg[k];
+                    if (!(sk && Number(sk.current) >= Number(sk.goal))) { done = false; break; }
+                }
+                if (!done) break;
+            }
+        }
+        if (done) completed.push(id);
+        else incomplete.push(id);
+    }
+    return { completed, incomplete };
+};
+
+/**
+ * 从 seelie 页面运行时目录读取「实体标识符→tier(稀有度)」映射，供一键激活/取消按稀有度过滤。
+ * - 角色：identifier=seelie key(角色名)，取自 data.characters[key].tier
+ * - 武器/光锥：identifier=数字 id，取自 data.weapons / data.cones 条目的 id→tier
+ * tier 取值 5(橙/金) / 4(紫) 等，与「橙色/紫色」勾选框一一对应。
+ * 该映射与 getEntityCompletion 使用的 identifier 完全一致，可直接用于过滤。
+ */
+export const getTierMap = (goalType: 'character' | 'weapon' | 'cone'): Record<string, number> => {
+    const map: Record<string, number> = {};
+    try {
+        const app = document.querySelector('#app') as any;
+        const data = app?._vnode?.component?.data;
+        if (!data) return map;
+        if (goalType === 'character') {
+            const cat = data.characters || {};
+            for (const [k, v] of Object.entries(cat)) {
+                const t = (v as any)?.tier;
+                if (typeof t === 'number') map[k] = t;
+            }
+        } else {
+            // 武器/光锥：tierMap 的 key 用运行时目录的顶层代码名（如 "a_teaspoon_of_transcendence"），
+            // 与 goal 的 weapon/cone 字段（由 getWeaponId/getConeId 反查得到，同为代码名）一致。
+            // 不能用 v.id（数字模板 id）：goal 里没有模板 id 字段，会令 tier 过滤全部跳过。
+            const kind = goalType === 'cone' ? 'cones' : 'weapons';
+            const cat = data[kind] || {};
+            for (const [k, v] of Object.entries(cat)) {
+                const t = (v as any)?.tier;
+                if (typeof k === 'string' && typeof t === 'number') map[k] = t;
+            }
+        }
+    } catch {
+        // 页面结构异常时返回空映射（等价于不过滤）
+    }
+    return map;
+};
+
 export const setGoals = async (goals: any) => {
     const key = `${getStorageAccount()}-goals`;
     const currentAdapter = AdapterManager.getCurrentAdapter();
@@ -285,7 +419,7 @@ export const updateCharacter = async (character: any, characterStatusGoal: seeli
 
 export const batchUpdateGoals = async <T extends Goal>(
     type: string,
-    identifierKey: 'character' | 'weapon' | 'talent' | 'cone', // 支持不同游戏的标识字段（角色/武器/天赋）
+    identifierKey: 'character' | 'weapon' | 'talent' | 'cone' | 'id', // 支持不同游戏的标识字段（角色/武器/天赋/光锥；武器与光锥用 goal.id）
     updateFn: (item: T, ...args: any[]) => Promise<void>,
     all: boolean,
     ...updateArgs: any[]

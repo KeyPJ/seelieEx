@@ -1,9 +1,77 @@
 import React, {useState, useRef, useEffect} from "react";
 import ListboxSelect from "./select/ListboxSelect";
 import CharacterGoalTab from "./tabs/CharacterGoalTab";
+import { PlanBatchPanel } from "./PlanBatchPanel";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {AdapterManager} from '../adapters/adapterManager';
 import {resetLoginFlag, resetSyncRequestCount, getSyncRequestCount} from '../adapters/common';
+
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(" ");
+}
+
+const TAB_TITLES = ["角色目标等级", "天赋目标等级", "武器目标等级"];
+
+// 共享 tab 栏：角色/天赋/武器，受同一 activeTab 控制，使两个操作折叠保持同步
+function TabBar({activeTab, setActiveTab}: { activeTab: number; setActiveTab: (i: number) => void }) {
+    return (
+        <div className="mt-4">
+            <div className="flex border-b border-gray-600">
+                {TAB_TITLES.map((title, idx) => (
+                    <button
+                        key={idx}
+                        className={classNames(
+                            "px-4 py-2 focus:outline-none transition-colors",
+                            activeTab === idx
+                                ? "border-b-2 border-blue-400 text-blue-300 font-medium"
+                                : "text-gray-300 hover:text-white"
+                        )}
+                        onClick={() => setActiveTab(idx)}
+                    >
+                        {title}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// 折叠面板：标题栏 + 可展开内容；展开态由父级 openPanel 控制（手风琴）
+function Fold({title, isOpen, onToggle, children}: {
+    title: string;
+    isOpen: boolean;
+    onToggle: () => void;
+    children: React.ReactNode
+}) {
+    return (
+        <div className="mt-2 border border-gray-700 rounded-lg bg-slate-700/50">
+            <button
+                className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors"
+                onClick={onToggle}
+            >
+                <span>{title}</span>
+                <svg
+                    className={`w-5 h-5 text-purple-300 transition-transform ${isOpen ? "transform rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                    />
+                </svg>
+            </button>
+            {isOpen && (
+                <div className="px-4 pt-4 pb-2 text-sm text-gray-100">
+                    {children}
+                </div>
+            )}
+        </div>
+    );
+}
 
 function ExDialog({onClose}: { onClose?: () => void }) {
 
@@ -15,44 +83,33 @@ function ExDialog({onClose}: { onClose?: () => void }) {
 
     const [accountList, setAccountList] = useState<mihoyo.Role[]>([]);
     const [currentAccount, setCurrentAccount] = useState<mihoyo.Role>();
-    const [isFirstPanelOpen, setIsFirstPanelOpen] = useState(false);
-    const [isSecondPanelOpen, setIsSecondPanelOpen] = useState(false);
+    // 手风琴：当前展开的折叠序号（0=同步, 1=规划批量操作, 2=目标等级设置），null=全收；同一时刻仅一个展开
+    const [openPanel, setOpenPanel] = useState<number | null>(0);
     const [activeTab, setActiveTab] = useState(0);
     const [loading, setLoading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [progressText, setProgressText] = useState("");
     const [syncInventory, setSyncInventory] = useState(true); // 是否同步背包库存（素材/武器/光锥），默认勾选
-    const panelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
+    const panelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
 
     // 添加对话框根元素的引用
     const dialogRef = useRef<HTMLDivElement>(null);
 
-    // 点击外部关闭面板
+    // 点击外部关闭所有面板（手风琴）
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (
-                panelRefs[0].current &&
-                !panelRefs[0].current.contains(e.target as Node) &&
-                isFirstPanelOpen
-            ) {
-                setIsFirstPanelOpen(false);
-            }
-            if (
-                panelRefs[1].current &&
-                !panelRefs[1].current.contains(e.target as Node) &&
-                isSecondPanelOpen
-            ) {
-                setIsSecondPanelOpen(false);
-            }
+            if (openPanel === null) return;
+            const target = e.target as Node;
+            const clickedInside = panelRefs.some(r => r.current && r.current.contains(target));
+            if (!clickedInside) setOpenPanel(null);
         };
         document.addEventListener("click", handleClickOutside);
         return () => document.removeEventListener("click", handleClickOutside);
-    }, [isFirstPanelOpen, isSecondPanelOpen]);
+    }, [openPanel]);
 
-    // 添加鼠标移出事件处理函数
+    // 添加鼠标移出事件处理函数（关闭全部）
     const handleMouseLeave = () => {
-        setIsFirstPanelOpen(false);
-        setIsSecondPanelOpen(false);
+        setOpenPanel(null);
     };
 
     const handleRoleSelectChange = (idx: number) => {
@@ -155,10 +212,6 @@ function ExDialog({onClose}: { onClose?: () => void }) {
         }
     };
 
-    function classNames(...classes: string[]) {
-        return classes.filter(Boolean).join(" ");
-    }
-
     return (
         <div
             ref={dialogRef}
@@ -174,164 +227,114 @@ function ExDialog({onClose}: { onClose?: () => void }) {
             </div>
             <div className="w-full p-4">
                 <div className="w-full max-w-md p-2 mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50">
-                    {/* 第一个折叠面板 - 同步（角色信息 + 素材/库存） */}
-                    <div ref={panelRefs[0]} className="mt-2 border border-gray-700 rounded-lg bg-slate-700/50">
-                        <button
-                            className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors"
-                            onClick={() => setIsFirstPanelOpen(!isFirstPanelOpen)}
+                    {/* 折叠1 - 同步（角色信息 + 素材/库存） */}
+                    <div ref={panelRefs[0]}>
+                        <Fold
+                            title="同步"
+                            isOpen={openPanel === 0}
+                            onToggle={() => setOpenPanel(openPanel === 0 ? null : 0)}
                         >
-                            <span>同步</span>
-                            <svg
-                                className={`w-5 h-5 text-purple-300 transition-transform ${
-                                    isFirstPanelOpen ? "transform rotate-180" : ""
-                                }`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 9l-7 7-7-7"
-                                />
-                            </svg>
-                        </button>
-
-                        {isFirstPanelOpen && (
-                            <div className="px-4 pt-4 pb-2 text-sm text-gray-100">
-                                <div className="flex pt-2">
-                                    <div className="w-full">
-                                        <button
-                                            className="text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded transition-colors"
-                                            onClick={getAccountList}
-                                        >
-                                            获取账户信息
-                                        </button>
-                                    </div>
+                            <div className="flex pt-2">
+                                <div className="w-full">
+                                    <button
+                                        className="text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded transition-colors"
+                                        onClick={getAccountList}
+                                    >
+                                        获取账户信息
+                                    </button>
                                 </div>
-
-                                <div className="flex pt-4">
-                                    <div className="w-1/2 text-gray-200">
-                                        账户选择:
-                                    </div>
-                                    <div className="w-1/2">
-                                        <ListboxSelect
-                                            selected={currentAccount ? accountList.indexOf(currentAccount) : 0}
-                                            setSelected={handleRoleSelectChange}
-                                            optionList={accountList.map((_, idx) => idx)}
-                                            show={accountShow}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex items-center pt-3">
-                                    <input
-                                        type="checkbox"
-                                        id="syncInventory"
-                                        checked={syncInventory}
-                                        onChange={(e) => setSyncInventory(e.target.checked)}
-                                        className="mr-2 h-4 w-4 accent-blue-500"
-                                    />
-                                    <label htmlFor="syncInventory" className="text-sm text-gray-200 cursor-pointer select-none">
-                                        同步背包库存（时间可能相对较长）
-                                    </label>
-                                </div>
-                                <div className="flex pt-2">
-                                    <div className="w-full">
-                                        <button
-                                            className={`px-4 py-2 rounded transition-colors ${
-                                                loading
-                                                    ? "text-gray-300 bg-gray-600 cursor-not-allowed"
-                                                    : "text-white bg-blue-600 hover:bg-blue-500"
-                                            }`}
-                                            onClick={syncAll}
-                                            disabled={loading}
-                                        >
-                                            {loading ? "同步中..." : "同步"}
-                                        </button>
-                                    </div>
-                                </div>
-                                {loading && (
-                                    <div className="mt-3">
-                                        <div className="w-full bg-gray-700 rounded-full h-2.5">
-                                            <div
-                                                className="bg-blue-500 h-2.5 rounded-full transition-all duration-500 ease-out"
-                                                style={{width: `${progress}%`}}
-                                            ></div>
-                                        </div>
-                                        <p className="text-xs text-gray-300 mt-1">{progressText}</p>
-                                    </div>
-                                )}
                             </div>
-                        )}
+
+                            <div className="flex pt-4">
+                                <div className="w-1/2 text-gray-200">
+                                    账户选择:
+                                </div>
+                                <div className="w-1/2">
+                                    <ListboxSelect
+                                        selected={currentAccount ? accountList.indexOf(currentAccount) : 0}
+                                        setSelected={handleRoleSelectChange}
+                                        optionList={accountList.map((_, idx) => idx)}
+                                        show={accountShow}
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex items-center pt-3">
+                                <input
+                                    type="checkbox"
+                                    id="syncInventory"
+                                    checked={syncInventory}
+                                    onChange={(e) => setSyncInventory(e.target.checked)}
+                                    className="mr-2 h-4 w-4 accent-blue-500"
+                                />
+                                <label htmlFor="syncInventory" className="text-sm text-gray-200 cursor-pointer select-none">
+                                    同步背包库存（时间可能相对较长）
+                                </label>
+                            </div>
+                            <div className="flex pt-2">
+                                <div className="w-full">
+                                    <button
+                                        className={`px-4 py-2 rounded transition-colors ${
+                                            loading
+                                                ? "text-gray-300 bg-gray-600 cursor-not-allowed"
+                                                : "text-white bg-blue-600 hover:bg-blue-500"
+                                        }`}
+                                        onClick={syncAll}
+                                        disabled={loading}
+                                    >
+                                        {loading ? "同步中..." : "同步"}
+                                    </button>
+                                </div>
+                            </div>
+                            {loading && (
+                                <div className="mt-3">
+                                    <div className="w-full bg-gray-700 rounded-full h-2.5">
+                                        <div
+                                            className="bg-blue-500 h-2.5 rounded-full transition-all duration-500 ease-out"
+                                            style={{width: `${progress}%`}}
+                                        ></div>
+                                    </div>
+                                    <p className="text-xs text-gray-300 mt-1">{progressText}</p>
+                                </div>
+                            )}
+                        </Fold>
                     </div>
 
-                    {/* 第二个折叠面板 - 规划批量操作 */}
-                    <div ref={panelRefs[1]} className="mt-2 border border-gray-700 rounded-lg bg-slate-700/50">
-                        <button
-                            className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors"
-                            onClick={() => setIsSecondPanelOpen(!isSecondPanelOpen)}
+                    {/* 折叠2 - 规划批量操作（角色/武器稀有度勾选 + 共用激活/取消按钮） */}
+                    <div ref={panelRefs[1]}>
+                        <Fold
+                            title="规划批量操作"
+                            isOpen={openPanel === 1}
+                            onToggle={() => setOpenPanel(openPanel === 1 ? null : 1)}
                         >
-                            <span>规划批量操作</span>
-                            <svg
-                                className={`w-5 h-5 text-purple-300 transition-transform ${
-                                    isSecondPanelOpen ? "transform rotate-180" : ""
-                                }`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 9l-7 7-7-7"
-                                />
-                            </svg>
-                        </button>
+                            <PlanBatchPanel />
+                        </Fold>
+                    </div>
 
-                        {isSecondPanelOpen && (
-                            <div className="px-4 pt-4 pb-2 text-sm text-gray-100">
-                                {/* 标签页切换 */}
-                                <div className="mt-4">
-                                    <div className="flex border-b border-gray-600">
-                                        {["角色目标等级", "天赋目标等级", "武器目标等级"].map(
-                                            (title, idx) => (
-                                                <button
-                                                    key={idx}
-                                                    className={classNames(
-                                                        "px-4 py-2 focus:outline-none transition-colors",
-                                                        activeTab === idx
-                                                            ? "border-b-2 border-blue-400 text-blue-300 font-medium"
-                                                            : "text-gray-300 hover:text-white"
-                                                    )}
-                                                    onClick={() => setActiveTab(idx)}
-                                                >
-                                                    {title}
-                                                </button>
-                                            )
-                                        )}
-                                    </div>
-
-                                    <div className="p-4">
-                                        {activeTab === 0 && (
-                                            <CharacterGoalTab
-                                                showText={"角色"}
-                                                batchUpdateCharacter={currentAdapter.batchUpdateCharacter}
-                                            />
-                                        )}
-                                        {activeTab === 1 &&
-                                            <TalentGoalTab/>}
-                                        {activeTab === 2 && (
-                                            <CharacterGoalTab
-                                                showText={"武器"}
-                                                batchUpdateCharacter={currentAdapter.batchUpdateWeapon}
-                                                                                            />
-                                        )}
-                                    </div>
-                                </div>
+                    {/* 折叠3 - 目标等级设置（开关 + 目标等级下拉 + 批量设置） */}
+                    <div ref={panelRefs[2]}>
+                        <Fold
+                            title="目标等级设置"
+                            isOpen={openPanel === 2}
+                            onToggle={() => setOpenPanel(openPanel === 2 ? null : 2)}
+                        >
+                            <TabBar activeTab={activeTab} setActiveTab={setActiveTab} />
+                            <div className="p-4">
+                                {activeTab === 0 && (
+                                    <CharacterGoalTab
+                                        showText={"角色"}
+                                        batchUpdateCharacter={currentAdapter.batchUpdateCharacter}
+                                    />
+                                )}
+                                {activeTab === 1 &&
+                                    <TalentGoalTab/>}
+                                {activeTab === 2 && (
+                                    <CharacterGoalTab
+                                        showText={"武器"}
+                                        batchUpdateCharacter={currentAdapter.batchUpdateWeapon}
+                                    />
+                                )}
                             </div>
-                        )}
+                        </Fold>
                     </div>
 
                 </div>
@@ -339,5 +342,4 @@ function ExDialog({onClose}: { onClose?: () => void }) {
         </div>
     );
 }
-
 export default ExDialog;
