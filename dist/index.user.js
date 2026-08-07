@@ -2,7 +2,7 @@
 // @name             genshinSeelieEx
 // @name:zh          原神、崩坏：星穹铁道、绝区零规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          6.7.2_260805
+// @version          6.7.8_260808
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -28,7 +28,7 @@
 // @copyright        2021, KeyPJ https://github.com/KeyPJ
 // ==/UserScript==
 
-(r=>{const t=document.createElement("style");t.dataset.source="vite-plugin-monkey",t.innerText=r,document.head.appendChild(t)})(' *,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-\\[20\\%\\]{left:20%;right:20%}.inset-y-0{top:0;bottom:0}.left-0{left:0}.right-0{right:0}.top-10{top:2.5rem}.z-10{z-index:10}.z-\\[1200\\]{z-index:1200}.mx-auto{margin-left:auto;margin-right:auto}.mr-2{margin-right:.5rem}.mt-1{margin-top:.25rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.h-2\\.5{height:.625rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.max-h-60{max-height:15rem}.min-h-min{min-height:-moz-min-content;min-height:min-content}.w-1\\/2{width:50%}.w-1\\/4{width:25%}.w-11{width:2.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-full{width:100%}.min-w-\\[50\\%\\]{min-width:50%}.max-w-md{max-width:28rem}.translate-x-1{--tw-translate-x: .25rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-6{--tw-translate-x: 1.5rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate: 180deg;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-default{cursor:default}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.grid-flow-col{grid-auto-flow:column}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.flex-row{flex-direction:row}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-2{gap:.5rem}.gap-4{gap:1rem}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-blue-400{--tw-border-opacity: 1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.border-gray-600{--tw-border-opacity: 1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.border-gray-700{--tw-border-opacity: 1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.border-purple-700\\/50{border-color:#7e22ce80}.bg-amber-100{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity: 1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-600{--tw-bg-opacity: 1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity: 1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-purple-800\\/70{background-color:#6b21a8b3}.bg-purple-900\\/30{background-color:#581c874d}.bg-slate-700\\/50{background-color:#33415580}.bg-slate-800\\/90{background-color:#1e293be6}.bg-white{--tw-bg-opacity: 1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-2{padding:.5rem}.p-4{padding:1rem}.px-4{padding-left:1rem;padding-right:1rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.pb-2{padding-bottom:.5rem}.pl-10{padding-left:2.5rem}.pl-3{padding-left:.75rem}.pr-10{padding-right:2.5rem}.pr-2{padding-right:.5rem}.pr-4{padding-right:1rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.leading-none{line-height:1}.text-amber-600{--tw-text-opacity: 1;color:rgb(217 119 6 / var(--tw-text-opacity, 1))}.text-amber-900{--tw-text-opacity: 1;color:rgb(120 53 15 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity: 1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-gray-100{--tw-text-opacity: 1;color:rgb(243 244 246 / var(--tw-text-opacity, 1))}.text-gray-200{--tw-text-opacity: 1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity: 1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity: 1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.accent-blue-500{accent-color:#3b82f6}.shadow-2xl{--tw-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);--tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.ring-black{--tw-ring-opacity: 1;--tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity, 1))}.ring-opacity-5{--tw-ring-opacity: .05}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,fill,stroke,-webkit-text-decoration-color;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,-webkit-text-decoration-color;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-500{transition-duration:.5s}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.ex-flex-col{flex-direction:column}.ex-mx-auto{margin-left:auto;margin-right:auto}.hover\\:bg-amber-100:hover{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.hover\\:bg-blue-500:hover{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.hover\\:bg-purple-700:hover{--tw-bg-opacity: 1;background-color:rgb(126 34 206 / var(--tw-bg-opacity, 1))}.hover\\:text-gray-300:hover{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.hover\\:text-white:hover{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus-visible\\:border-indigo-500:focus-visible{--tw-border-opacity: 1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\\:ring-white:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity, 1))}.focus-visible\\:ring-opacity-75:focus-visible{--tw-ring-opacity: .75}.focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px}.focus-visible\\:ring-offset-orange-300:focus-visible{--tw-ring-offset-color: #fdba74}@media (min-width: 640px){.sm\\:text-sm{font-size:.875rem;line-height:1.25rem}} ');
+(r=>{const t=document.createElement("style");t.dataset.source="vite-plugin-monkey",t.innerText=r,document.head.appendChild(t)})(' *,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-\\[20\\%\\]{left:20%;right:20%}.inset-y-0{top:0;bottom:0}.left-0{left:0}.right-0{right:0}.top-10{top:2.5rem}.z-10{z-index:10}.z-\\[1200\\]{z-index:1200}.mx-auto{margin-left:auto;margin-right:auto}.mr-2{margin-right:.5rem}.mt-1{margin-top:.25rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.h-2\\.5{height:.625rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.max-h-60{max-height:15rem}.min-h-min{min-height:-moz-min-content;min-height:min-content}.w-1\\/2{width:50%}.w-1\\/4{width:25%}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-full{width:100%}.min-w-\\[50\\%\\]{min-width:50%}.max-w-md{max-width:28rem}.shrink-0{flex-shrink:0}.translate-x-1{--tw-translate-x: .25rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-6{--tw-translate-x: 1.5rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate: 180deg;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-default{cursor:default}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.grid-flow-col{grid-auto-flow:column}.grid-rows-2{grid-template-rows:repeat(2,minmax(0,1fr))}.flex-row{flex-direction:row}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem * var(--tw-space-y-reverse))}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-blue-400{--tw-border-opacity: 1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.border-gray-600{--tw-border-opacity: 1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.border-gray-700{--tw-border-opacity: 1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.border-purple-700\\/50{border-color:#7e22ce80}.bg-amber-100{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-amber-600{--tw-bg-opacity: 1;background-color:rgb(217 119 6 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity: 1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-600{--tw-bg-opacity: 1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity: 1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity: 1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-purple-800\\/70{background-color:#6b21a8b3}.bg-purple-900\\/30{background-color:#581c874d}.bg-slate-700\\/50{background-color:#33415580}.bg-slate-800\\/90{background-color:#1e293be6}.bg-white{--tw-bg-opacity: 1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-2{padding:.5rem}.p-4{padding:1rem}.px-4{padding-left:1rem;padding-right:1rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.pb-2{padding-bottom:.5rem}.pl-10{padding-left:2.5rem}.pl-3{padding-left:.75rem}.pr-10{padding-right:2.5rem}.pr-2{padding-right:.5rem}.pr-4{padding-right:1rem}.pt-1{padding-top:.25rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.leading-none{line-height:1}.text-amber-600{--tw-text-opacity: 1;color:rgb(217 119 6 / var(--tw-text-opacity, 1))}.text-amber-900{--tw-text-opacity: 1;color:rgb(120 53 15 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity: 1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-gray-100{--tw-text-opacity: 1;color:rgb(243 244 246 / var(--tw-text-opacity, 1))}.text-gray-200{--tw-text-opacity: 1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity: 1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-orange-400{--tw-text-opacity: 1;color:rgb(251 146 60 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity: 1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity: 1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.accent-blue-500{accent-color:#3b82f6}.shadow-2xl{--tw-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);--tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.ring-black{--tw-ring-opacity: 1;--tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity, 1))}.ring-opacity-5{--tw-ring-opacity: .05}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,fill,stroke,-webkit-text-decoration-color;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,-webkit-text-decoration-color;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-500{transition-duration:.5s}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.ex-flex-col{flex-direction:column}.ex-mx-auto{margin-left:auto;margin-right:auto}.hover\\:bg-amber-100:hover{--tw-bg-opacity: 1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.hover\\:bg-amber-500:hover{--tw-bg-opacity: 1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.hover\\:bg-blue-500:hover{--tw-bg-opacity: 1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.hover\\:bg-green-500:hover{--tw-bg-opacity: 1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.hover\\:bg-purple-700:hover{--tw-bg-opacity: 1;background-color:rgb(126 34 206 / var(--tw-bg-opacity, 1))}.hover\\:text-gray-300:hover{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.hover\\:text-white:hover{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus-visible\\:border-indigo-500:focus-visible{--tw-border-opacity: 1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\\:ring-white:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity, 1))}.focus-visible\\:ring-opacity-75:focus-visible{--tw-ring-opacity: .75}.focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px}.focus-visible\\:ring-offset-orange-300:focus-visible{--tw-ring-offset-color: #fdba74}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}@media (min-width: 640px){.sm\\:text-sm{font-size:.875rem;line-height:1.25rem}} ');
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -148,7 +148,7 @@ var __publicField = (obj, key, value) => {
   var jsxRuntimeExports = jsxRuntime.exports;
   const jsx = jsxRuntimeExports.jsx;
   const jsxs = jsxRuntimeExports.jsxs;
-  function classNames(...classes) {
+  function classNames$1(...classes) {
     return classes.filter(Boolean).join(" ");
   }
   function ListboxSelect(props) {
@@ -183,7 +183,7 @@ var __publicField = (obj, key, value) => {
     };
     return /* @__PURE__ */ jsxs("div", {
       ref: containerRef,
-      className: classNames("relative mt-1 w-full", className),
+      className: classNames$1("relative mt-1 w-full", className),
       children: [/* @__PURE__ */ jsxs("button", {
         type: "button",
         className: "relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm",
@@ -1787,18 +1787,16 @@ var __publicField = (obj, key, value) => {
   }
   const ACT_MIHOYO_BASE_URL = "https://act.mihoyo.com/";
   const DEVICE_FP_URL = "https://public-data-api.mihoyo.com/device-fp/api/getFp";
+  const ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie";
   const GI_CALC_PAGE_URL = "https://act.mihoyo.com/ys/event/calculator/index.html";
-  const GI_ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn";
   const GI_CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/list";
   const GI_ALL_CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v1/avatar/list";
   const GI_BATCH_COMPUTE_URL = "https://api-takumi.mihoyo.com/event/e20200928calculate/v3/batch_compute";
   const HSR_CALC_PAGE_URL = "https://act.mihoyo.com/sr/event/cultivation-tool/index.html";
-  const HSR_ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hkrpg_cn";
   const HSR_AVATAR_LIST_URL = "https://api-takumi.mihoyo.com/event/rpgcultivate/avatar/list";
   const HSR_AVATAR_DETAIL_URL = "https://api-takumi.mihoyo.com/event/rpgcultivate/calc/avatar/detail";
   const HSR_COMPUTE_URL = "https://api-takumi.mihoyo.com/event/rpgcultivate/calc/compute";
   const ZZZ_CALC_PAGE_URL = "https://act.mihoyo.com/zzz/gt/character-builder-h/index.html";
-  const ZZZ_ROLE_URL = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookieToken?game_biz=nap_cn";
   const ZZZ_CHARACTERS_URL = "https://api-takumi.mihoyo.com/event/nap_cultivate_tool/user/avatar_basic_list";
   const ZZZ_CHARACTERS_DETAIL_URL = "https://api-takumi.mihoyo.com/event/nap_cultivate_tool/user/batch_avatar_detail_v2";
   const ZZZ_CALC_URL = "https://act-api-takumi.mihoyo.com/event/nap_cultivate_tool/user/avatar_calc";
@@ -1921,18 +1919,28 @@ var __publicField = (obj, key, value) => {
       return fp;
     }
   };
-  const getAccount = async (roleUrl, openUrl, gameType) => {
-    const [err, res] = await to(axios$1.get(roleUrl, {
-      headers
-    }));
-    if (!err) {
-      const { status, data: resData } = await res;
-      if (status == 200) {
+  const buildRoleHeaders = () => {
+    const deviceId = localStorage.getItem("mysDeviceId") || getGuid();
+    return {
+      ...headers,
+      "x-rpc-device_id": deviceId,
+      "x-rpc-lrsag": "",
+      "x-rpc-mi_referrer": ACT_MIHOYO_BASE_URL
+    };
+  };
+  const getAccount = async (gameBiz, openUrl, gameType) => {
+    const roleUrl = `${ROLE_URL}?game_biz=${gameBiz}`;
+    const [err, res] = await to(axios$1.get(roleUrl, { headers: buildRoleHeaders() }));
+    if (!err && res) {
+      const { status, data: resData } = res;
+      if (status === 200) {
         const { retcode, data: data2 } = resData;
         if (retcode === 0) {
-          const { list: accountList } = await data2;
+          const { list: accountList } = data2;
           return accountList;
         }
+        checkLogin(retcode, gameType, openUrl);
+        console.warn(`[账户] 获取失败 retcode=${retcode}: ${resData?.message || ""}`);
       }
     }
     alert(`请确认已登录活动页面且绑定${gameType}账户!`);
@@ -1979,6 +1987,106 @@ var __publicField = (obj, key, value) => {
     const text = await currentAdapter.getItem(key) || "[]";
     return Object.keys(typeof text === "string" ? JSON.parse(text) : text);
   };
+  const mergeGoalInactive = async (updates) => {
+    const currentAdapter = AdapterManager.getCurrentAdapter();
+    const key = `${getStorageAccount()}-inactive`;
+    const text = await currentAdapter.getItem(key) || "{}";
+    const currentObj = (typeof text === "string" ? JSON.parse(text) : text) || {};
+    const merged = { ...currentObj };
+    for (const rawId of Object.keys(updates)) {
+      if (updates[rawId])
+        merged[rawId] = true;
+      else
+        delete merged[rawId];
+    }
+    await currentAdapter.setItem(key, merged);
+    await refreshPage();
+  };
+  const getEntityCompletion = async (goalType, tiers) => {
+    const adapter2 = AdapterManager.getCurrentAdapter();
+    const goals = await getTotalGoal();
+    const config = adapter2.getInactiveConfig();
+    const cfgEntry = config.find((c) => c.type === goalType);
+    const identifierField = cfgEntry?.identifierKey || (goalType === "character" ? "character" : "id");
+    const talentConfig = config.find((c) => c.isTalent);
+    const talentType = talentConfig?.type;
+    const talentKeys = talentConfig?.talentKeys || [];
+    const byEntity = /* @__PURE__ */ new Map();
+    const ensure = (id) => {
+      if (!byEntity.has(id))
+        byEntity.set(id, []);
+      return byEntity.get(id);
+    };
+    for (const g2 of goals) {
+      if (g2.type === goalType)
+        ensure(String(g2[identifierField])).push(g2);
+      if (goalType === "character" && talentType && g2.type === talentType) {
+        ensure(String(g2.character)).push(g2);
+      }
+    }
+    const tierMap = tiers !== void 0 ? getTierMap(goalType) : null;
+    const completed = [];
+    const incomplete = [];
+    for (const [id, gs] of byEntity) {
+      const tierKey = goalType === "character" ? id : gs[0] ? gs[0][goalType === "weapon" ? "weapon" : "cone"] : void 0;
+      if (tierMap && (tierKey === void 0 || tierMap[tierKey] === void 0 || !tiers.includes(tierMap[tierKey])))
+        continue;
+      const levelGoals = gs.filter((g2) => g2.type === goalType);
+      const talentGoals = talentType ? gs.filter((g2) => g2.type === talentType) : [];
+      let done = true;
+      for (const lg of levelGoals) {
+        if (!(Number(lg.current?.level) >= Number(lg.goal?.level))) {
+          done = false;
+          break;
+        }
+      }
+      if (done && talentGoals.length > 0) {
+        for (const tg of talentGoals) {
+          for (const k of talentKeys) {
+            const sk = tg[k];
+            if (!(sk && Number(sk.current) >= Number(sk.goal))) {
+              done = false;
+              break;
+            }
+          }
+          if (!done)
+            break;
+        }
+      }
+      if (done)
+        completed.push(id);
+      else
+        incomplete.push(id);
+    }
+    return { completed, incomplete };
+  };
+  const getTierMap = (goalType) => {
+    const map = {};
+    try {
+      const app = document.querySelector("#app");
+      const data2 = app?._vnode?.component?.data;
+      if (!data2)
+        return map;
+      if (goalType === "character") {
+        const cat = data2.characters || {};
+        for (const [k, v] of Object.entries(cat)) {
+          const t = v?.tier;
+          if (typeof t === "number")
+            map[k] = t;
+        }
+      } else {
+        const kind = goalType === "cone" ? "cones" : "weapons";
+        const cat = data2[kind] || {};
+        for (const [k, v] of Object.entries(cat)) {
+          const t = v?.tier;
+          if (typeof k === "string" && typeof t === "number")
+            map[k] = t;
+        }
+      }
+    } catch {
+    }
+    return map;
+  };
   const setGoals = async (goals) => {
     const key = `${getStorageAccount()}-goals`;
     const currentAdapter = AdapterManager.getCurrentAdapter();
@@ -2012,6 +2120,26 @@ var __publicField = (obj, key, value) => {
     }
     await setGoals(goals);
   };
+  const reconcileWeaponOwnership = async (syncedCharacters, wornByCharacter) => {
+    const goals = await getTotalGoal();
+    let changed = false;
+    for (const g2 of goals) {
+      if (g2.type !== "weapon" && g2.type !== "cone")
+        continue;
+      const c = g2.character;
+      if (!c)
+        continue;
+      if (!syncedCharacters.has(c))
+        continue;
+      const key = g2.type === "cone" ? g2.cone : g2.weapon;
+      if (wornByCharacter.get(c)?.has(key))
+        continue;
+      g2.character = "";
+      changed = true;
+    }
+    if (changed)
+      await setGoals(goals);
+  };
   const updateCharacter = async (character, characterStatusGoal) => {
     const { current } = character;
     const { level: levelCurrent, asc: ascCurrent } = current;
@@ -2022,6 +2150,15 @@ var __publicField = (obj, key, value) => {
     };
     await addGoal(characterGoalNew);
   };
+  const mergeLevel = (current, oldGoal, cap) => {
+    if (current > oldGoal)
+      return cap !== void 0 ? Math.min(current, cap) : current;
+    return oldGoal;
+  };
+  const mergeCharacterStatus = (next, oldCurrent, oldGoal) => ({
+    current: next.level >= oldCurrent.level && next.asc >= oldCurrent.asc ? next : oldCurrent,
+    goal: next.level >= oldGoal.level && next.asc >= oldGoal.asc ? next : oldGoal
+  });
   const batchUpdateGoals = async (type, identifierKey, updateFn, all, ...updateArgs) => {
     const totalGoal = await getTotalGoal();
     const goalInactive = await getGoalInactive();
@@ -2080,6 +2217,19 @@ var __publicField = (obj, key, value) => {
     }
     return null;
   };
+  const safeCache = () => {
+    try {
+      return AdapterManager.getCurrentAdapter();
+    } catch {
+      return {
+        getItem: (k) => Promise.resolve(localStorage.getItem(k)),
+        setItem: (k, v) => {
+          localStorage.setItem(k, typeof v === "string" ? v : JSON.stringify(v));
+          return Promise.resolve();
+        }
+      };
+    }
+  };
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const sleepWithJitter = (base, jitter = 0) => sleep(base + Math.floor(Math.random() * (jitter + 1)));
   const getFpDeviceId = async () => {
@@ -2111,23 +2261,140 @@ var __publicField = (obj, key, value) => {
         merged[id] = val;
     }
   };
-  const postCalcAndMerge = async (url, body, h2, label, gameName, calcPageUrl, merged, avatarId) => {
+  const CALC_CACHE_VERSION = 1;
+  const CHAR_CACHE_PREFIX = "seelieex:char:";
+  const WP_CACHE_PREFIX = "seelieex:wp:";
+  const calcSig = (body) => {
+    const b = { ...body };
+    delete b.uid;
+    delete b.region;
+    try {
+      return JSON.stringify(b);
+    } catch {
+      return String(body?.item_id ?? body?.avatar?.item_id ?? body?.avatar_id ?? "?");
+    }
+  };
+  const charCacheKey = (game, charKey) => `${CHAR_CACHE_PREFIX}${game}:${charKey}`;
+  const wpCacheKey = (game, wpKey) => `${WP_CACHE_PREFIX}${game}:${wpKey}`;
+  const parseCacheEntry = (raw) => {
+    if (raw == null)
+      return null;
+    if (typeof raw === "string") {
+      const s = raw.trim();
+      if (!s)
+        return null;
+      try {
+        return JSON.parse(s);
+      } catch {
+        return null;
+      }
+    }
+    return raw;
+  };
+  const readCharCache = async (game, charKey) => {
+    const key = charCacheKey(game, charKey);
+    const raw = await safeCache().getItem(key);
+    if (raw == null) {
+      console.log(`[calc缓存] 读角色缓存 miss ${key}`);
+      return null;
+    }
+    const e = parseCacheEntry(raw);
+    if (e && e.v === CALC_CACHE_VERSION) {
+      console.log(`[calc缓存] 读角色缓存 hit ${key}（${e.charItemIds.length} 个素材）`);
+      return e;
+    }
+    console.log(`[calc缓存] 读角色缓存 miss/版本不符 ${key} v=${e?.v}`);
+    return null;
+  };
+  const readWpCache = async (game, wpKey) => {
+    const key = wpCacheKey(game, wpKey);
+    const raw = await safeCache().getItem(key);
+    if (raw == null) {
+      console.log(`[calc缓存] 读武器缓存 miss ${key}`);
+      return null;
+    }
+    const e = parseCacheEntry(raw);
+    if (e && e.v === CALC_CACHE_VERSION) {
+      console.log(`[calc缓存] 读武器缓存 hit ${key}（${e.wpItemIds.length} 个素材）`);
+      return e;
+    }
+    console.log(`[calc缓存] 读武器缓存 miss/版本不符 ${key} v=${e?.v}`);
+    return null;
+  };
+  const writeCharCache = async (e) => {
+    const key = charCacheKey(e.game, e.charKey);
+    try {
+      await safeCache().setItem(key, e);
+      console.log(`[calc缓存] 已写入角色缓存 ${key}（${e.charItemIds.length} 个素材）`);
+    } catch (err) {
+      console.error(`[calc缓存] 写入角色缓存失败（可能 localStorage 配额超限）key=${key}`, err);
+    }
+  };
+  const writeWpCache = async (e) => {
+    const key = wpCacheKey(e.game, e.wpKey);
+    try {
+      await safeCache().setItem(key, e);
+      console.log(`[calc缓存] 已写入武器缓存 ${key}（${e.wpItemIds.length} 个素材）`);
+    } catch (err) {
+      console.error(`[calc缓存] 写入武器缓存失败（可能 localStorage 配额超限）key=${key}`, err);
+    }
+  };
+  const postCalcAndMerge = async (strategy, url, body, h2, label, calcPageUrl, merged, state, charKey, charSig, wpKey, wpSig) => {
+    const { game, gameName } = strategy;
+    const charCached = await readCharCache(game, charKey);
+    const charHit = !!charCached && charCached.sig === charSig;
+    const wpCached = wpKey == null ? null : await readWpCache(game, wpKey);
+    const wpHit = wpKey == null || !!wpCached && wpCached.sig === wpSig;
+    if (state.fresh && charHit && wpHit) {
+      const comboIds = [
+        ...charCached?.charItemIds || [],
+        ...wpCached?.wpItemIds || []
+      ];
+      if (comboIds.length && comboIds.every((id) => state.covered.has(id))) {
+        console.log(`[${label}] 角色 ${charKey}${wpKey != null ? " + 武器 " + wpKey : ""} 所需素材均已被本次同步其他角色覆盖（consume 已缓存），跳过接口请求`);
+        return true;
+      }
+    }
     const [err, res] = await to(axios$1.post(url, JSON.stringify(body), {
       timeout: 8e3,
       headers: { ...h2, "content-type": "application/json" }
     }));
     if (err) {
-      console.warn(`[${label}] 角色 ${avatarId} 计算失败`, err?.message || err);
+      console.warn(`[${label}] 角色 ${charKey} 计算失败`, err?.message || err);
       return false;
     }
     const { status, data: resData } = await res;
     if (status !== 200 || resData?.retcode !== 0) {
       checkLogin(resData?.retcode, gameName, calcPageUrl);
-      console.warn(`[${label}] 角色 ${avatarId} 计算错误 retcode=${resData?.retcode}`);
+      console.warn(`[${label}] 角色 ${charKey} 计算错误 retcode=${resData?.retcode}`);
       return false;
     }
-    const mats = resData?.data?.user_owns_materials || {};
+    const data2 = resData?.data || {};
+    const mats = data2.user_owns_materials || {};
     mergeMaterialsMax(merged, mats);
+    const charItemIds = strategy.charItemIds(data2);
+    charItemIds.forEach((id) => state.covered.add(id));
+    const wpItemIds = strategy.wpItemIds(data2);
+    wpItemIds.forEach((id) => state.covered.add(id));
+    await writeCharCache({
+      v: CALC_CACHE_VERSION,
+      sig: charSig,
+      game,
+      charKey,
+      charItemIds,
+      ts: Date.now()
+    });
+    if (wpKey != null) {
+      await writeWpCache({
+        v: CALC_CACHE_VERSION,
+        sig: wpSig ?? "",
+        game,
+        wpKey,
+        wpItemIds,
+        ts: Date.now()
+      });
+    }
+    state.fresh = true;
     return true;
   };
   const writeMergedToSeelieInventory = (merged, itemLib, specialMap, sourceLabel, extra) => {
@@ -2155,16 +2422,37 @@ var __publicField = (obj, key, value) => {
     return results;
   };
   const withThrottle = async (key, label, fn, uid, region, cooldownMs = 6e4) => {
-    const last = Number(localStorage.getItem(key) || 0);
+    const last = Number(await safeCache().getItem(key) || 0);
     if (last && Date.now() - last < cooldownMs) {
       const wait = Math.ceil((cooldownMs - (Date.now() - last)) / 1e3);
       alert(`请稍候 ${wait}s 再同步（${label} 1 分钟节流）`);
       return { ok: false, skipped: true, reason: "节流" };
     }
     const results = await fn(uid, region);
-    localStorage.setItem(key, Date.now().toString());
+    await safeCache().setItem(key, Date.now().toString());
     return results;
   };
+  class ProgressBus {
+    constructor() {
+      __publicField(this, "listeners", /* @__PURE__ */ new Set());
+    }
+    subscribe(fn) {
+      this.listeners.add(fn);
+      return () => {
+        this.listeners.delete(fn);
+      };
+    }
+    emit(phase, done, total) {
+      for (const fn of this.listeners) {
+        try {
+          fn(phase, done, total);
+        } catch (e) {
+          console.warn("[progressBus] listener error:", e);
+        }
+      }
+    }
+  }
+  const progressBus = new ProgressBus();
   const requestPageSize = 200;
   const buildGenshinHeaders = async () => {
     const { fp, deviceId } = await getFpDeviceId();
@@ -2208,16 +2496,20 @@ var __publicField = (obj, key, value) => {
   };
   const getDetailList$2 = async (game_uid, region, cfg) => {
     let maxPageSize = Math.ceil(getCharactersNum() / requestPageSize);
+    if (maxPageSize < 1)
+      maxPageSize = 1;
     let idxs = Array.from(new Array(maxPageSize).keys());
     const characters = [];
     for await (let i of idxs) {
       characters.push.apply(characters, await getCharacters$2(game_uid, region, i + 1, cfg));
+      progressBus.emit("detail", characters.length, Math.max(getCharactersNum(), 1));
     }
     const details = characters.map((c) => getCharacterDetail$2(c));
     const detailList = [];
     for await (let d of details) {
       if (!!d) {
         detailList.push(d);
+        progressBus.emit("detail", detailList.length, Math.max(characters.length, 1));
       }
     }
     return detailList;
@@ -2322,9 +2614,9 @@ var __publicField = (obj, key, value) => {
     }
     items = items.filter((a) => a.avatar_level_current != a.avatar_level_target || a.skill_list.length > 0);
     console.table(items);
-    const BATCH_SIZE = 256;
+    progressBus.emit("inventory", 0, 3);
     const SPLIT_RETRY_DELAY = 1e3;
-    const consumeRaw = [];
+    let consumeRaw = [];
     const doBatch = async (chunk) => {
       const [err, res] = await to(axios$1.post(cfg.computeUrl, JSON.stringify({
         items: chunk,
@@ -2347,35 +2639,48 @@ var __publicField = (obj, key, value) => {
       }
       return resData.data?.overall_consume || [];
     };
-    const processChunk = async (chunk) => {
-      const part = await doBatch(chunk);
-      if (part !== null) {
-        console.log(`[素材同步] 批次(${chunk.length}条)完成，本批 ${part.length} 条素材`);
-        return part;
-      }
+    const splitRetry = async (chunk) => {
+      const part2 = await doBatch(chunk);
+      if (part2 !== null)
+        return { ok: part2, bad: [] };
       if (chunk.length > 1) {
         const mid = Math.ceil(chunk.length / 2);
         const left = chunk.slice(0, mid);
         const right = chunk.slice(mid);
         console.warn(`[素材同步] 批次(${chunk.length}条)失败，二分重试 -> ${left.length}+${right.length}，间隔 ${SPLIT_RETRY_DELAY}ms`);
         await sleep(SPLIT_RETRY_DELAY);
-        const l = await processChunk(left);
-        const r = await processChunk(right);
-        return [...l, ...r];
+        const l = await splitRetry(left);
+        const r = await splitRetry(right);
+        return { ok: [...l.ok, ...r.ok], bad: [...l.bad, ...r.bad] };
       }
       console.error(`[素材同步] 摘除影响数据(单条始终失败):`, JSON.stringify(chunk[0]));
-      return [];
+      return { ok: [], bad: chunk };
     };
-    const total = Math.ceil(items.length / BATCH_SIZE);
-    let idx = 0;
-    for (let i = 0; i < items.length; i += BATCH_SIZE) {
-      const chunk = items.slice(i, i + BATCH_SIZE);
-      idx++;
-      const part = await processChunk(chunk);
-      if (part.length)
-        consumeRaw.push(...part);
-      console.log(`[素材同步] 批次 ${idx}/${total} 处理完毕，累计素材 ${consumeRaw.length} 条`);
+    const part = await doBatch(items);
+    progressBus.emit("inventory", 1, 3);
+    if (part !== null) {
+      consumeRaw.push(...part);
+      console.log(`[素材同步] 请求①整批(${items.length}条)成功，本次仅 1 次 HTTP`);
+    } else {
+      console.warn(`[素材同步] 请求①整批(${items.length}条)失败，进入二分重试`);
+      const retry = await splitRetry(items);
+      consumeRaw.push(...retry.ok);
+      const badItems = retry.bad;
+      if (badItems.length) {
+        console.warn(`[素材同步] 二分重试隔离 ${badItems.length} 条始终失败项，追加剔除失败的全量请求`);
+        const retryItems = items.filter((it) => !badItems.includes(it));
+        const part2 = await doBatch(retryItems);
+        if (part2 !== null) {
+          consumeRaw = part2;
+          console.log(`[素材同步] 请求②(剔除 ${badItems.length} 失败项)成功，融合入库`);
+        } else {
+          console.warn(`[素材同步] 请求②仍失败，按原逻辑合并 ${consumeRaw.length} 条成功部分`);
+        }
+      } else {
+        console.log(`[素材同步] 二分重试全部成功，共 ${consumeRaw.length} 条素材`);
+      }
     }
+    progressBus.emit("inventory", 2, 3);
     if (consumeRaw.length === 0) {
       localStorage.removeItem("fp");
       throw new Error("Failed to calculate inventory.");
@@ -2401,6 +2706,7 @@ var __publicField = (obj, key, value) => {
       "[素材同步]",
       (id) => ({ sort: 0, max: !merged[id].lackNum })
     );
+    progressBus.emit("inventory", 3, 3);
     localStorage.removeItem("fp");
     return { ok: true, count: results.length, source: pageItems ? "page" : "fallback" };
   };
@@ -2467,7 +2773,7 @@ var __publicField = (obj, key, value) => {
     const totalGoal = await getTotalGoal();
     const owner = extra?.owner ?? "";
     const characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
-    const weaponPredicate = (g2) => g2.type == "weapon" && g2.character == owner;
+    const weaponPredicate = (g2) => g2.type == "weapon" && (owner ? g2.character == owner : g2.weapon == nameEn);
     const legacyWeaponPredicate = (g2) => g2.type == "weapon" && !g2.character && g2.weapon == nameEn;
     let characterIdx;
     if (type == "character") {
@@ -2533,12 +2839,13 @@ var __publicField = (obj, key, value) => {
     }
     await addGoal(characterGoal, true);
   };
-  async function addCharacter$2(characterDataEx) {
+  async function addCharacter$2(characterDataEx, recorder, associateWeapon = true) {
     const { character, skill_list, weapon } = characterDataEx;
     const characterId = getCharacterId$2(character);
     if (!characterId) {
       return;
     }
+    recorder?.synced.add(characterId);
     await addCharacterGoal$2(
       resolveStatus$1(character.level_current, character.promote_level),
       characterId,
@@ -2552,8 +2859,13 @@ var __publicField = (obj, key, value) => {
           resolveStatus$1(weapon.level_current),
           weaponId,
           "weapon",
-          { owner: characterId }
+          { owner: associateWeapon ? characterId : void 0 }
         );
+        if (associateWeapon && recorder) {
+          if (!recorder.worn.has(characterId))
+            recorder.worn.set(characterId, /* @__PURE__ */ new Set());
+          recorder.worn.get(characterId).add(weaponId);
+        }
       }
     }
     await addTalentGoal(characterId, skill_list);
@@ -2586,15 +2898,15 @@ var __publicField = (obj, key, value) => {
       ...talent,
       normal: {
         current: normalCurrent,
-        goal: normalCurrent > normalGoal ? normalCurrent : normalGoal
+        goal: mergeLevel(normalCurrent, normalGoal)
       },
       skill: {
         current: skillCurrent,
-        goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
+        goal: mergeLevel(skillCurrent, skillGoal)
       },
       burst: {
         current: burstCurrent,
-        goal: burstCurrent > burstGoal ? burstCurrent : burstGoal
+        goal: mergeLevel(burstCurrent, burstGoal)
       }
     };
     await addGoal(talentNew);
@@ -2623,8 +2935,8 @@ var __publicField = (obj, key, value) => {
   const batchUpdateWeapon$2 = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "weapon",
-      "weapon",
-      // 武器目标用weapon字段标识
+      "id",
+      // 武器 inactive 标识用 goal.id（与 seelie getInactiveConfig / computeInactive 一致）
       (weapon) => updateCharacter(weapon, characterStatusGoal),
       all,
       characterStatusGoal
@@ -2647,8 +2959,8 @@ var __publicField = (obj, key, value) => {
     }
     // 公共实现：获取账户列表
     async getAccounts() {
-      const { calcPageUrl, roleUrl } = this.getApiConfig();
-      return await getAccount(roleUrl, calcPageUrl, this.getGameName());
+      const { calcPageUrl, gameBiz } = this.getApiConfig();
+      return await getAccount(gameBiz, calcPageUrl, this.getGameName());
     }
     async getItem(key) {
       return Promise.resolve(localStorage.getItem(key));
@@ -2679,7 +2991,7 @@ var __publicField = (obj, key, value) => {
           },
           // 天赋目标（标识字段：character）
           { type: "weapon", identifierKey: "id" }
-          // 武器目标（标识字段：weapon）
+          // 武器目标（标识字段：goal.id，与 seelie computeInactive 一致）
         ];
         return GENSHIN_INACTIVE_CONFIG;
       });
@@ -2695,7 +3007,7 @@ var __publicField = (obj, key, value) => {
     getApiConfig() {
       return {
         calcPageUrl: GI_CALC_PAGE_URL,
-        roleUrl: GI_ROLE_URL,
+        gameBiz: "hk4e_cn",
         charactersUrl: GI_CHARACTERS_URL,
         allCharactersUrl: GI_ALL_CHARACTERS_URL,
         computeUrl: GI_BATCH_COMPUTE_URL
@@ -2704,7 +3016,7 @@ var __publicField = (obj, key, value) => {
     async getCharacterDetails(uid, region) {
       return getDetailList$2(uid, region, this.getApiConfig());
     }
-    async syncCharacters(res) {
+    async syncCharacters(res, associateWeapon = true) {
       console.group("返回数据");
       console.groupCollapsed("角色");
       console.table(res.map((a) => a.character));
@@ -2721,8 +3033,12 @@ var __publicField = (obj, key, value) => {
       });
       console.groupEnd();
       console.groupEnd();
+      const recorder = { synced: /* @__PURE__ */ new Set(), worn: /* @__PURE__ */ new Map() };
       for (let v of res) {
-        await addCharacter$2(v);
+        await addCharacter$2(v, recorder, associateWeapon);
+      }
+      if (associateWeapon) {
+        await reconcileWeaponOwnership(recorder.synced, recorder.worn);
       }
     }
     importSeelieMethods() {
@@ -2732,6 +3048,30 @@ var __publicField = (obj, key, value) => {
       return characterStatusList$2;
     }
   }
+  const hsrCalcStrategy = {
+    game: "hsr",
+    gameName: "崩坏：星穹铁道",
+    charItemIds(data2) {
+      const ids = /* @__PURE__ */ new Set();
+      for (const key of ["avatar_consume", "skill_consume"]) {
+        for (const it of data2?.[key] || []) {
+          const id = it?.item_id;
+          if (id !== void 0 && id !== null && id !== "")
+            ids.add(String(id));
+        }
+      }
+      return [...ids];
+    },
+    wpItemIds(data2) {
+      const ids = /* @__PURE__ */ new Set();
+      for (const it of data2?.equipment_consume || []) {
+        const id = it?.item_id;
+        if (id !== void 0 && id !== null && id !== "")
+          ids.add(String(id));
+      }
+      return [...ids];
+    }
+  };
   const getCharacters$1 = async (uid, region, cfg) => {
     const h2 = await buildHsrHeaders();
     const params = `?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}`;
@@ -2766,15 +3106,21 @@ var __publicField = (obj, key, value) => {
   };
   const getDetailList$1 = async (game_uid, region, cfg) => {
     const avatars = await getCharacters$1(game_uid, region, cfg);
-    const detailPromises = avatars.map((c) => getCharacterDetail$1(c, game_uid, region, cfg));
-    const settled = await Promise.all(detailPromises);
     const detailList = [];
-    for (let i = 0; i < avatars.length; i++) {
-      const d = settled[i];
-      if (d) {
-        d.isOwned = Number(avatars[i].first_meet_time || 0) > 0;
-        detailList.push(d);
+    const D_BATCH = 8;
+    for (let i = 0; i < avatars.length; i += D_BATCH) {
+      const slice = avatars.slice(i, i + D_BATCH);
+      const settled = await Promise.all(slice.map((c) => getCharacterDetail$1(c, game_uid, region, cfg)));
+      for (let j = 0; j < slice.length; j++) {
+        const d = settled[j];
+        if (d) {
+          d.isOwned = Number(slice[j].first_meet_time || 0) > 0;
+          detailList.push(d);
+        }
       }
+      if (i + D_BATCH < avatars.length)
+        await sleep(HSR_REQ_DELAY);
+      progressBus.emit("detail", detailList.length, avatars.length);
     }
     return detailList;
   };
@@ -2817,6 +3163,8 @@ var __publicField = (obj, key, value) => {
     const h2 = await buildHsrHeaders();
     const merged = {};
     let computed = 0;
+    const calcState = { fresh: false, covered: /* @__PURE__ */ new Set() };
+    let idx = 0;
     for (const d of details) {
       const avatar = d.avatar || {};
       const allSkills = [
@@ -2840,21 +3188,27 @@ var __publicField = (obj, key, value) => {
         uid,
         region
       };
+      let wpKey = null;
       if (d.equipment && d.equipment.item_id) {
         body.equipment = {
           item_id: String(d.equipment.item_id),
           cur_level: 1,
           target_level: d.equipment.max_level || 80
         };
+        wpKey = d.equipment.item_id;
       }
+      const charSig = calcSig({ avatar: body.avatar, skill_list: body.skill_list });
+      const wpSig = wpKey != null ? calcSig(body.equipment) : null;
       const url = `${cfg.computeUrl}?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}&noSessionRetry=true`;
-      const ok = await postCalcAndMerge(url, body, h2, "[HSR素材]", "崩坏：星穹铁道", cfg.calcPageUrl, merged, avatar.item_id);
+      const ok = await postCalcAndMerge(hsrCalcStrategy, url, body, h2, "[HSR素材]", cfg.calcPageUrl, merged, calcState, avatar.item_id, charSig, wpKey, wpSig);
       if (ok) {
         computed++;
         if (computed % 10 === 0)
           console.log(`[HSR素材] 已计算 ${computed}/${details.length}`);
       }
       await sleep(HSR_REQ_DELAY);
+      idx++;
+      progressBus.emit("inventory", idx, details.length);
     }
     if (!Object.keys(merged).length)
       throw new Error("[HSR素材] 未计算出任何素材（请检查接口/items 库）");
@@ -2934,12 +3288,20 @@ var __publicField = (obj, key, value) => {
     console.error(`getWeaponId 查询失败 (input=${JSON.stringify(input)})`);
     return "";
   };
-  let initBonus = {};
-  const addTraceGoal$1 = async (talentCharacter, skill_list, skills_servant) => {
+  const buildBonus = (skillsOther) => {
+    const bonus = {};
+    for (const s of skillsOther ?? []) {
+      if (Number(s.point_type) === 2)
+        continue;
+      bonus[String(s.point_id)] = Number(s.cur_level) > 0;
+    }
+    return bonus;
+  };
+  const addTraceGoal$1 = async (talentCharacter, skill_list, skills_servant, skills_other) => {
     const totalGoal = await getTotalGoal();
     const talentIdx = totalGoal.findIndex((g2) => g2.type == "trace" && g2.character == talentCharacter);
-    const combatSkills = skill_list.filter((s) => s.point_type === 2).sort((a, b) => parseInt(a.point_id) - parseInt(b.point_id));
-    const elationSkill = skill_list.find((s) => s.point_type === 4);
+    const combatSkills = skill_list.filter((s) => Number(s.point_type) === 2).sort((a, b) => parseInt(a.point_id) - parseInt(b.point_id));
+    const elationSkill = skill_list.find((s) => Number(s.point_type) === 4);
     const [baseCurrent, skillCurrent, ultimateCurrent, talentCurrent] = combatSkills.map((a) => a.cur_level);
     const elationCurrent = elationSkill?.cur_level;
     let [petSkillCurrent, petTalentCurrent] = [1, 1];
@@ -2950,6 +3312,7 @@ var __publicField = (obj, key, value) => {
     const path = getCharacterPath(talentCharacter);
     const isRemembrance = path === "remembrance";
     const isElation = path === "elation";
+    const builtBonus = buildBonus(skills_other);
     let talentGoal;
     if (talentIdx < 0) {
       const id = await getNextId();
@@ -2972,7 +3335,7 @@ var __publicField = (obj, key, value) => {
           current: talentCurrent,
           goal: talentCurrent
         },
-        bonus: initBonus,
+        bonus: builtBonus,
         id,
         ...isRemembrance ? {
           pet_skill: {
@@ -3003,21 +3366,24 @@ var __publicField = (obj, key, value) => {
       const elationGoal = seelieGoal.elation_skill?.goal ?? 1;
       talentGoal = {
         ...seelieGoal,
+        // 合并米游社 skills_other 推导的已激活点：既有 bonus 保留（含用户自定义/活动节点），
+        // 标准节点以米游社当前点亮状态覆盖（cur_level>0 → true）。
+        bonus: { ...seelieGoal.bonus, ...builtBonus },
         basic: {
           current: baseCurrent,
-          goal: baseCurrent > basicGoal ? Math.min(baseCurrent, 6) : basicGoal
+          goal: mergeLevel(baseCurrent, basicGoal, 6)
         },
         skill: {
           current: skillCurrent,
-          goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
+          goal: mergeLevel(skillCurrent, skillGoal)
         },
         ultimate: {
           current: ultimateCurrent,
-          goal: ultimateCurrent > ultimateGoal ? ultimateCurrent : ultimateGoal
+          goal: mergeLevel(ultimateCurrent, ultimateGoal)
         },
         talent: {
           current: talentCurrent,
-          goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
+          goal: mergeLevel(talentCurrent, talentGoal2)
         },
         ...isRemembrance ? {
           pet_skill: {
@@ -3039,10 +3405,11 @@ var __publicField = (obj, key, value) => {
     }
     await addGoal(talentGoal);
   };
-  const addCharacterGoal$1 = async (level_current, nameEn, name, type, eidolon) => {
+  const addCharacterGoal$1 = async (level_current, nameEn, name, type, eidolon, owner, associate = true) => {
     const totalGoal = await getTotalGoal();
+    const linkOwner = associate ? owner ?? "" : "";
     let characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
-    let weaponPredicate = (g2) => g2.type == type && g2.cone == nameEn;
+    let weaponPredicate = (g2) => g2.type == type && g2.cone == nameEn && (linkOwner ? g2.character == linkOwner || !g2.character : true);
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
     const characterStatus = initCharacterStatus(level_current);
     let characterGoal;
@@ -3059,7 +3426,7 @@ var __publicField = (obj, key, value) => {
     function initWeaponGoal(id) {
       return {
         type,
-        character: "",
+        character: linkOwner ?? "",
         cone: nameEn,
         current: characterStatus,
         goal: characterStatus,
@@ -3072,39 +3439,54 @@ var __publicField = (obj, key, value) => {
     } else {
       const seelieGoal = type == "character" ? totalGoal[characterIdx] : totalGoal[characterIdx];
       const { goal, current } = seelieGoal;
-      const { level: levelCurrent, asc: ascCurrent } = current;
-      const { level: levelGoal, asc: ascGoal } = goal;
-      const { level, asc } = characterStatus;
+      const { current: mergedCurrent, goal: mergedGoal } = mergeCharacterStatus(characterStatus, current, goal);
       const merged = {
         ...seelieGoal,
-        current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
-        goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal
+        current: mergedCurrent,
+        goal: mergedGoal
       };
+      if (type != "character") {
+        merged.character = linkOwner;
+      }
       if (type == "character" && (eidolon !== void 0 || seelieGoal.eidolon !== void 0)) {
         merged.eidolon = Math.max(seelieGoal.eidolon ?? 0, eidolon ?? 0);
       }
-      characterGoal = merged;
+      totalGoal[characterIdx] = merged;
+      const keyField = type == "character" ? "character" : type == "cone" ? "cone" : "weapon";
+      for (let i = totalGoal.length - 1; i >= 0; i--) {
+        if (i !== characterIdx && totalGoal[i].type === type && totalGoal[i][keyField] === nameEn) {
+          totalGoal.splice(i, 1);
+        }
+      }
+      await setGoals(totalGoal);
+      return;
     }
     await addGoal(characterGoal);
   };
-  async function addCharacter$1(characterDataEx) {
-    const { avatar: character, skills: skill_list, skills_servant, equipment: weapon } = characterDataEx;
+  async function addCharacter$1(characterDataEx, recorder, associateWeapon = true) {
+    const { avatar: character, skills: skill_list, skills_servant, skills_other, equipment: weapon } = characterDataEx;
     const { item_name: name, item_id: itemId, rank } = character;
-    if (weapon) {
+    const characterId = getCharacterId$1({ id: parseInt(itemId) });
+    if (weapon && characterId) {
       const { item_name: weaponName, item_id: weaponItemId, cur_level: weaponLeveL } = weapon;
       const weaponId = getWeaponId$1({ id: parseInt(weaponItemId) });
       if (weaponId) {
-        await addCharacterGoal$1(weaponLeveL, weaponId, weaponName, "cone");
+        await addCharacterGoal$1(weaponLeveL, weaponId, weaponName, "cone", void 0, associateWeapon ? characterId : void 0, associateWeapon);
+        if (associateWeapon && recorder) {
+          if (!recorder.worn.has(characterId))
+            recorder.worn.set(characterId, /* @__PURE__ */ new Set());
+          recorder.worn.get(characterId).add(weaponId);
+        }
       }
     }
     const { cur_level: characterLevel } = character;
-    const characterId = getCharacterId$1({ id: parseInt(itemId) });
     if (!characterId || characterId.includes("trailblazer")) {
       return;
     }
+    recorder?.synced.add(characterId);
     const eidolon = parseInt(rank ?? "") || 0;
     await addCharacterGoal$1(characterLevel, characterId, name, "character", eidolon);
-    await addTraceGoal$1(characterId, skill_list, skills_servant);
+    await addTraceGoal$1(characterId, skill_list, skills_servant, skills_other);
   }
   const characterStatusList$1 = [
     { level: 1, asc: 0, text: "1" },
@@ -3159,19 +3541,19 @@ var __publicField = (obj, key, value) => {
       ...talent,
       basic: {
         current: basicCurrent,
-        goal: basicCurrent > normalGoal ? basicCurrent : normalGoal
+        goal: mergeLevel(basicCurrent, normalGoal, 6)
       },
       skill: {
         current: skillCurrent,
-        goal: skillCurrent > skillGoal ? skillCurrent : skillGoal
+        goal: mergeLevel(skillCurrent, skillGoal)
       },
       ultimate: {
         current: ultimateCurrent,
-        goal: ultimateCurrent > burstGoal ? ultimateCurrent : burstGoal
+        goal: mergeLevel(ultimateCurrent, burstGoal)
       },
       talent: {
         current: talentCurrent,
-        goal: talentCurrent > talentGoal2 ? talentCurrent : talentGoal2
+        goal: mergeLevel(talentCurrent, talentGoal2)
       },
       pet_skill: applyExtra(talent.pet_skill, petSkillGoal, isRemembrance),
       pet_talent: applyExtra(talent.pet_talent, petTalentGoal, isRemembrance),
@@ -3205,7 +3587,8 @@ var __publicField = (obj, key, value) => {
   const batchUpdateWeapon$1 = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "cone",
-      "cone",
+      "id",
+      // 光锥 inactive 标识用 goal.id（与 seelie getInactiveConfig / computeInactive 一致）
       (weapon) => updateCharacter(weapon, characterStatusGoal),
       all,
       characterStatusGoal
@@ -3247,7 +3630,7 @@ var __publicField = (obj, key, value) => {
     getApiConfig() {
       return {
         calcPageUrl: HSR_CALC_PAGE_URL,
-        roleUrl: HSR_ROLE_URL,
+        gameBiz: "hkrpg_cn",
         charactersUrl: HSR_AVATAR_LIST_URL,
         // rpgcultivate/avatar/list（act-api，data.avatars + first_meet_time/is_own 判拥有）
         charactersDetailUrl: HSR_AVATAR_DETAIL_URL,
@@ -3258,7 +3641,7 @@ var __publicField = (obj, key, value) => {
     async getCharacterDetails(uid, region) {
       return getDetailList$1(uid, region, this.getApiConfig());
     }
-    async syncCharacters(res) {
+    async syncCharacters(res, associateWeapon = true) {
       console.group("返回数据");
       console.groupCollapsed("角色");
       console.table(res.map((a) => a.avatar));
@@ -3283,10 +3666,14 @@ var __publicField = (obj, key, value) => {
       });
       console.groupEnd();
       console.groupEnd();
+      const recorder = { synced: /* @__PURE__ */ new Set(), worn: /* @__PURE__ */ new Map() };
       for (let v of res) {
         if (!v.isOwned)
           continue;
-        await addCharacter$1(v);
+        await addCharacter$1(v, recorder, associateWeapon);
+      }
+      if (associateWeapon) {
+        await reconcileWeaponOwnership(recorder.synced, recorder.worn);
       }
     }
     importSeelieMethods() {
@@ -3302,6 +3689,30 @@ var __publicField = (obj, key, value) => {
       return localforage2.setItem(key, value);
     }
   }
+  const zzzCalcStrategy = {
+    game: "zzz",
+    gameName: "绝区零",
+    charItemIds(data2) {
+      const ids = /* @__PURE__ */ new Set();
+      for (const key of ["avatar_consume", "skill_consume"]) {
+        for (const it of data2?.[key] || []) {
+          const id = it?.id;
+          if (id !== void 0 && id !== null && id !== "")
+            ids.add(String(id));
+        }
+      }
+      return [...ids];
+    },
+    wpItemIds(data2) {
+      const ids = /* @__PURE__ */ new Set();
+      for (const it of data2?.weapon_consume || []) {
+        const id = it?.id;
+        if (id !== void 0 && id !== null && id !== "")
+          ids.add(String(id));
+      }
+      return [...ids];
+    }
+  };
   const getCharacters = async (uid, region, page = 1, cfg) => {
     let url = cfg.charactersUrl;
     let params = `?uid=${uid}&region=${region}`;
@@ -3325,7 +3736,6 @@ var __publicField = (obj, key, value) => {
         console.warn(`[ZZZ] 角色列表获取失败 retcode=${retcode}: ${resData?.message || ""}`);
       }
     }
-    alert("请确认已登录活动页面且绑定账户!");
     throw err ? err : new Error("角色列表获取失败");
   };
   const getCharacterDetail = async (ids, uid, region, cfg) => {
@@ -3365,7 +3775,7 @@ var __publicField = (obj, key, value) => {
     } else {
       console.error(err);
     }
-    return [];
+    return null;
   };
   const getDetailList = async (game_uid, region, cfg) => {
     let maxPageSize = 1;
@@ -3378,10 +3788,19 @@ var __publicField = (obj, key, value) => {
     let ids = characters.map((a) => a.id);
     const batchSize = 10;
     const allResults = [];
+    let dropped = 0;
     for (let i = 0; i < ids.length; i += batchSize) {
       const batchIds = ids.slice(i, i + batchSize);
       const batchResults = await getCharacterDetail(batchIds, game_uid, region, cfg);
-      allResults.push(...batchResults);
+      if (batchResults) {
+        allResults.push(...batchResults);
+      } else {
+        dropped += batchIds.length;
+      }
+      progressBus.emit("detail", allResults.length + dropped, Math.max(ids.length, 1));
+    }
+    if (dropped) {
+      console.warn(`[ZZZ] ${dropped} 个角色详情获取失败，已跳过（不影响其余角色同步）`);
     }
     return allResults;
   };
@@ -3422,6 +3841,8 @@ var __publicField = (obj, key, value) => {
     const h2 = await buildZzzHeaders();
     const merged = {};
     let computed = 0;
+    const calcState = { fresh: false, covered: /* @__PURE__ */ new Set() };
+    let idx = 0;
     for (const d of list) {
       await sleepWithJitter(ZZZ_REQ_DELAY, ZZZ_REQ_JITTER);
       const avatar = d.avatar || d;
@@ -3441,13 +3862,24 @@ var __publicField = (obj, key, value) => {
           weapon_init_level: 0
         } : void 0
       };
+      const charSig = calcSig({
+        avatar_id: body.avatar_id,
+        avatar_level: body.avatar_level,
+        avatar_current_level: body.avatar_current_level,
+        avatar_current_promotes: body.avatar_current_promotes,
+        skills: body.skills
+      });
+      const wpKey = weaponId != null ? weaponId : null;
+      const wpSig = wpKey != null ? calcSig(body.weapon_info) : null;
       const url = `${cfg.computeUrl}?uid=${uid}&region=${region}`;
-      const ok = await postCalcAndMerge(url, body, h2, "[ZZZ素材]", "绝区零", cfg.calcPageUrl, merged, avatarId);
+      const ok = await postCalcAndMerge(zzzCalcStrategy, url, body, h2, "[ZZZ素材]", cfg.calcPageUrl, merged, calcState, avatarId, charSig, wpKey, wpSig);
       if (ok) {
         computed++;
         if (computed % 10 === 0)
           console.log(`[ZZZ素材] 已计算 ${computed}/${list.length}`);
       }
+      idx++;
+      progressBus.emit("inventory", idx, list.length);
     }
     if (!Object.keys(merged).length)
       throw new Error("[ZZZ素材] 未计算出任何素材（请检查接口/items 库）");
@@ -3511,13 +3943,16 @@ var __publicField = (obj, key, value) => {
   const addTraceGoal = async (talentCharacter, skill_list) => {
     const totalGoal = await getTotalGoal();
     const talentIdx = totalGoal.findIndex((g2) => g2.type == "talent" && g2.character == talentCharacter);
-    const typeOrder = [0, 2, 6, 1, 3, 5];
-    skill_list.sort((a, b) => {
-      const aIndex = typeOrder.indexOf(a.skill_type);
-      const bIndex = typeOrder.indexOf(b.skill_type);
-      return aIndex - bIndex;
-    });
-    const [baseCurrent, dodgeCurrent, assistCurrent, specialCurrent, chainCurrent, coreCurrent] = skill_list.map((a) => a.level);
+    const levelByType = (t) => {
+      const s = (skill_list ?? []).find((x) => x.skill_type === t);
+      return s ? Number(s.level) : 0;
+    };
+    const baseCurrent = levelByType(0);
+    const dodgeCurrent = levelByType(2);
+    const assistCurrent = levelByType(6);
+    const specialCurrent = levelByType(1);
+    const chainCurrent = levelByType(3);
+    const coreCurrent = levelByType(5);
     let talentGoal;
     let coreValue = coreCurrent - 1;
     if (talentIdx < 0) {
@@ -3564,27 +3999,27 @@ var __publicField = (obj, key, value) => {
         ...seelieGoal,
         basic: {
           current: baseCurrent,
-          goal: baseCurrent > basicGoal ? baseCurrent : basicGoal
+          goal: mergeLevel(baseCurrent, basicGoal)
         },
         dodge: {
           current: dodgeCurrent,
-          goal: dodgeCurrent > dodgeGoal ? dodgeCurrent : dodgeGoal
+          goal: mergeLevel(dodgeCurrent, dodgeGoal)
         },
         assist: {
           current: assistCurrent,
-          goal: assistCurrent > assistGoal ? assistCurrent : assistGoal
+          goal: mergeLevel(assistCurrent, assistGoal)
         },
         special: {
           current: specialCurrent,
-          goal: specialCurrent > specialGoal ? specialCurrent : specialGoal
+          goal: mergeLevel(specialCurrent, specialGoal)
         },
         chain: {
           current: chainCurrent,
-          goal: chainCurrent > chainGoal ? chainCurrent : chainGoal
+          goal: mergeLevel(chainCurrent, chainGoal)
         },
         core: {
           current: coreValue,
-          goal: coreValue > coreGoal ? coreValue : coreGoal
+          goal: mergeLevel(coreValue, coreGoal)
         }
       };
     }
@@ -3600,10 +4035,10 @@ var __publicField = (obj, key, value) => {
     const ascended = cap > closest.level;
     return { ...ascended ? candidates[candidates.length - 1] : candidates[0] };
   };
-  const addCharacterGoal = async (status, nameEn, type, extra) => {
+  const addCharacterGoal = async (status, nameEn, type, extra, associate = true) => {
     const totalGoal = await getTotalGoal();
     const cons = extra?.cons;
-    const owner = extra?.owner ?? "";
+    const owner = associate ? extra?.owner ?? "" : "";
     const characterPredicate = (g2) => g2.type == type && g2.character == nameEn;
     const weaponPredicate = (g2) => g2.type == type && g2.weapon == nameEn;
     const characterIdx = totalGoal.findIndex(type == "character" ? characterPredicate : weaponPredicate);
@@ -3636,44 +4071,61 @@ var __publicField = (obj, key, value) => {
     } else {
       const seelieGoal = type == "character" ? totalGoal[characterIdx] : totalGoal[characterIdx];
       const { goal, current } = seelieGoal;
-      const { level: levelCurrent, asc: ascCurrent } = current;
-      const { level: levelGoal, asc: ascGoal } = goal;
-      const { level, asc } = characterStatus;
+      const { current: mergedCurrent, goal: mergedGoal } = mergeCharacterStatus(characterStatus, current, goal);
       const merged = {
         ...seelieGoal,
-        current: level >= levelCurrent && asc >= ascCurrent ? characterStatus : current,
-        goal: level >= levelGoal && asc >= ascGoal ? characterStatus : goal
+        current: mergedCurrent,
+        goal: mergedGoal
       };
+      if (type != "character") {
+        merged.character = owner;
+      }
       if (type == "character" && (cons !== void 0 || seelieGoal.cons !== void 0)) {
         merged.cons = Math.max(seelieGoal.cons ?? 0, cons ?? 0);
       }
-      characterGoal = merged;
+      totalGoal[characterIdx] = merged;
+      const keyField = type == "character" ? "character" : "weapon";
+      for (let i = totalGoal.length - 1; i >= 0; i--) {
+        if (i !== characterIdx && totalGoal[i].type === type && totalGoal[i][keyField] === nameEn) {
+          totalGoal.splice(i, 1);
+        }
+      }
+      await setGoals(totalGoal);
+      return;
     }
     await addGoal(characterGoal);
   };
-  async function addCharacter(characterDataEx) {
+  async function addCharacter(characterDataEx, recorder, associateWeapon = true) {
     const { avatar: character, weapon } = characterDataEx;
     const { level: characterLevel, rank, promotes } = character;
-    if (weapon) {
+    const characterId = getCharacterId(character);
+    if (weapon && characterId) {
       const { level: weaponLevel, promotes: weaponPromotes } = weapon;
       const weaponId = getWeaponId(weapon);
       if (weaponId) {
         await addCharacterGoal(
           resolveStatus(weaponLevel, weaponPromotes),
           weaponId,
-          "weapon"
+          "weapon",
+          { owner: associateWeapon ? characterId : void 0 },
+          associateWeapon
         );
+        if (associateWeapon && recorder) {
+          if (!recorder.worn.has(characterId))
+            recorder.worn.set(characterId, /* @__PURE__ */ new Set());
+          recorder.worn.get(characterId).add(weaponId);
+        }
       }
     }
-    const characterId = getCharacterId(character);
     if (!characterId) {
       return;
     }
+    recorder?.synced.add(characterId);
     await addCharacterGoal(
       resolveStatus(characterLevel, promotes),
       characterId,
       "character",
-      { cons: rank }
+      { cons: Number(rank) || 0 }
     );
     await addTraceGoal(characterId, character.skills);
   }
@@ -3702,27 +4154,27 @@ var __publicField = (obj, key, value) => {
       ...talent,
       basic: {
         current: baseCurrent,
-        goal: baseCurrent > basicGoal ? baseCurrent : basicGoal
+        goal: mergeLevel(baseCurrent, basicGoal)
       },
       dodge: {
         current: dodgeCurrent,
-        goal: dodgeCurrent > dodgeGoal ? dodgeCurrent : dodgeGoal
+        goal: mergeLevel(dodgeCurrent, dodgeGoal)
       },
       assist: {
         current: assistCurrent,
-        goal: assistCurrent > assistGoal ? assistCurrent : assistGoal
+        goal: mergeLevel(assistCurrent, assistGoal)
       },
       special: {
         current: specialCurrent,
-        goal: specialCurrent > specialGoal ? specialCurrent : specialGoal
+        goal: mergeLevel(specialCurrent, specialGoal)
       },
       chain: {
         current: chainCurrent,
-        goal: chainCurrent > chainGoal ? chainCurrent : chainGoal
+        goal: mergeLevel(chainCurrent, chainGoal)
       },
       core: {
         current: coreCurrent,
-        goal: coreCurrent > coreGoal ? coreCurrent : coreGoal
+        goal: mergeLevel(coreCurrent, coreGoal)
       }
     };
     await addGoal(talentNew);
@@ -3754,8 +4206,8 @@ var __publicField = (obj, key, value) => {
   const batchUpdateWeapon = async (all, characterStatusGoal) => {
     batchUpdateGoals(
       "weapon",
-      "weapon",
-      // 武器目标用weapon字段标识
+      "id",
+      // 武器 inactive 标识用 goal.id（与 seelie getInactiveConfig / computeInactive 一致）
       (weapon) => updateCharacter(weapon, characterStatusGoal),
       all,
       characterStatusGoal
@@ -3797,7 +4249,7 @@ var __publicField = (obj, key, value) => {
     getApiConfig() {
       return {
         calcPageUrl: ZZZ_CALC_PAGE_URL,
-        roleUrl: ZZZ_ROLE_URL,
+        gameBiz: "nap_cn",
         charactersUrl: ZZZ_CHARACTERS_URL,
         charactersDetailUrl: ZZZ_CHARACTERS_DETAIL_URL,
         computeUrl: ZZZ_CALC_URL
@@ -3806,7 +4258,7 @@ var __publicField = (obj, key, value) => {
     async getCharacterDetails(uid, region) {
       return getDetailList(uid, region, this.getApiConfig());
     }
-    async syncCharacters(res) {
+    async syncCharacters(res, associateWeapon = true) {
       console.group("返回数据");
       console.groupCollapsed("角色");
       console.table(res.map((a) => a.avatar));
@@ -3823,8 +4275,12 @@ var __publicField = (obj, key, value) => {
       });
       console.groupEnd();
       console.groupEnd();
+      const recorder = { synced: /* @__PURE__ */ new Set(), worn: /* @__PURE__ */ new Map() };
       for (let v of res) {
-        await addCharacter(v);
+        await addCharacter(v, recorder, associateWeapon);
+      }
+      if (associateWeapon) {
+        await reconcileWeaponOwnership(recorder.synced, recorder.worn);
       }
     }
     importSeelieMethods() {
@@ -3924,6 +4380,115 @@ var __publicField = (obj, key, value) => {
             children: ["批量设置", showText, "目标等级"]
           })
         })
+      })]
+    });
+  }
+  const computeTiers = (t5, t4) => {
+    return [...t5 ? [5] : [], ...t4 ? [4] : []];
+  };
+  function PlanBatchPanel() {
+    const [charTier5, setCharTier5] = require$$1.useState(true);
+    const [charTier4, setCharTier4] = require$$1.useState(false);
+    const [weapTier5, setWeapTier5] = require$$1.useState(true);
+    const [weapTier4, setWeapTier4] = require$$1.useState(false);
+    const [planning, setPlanning] = require$$1.useState(false);
+    const weaponGoalType = AdapterManager.getCurrentGameType() === GameType.HSR ? "cone" : "weapon";
+    const charUnchecked = !charTier5 && !charTier4;
+    const weapUnchecked = !weapTier5 && !weapTier4;
+    const allUnchecked = charUnchecked && weapUnchecked;
+    const applyPlan = async (activate) => {
+      if (planning)
+        return;
+      setPlanning(true);
+      try {
+        const charTiers = allUnchecked ? void 0 : computeTiers(charTier5, charTier4);
+        const weapTiers = allUnchecked ? void 0 : computeTiers(weapTier5, weapTier4);
+        const [charRes, weapRes] = await Promise.all([getEntityCompletion("character", charTiers), getEntityCompletion(weaponGoalType, weapTiers)]);
+        const updates = {};
+        for (const res of [charRes, weapRes]) {
+          for (const id of res.completed)
+            updates[id] = true;
+          for (const id of res.incomplete)
+            updates[id] = !activate;
+        }
+        if (Object.keys(updates).length === 0) {
+          alert("没有可处理的角色/武器目标");
+          return;
+        }
+        await mergeGoalInactive(updates);
+      } finally {
+        setPlanning(false);
+      }
+    };
+    return /* @__PURE__ */ jsxs("div", {
+      className: "p-4 space-y-3",
+      children: [/* @__PURE__ */ jsxs("div", {
+        className: "flex items-center gap-4",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "text-sm text-gray-300 w-10 shrink-0",
+          children: "角色"
+        }), /* @__PURE__ */ jsxs("label", {
+          className: "flex items-center gap-1 text-sm cursor-pointer select-none",
+          children: [/* @__PURE__ */ jsx("input", {
+            type: "checkbox",
+            checked: charTier5,
+            onChange: (e) => setCharTier5(e.target.checked)
+          }), /* @__PURE__ */ jsx("span", {
+            className: "text-orange-400 font-medium",
+            children: "橙色 (5★)"
+          })]
+        }), /* @__PURE__ */ jsxs("label", {
+          className: "flex items-center gap-1 text-sm cursor-pointer select-none",
+          children: [/* @__PURE__ */ jsx("input", {
+            type: "checkbox",
+            checked: charTier4,
+            onChange: (e) => setCharTier4(e.target.checked)
+          }), /* @__PURE__ */ jsx("span", {
+            className: "text-purple-400 font-medium",
+            children: "紫色 (4★)"
+          })]
+        })]
+      }), /* @__PURE__ */ jsxs("div", {
+        className: "flex items-center gap-4",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "text-sm text-gray-300 w-10 shrink-0",
+          children: "武器"
+        }), /* @__PURE__ */ jsxs("label", {
+          className: "flex items-center gap-1 text-sm cursor-pointer select-none",
+          children: [/* @__PURE__ */ jsx("input", {
+            type: "checkbox",
+            checked: weapTier5,
+            onChange: (e) => setWeapTier5(e.target.checked)
+          }), /* @__PURE__ */ jsx("span", {
+            className: "text-orange-400 font-medium",
+            children: "橙色 (5★)"
+          })]
+        }), /* @__PURE__ */ jsxs("label", {
+          className: "flex items-center gap-1 text-sm cursor-pointer select-none",
+          children: [/* @__PURE__ */ jsx("input", {
+            type: "checkbox",
+            checked: weapTier4,
+            onChange: (e) => setWeapTier4(e.target.checked)
+          }), /* @__PURE__ */ jsx("span", {
+            className: "text-purple-400 font-medium",
+            children: "紫色 (4★)"
+          })]
+        })]
+      }), /* @__PURE__ */ jsxs("div", {
+        className: "flex gap-3 pt-1",
+        children: [/* @__PURE__ */ jsx("button", {
+          className: "text-white bg-green-600 hover:bg-green-500 px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed",
+          onClick: () => applyPlan(true),
+          disabled: planning,
+          title: "对未达标的角色/武器激活规划（移除未激活）；已达标自动归入未激活。勾选稀有度后仅对该稀有度生效；某行两框都不勾则跳过该行；四框全不勾则视为全部勾选并全量处理",
+          children: "一键激活规划"
+        }), /* @__PURE__ */ jsx("button", {
+          className: "text-white bg-amber-600 hover:bg-amber-500 px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed",
+          onClick: () => applyPlan(false),
+          disabled: planning,
+          title: "对未达标的角色/武器取消规划（归入未激活）；已达标也自动归入未激活。勾选稀有度后仅对该稀有度生效；某行两框都不勾则跳过该行；四框全不勾则视为全部勾选并全量处理",
+          children: "批量取消规划"
+        })]
       })]
     });
   }
@@ -4048,6 +4613,57 @@ var __publicField = (obj, key, value) => {
       })]
     });
   }
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(" ");
+  }
+  const TAB_TITLES = ["角色目标等级", "天赋目标等级", "武器目标等级"];
+  function TabBar({
+    activeTab,
+    setActiveTab
+  }) {
+    return /* @__PURE__ */ jsx("div", {
+      className: "mt-4",
+      children: /* @__PURE__ */ jsx("div", {
+        className: "flex border-b border-gray-600",
+        children: TAB_TITLES.map((title, idx) => /* @__PURE__ */ jsx("button", {
+          className: classNames("px-4 py-2 focus:outline-none transition-colors", activeTab === idx ? "border-b-2 border-blue-400 text-blue-300 font-medium" : "text-gray-300 hover:text-white"),
+          onClick: () => setActiveTab(idx),
+          children: title
+        }, idx))
+      })
+    });
+  }
+  function Fold({
+    title,
+    isOpen,
+    onToggle,
+    children
+  }) {
+    return /* @__PURE__ */ jsxs("div", {
+      className: "mt-2 border border-gray-700 rounded-lg bg-slate-700/50",
+      children: [/* @__PURE__ */ jsxs("button", {
+        className: "flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors",
+        onClick: onToggle,
+        children: [/* @__PURE__ */ jsx("span", {
+          children: title
+        }), /* @__PURE__ */ jsx("svg", {
+          className: `w-5 h-5 text-purple-300 transition-transform ${isOpen ? "transform rotate-180" : ""}`,
+          fill: "none",
+          stroke: "currentColor",
+          viewBox: "0 0 24 24",
+          children: /* @__PURE__ */ jsx("path", {
+            strokeLinecap: "round",
+            strokeLinejoin: "round",
+            strokeWidth: 2,
+            d: "M19 9l-7 7-7-7"
+          })
+        })]
+      }), isOpen && /* @__PURE__ */ jsx("div", {
+        className: "px-4 pt-4 pb-2 text-sm text-gray-100",
+        children
+      })]
+    });
+  }
   function ExDialog({
     onClose
   }) {
@@ -4057,30 +4673,29 @@ var __publicField = (obj, key, value) => {
     }, [currentAdapter]);
     const [accountList, setAccountList] = require$$1.useState([]);
     const [currentAccount, setCurrentAccount] = require$$1.useState();
-    const [isFirstPanelOpen, setIsFirstPanelOpen] = require$$1.useState(false);
-    const [isSecondPanelOpen, setIsSecondPanelOpen] = require$$1.useState(false);
+    const [openPanel, setOpenPanel] = require$$1.useState(0);
     const [activeTab, setActiveTab] = require$$1.useState(0);
     const [loading, setLoading] = require$$1.useState(false);
     const [progress, setProgress] = require$$1.useState(0);
     const [progressText, setProgressText] = require$$1.useState("");
     const [syncInventory, setSyncInventory] = require$$1.useState(true);
-    const panelRefs = [require$$1.useRef(null), require$$1.useRef(null)];
+    const [associateWeapon, setAssociateWeapon] = require$$1.useState(true);
+    const panelRefs = [require$$1.useRef(null), require$$1.useRef(null), require$$1.useRef(null)];
     const dialogRef = require$$1.useRef(null);
     require$$1.useEffect(() => {
       const handleClickOutside = (e) => {
-        if (panelRefs[0].current && !panelRefs[0].current.contains(e.target) && isFirstPanelOpen) {
-          setIsFirstPanelOpen(false);
-        }
-        if (panelRefs[1].current && !panelRefs[1].current.contains(e.target) && isSecondPanelOpen) {
-          setIsSecondPanelOpen(false);
-        }
+        if (openPanel === null)
+          return;
+        const target = e.target;
+        const clickedInside = panelRefs.some((r) => r.current && r.current.contains(target));
+        if (!clickedInside)
+          setOpenPanel(null);
       };
       document.addEventListener("click", handleClickOutside);
       return () => document.removeEventListener("click", handleClickOutside);
-    }, [isFirstPanelOpen, isSecondPanelOpen]);
+    }, [openPanel]);
     const handleMouseLeave = () => {
-      setIsFirstPanelOpen(false);
-      setIsSecondPanelOpen(false);
+      setOpenPanel(null);
     };
     const handleRoleSelectChange = (idx) => {
       setCurrentAccount(accountList[idx]);
@@ -4119,30 +4734,29 @@ var __publicField = (obj, key, value) => {
       setLoading(true);
       setProgress(5);
       setProgressText("正在获取角色详情...");
-      let progressInterval = null;
+      const unsubscribe = progressBus.subscribe((phase, done, total) => {
+        if (phase === "detail") {
+          const p2 = 5 + Math.round(done / Math.max(total, 1) * 23);
+          setProgress(p2);
+          setProgressText(`正在获取角色详情... (${done}/${total})`);
+        } else if (phase === "inventory") {
+          const p2 = 40 + Math.round(done / Math.max(total, 1) * 55);
+          setProgress(p2);
+          setProgressText(`正在同步素材/库存... (${done}/${total})`);
+        }
+      });
       try {
         const res = await currentAdapter.getCharacterDetails(game_uid, region);
         setProgress(30);
         setProgressText("正在写入角色/天赋目标...");
-        progressInterval = setInterval(() => {
-          setProgress((prev) => {
-            if (prev < 85)
-              return prev + 2;
-            return prev;
-          });
-        }, 3e3);
-        currentAdapter.syncCharacters(res);
+        await currentAdapter.syncCharacters(res, associateWeapon);
         setProgress(40);
         let invRes = null;
         if (syncInventory) {
-          setProgressText("角色目标写入完成，正在同步素材/库存...");
+          setProgressText("正在同步素材/库存...");
           invRes = await currentAdapter.batchUpdateInventory(game_uid, region, res);
         } else {
           setProgressText("已跳过素材/库存同步");
-        }
-        if (progressInterval) {
-          clearInterval(progressInterval);
-          progressInterval = null;
         }
         setProgress(100);
         setProgressText("同步完成");
@@ -4154,21 +4768,16 @@ var __publicField = (obj, key, value) => {
 （素材/库存同步暂不支持当前游戏：${invRes.reason || ""}）` : "同步完毕（角色信息 + 素材/库存）");
         location.reload();
       } catch (err) {
-        if (progressInterval) {
-          clearInterval(progressInterval);
-        }
         console.error("同步失败:", err);
         console.log(`[请求计数] 同步中断前已发起 ${getSyncRequestCount()} 个 HTTP 请求`);
         alert("同步失败：" + (err?.message || err));
       } finally {
+        unsubscribe();
         setLoading(false);
         setProgress(0);
         setProgressText("");
       }
     };
-    function classNames2(...classes) {
-      return classes.filter(Boolean).join(" ");
-    }
     return /* @__PURE__ */ jsxs("div", {
       ref: dialogRef,
       className: "fixed top-10 inset-x-[20%] mx-auto min-w-[50%] min-h-min rounded-md bg-slate-800/90 text-white text-center z-[1200] shadow-2xl",
@@ -4188,28 +4797,12 @@ var __publicField = (obj, key, value) => {
         className: "w-full p-4",
         children: /* @__PURE__ */ jsxs("div", {
           className: "w-full max-w-md p-2 mx-auto bg-purple-900/30 rounded-2xl border border-purple-700/50",
-          children: [/* @__PURE__ */ jsxs("div", {
+          children: [/* @__PURE__ */ jsx("div", {
             ref: panelRefs[0],
-            className: "mt-2 border border-gray-700 rounded-lg bg-slate-700/50",
-            children: [/* @__PURE__ */ jsxs("button", {
-              className: "flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors",
-              onClick: () => setIsFirstPanelOpen(!isFirstPanelOpen),
-              children: [/* @__PURE__ */ jsx("span", {
-                children: "同步"
-              }), /* @__PURE__ */ jsx("svg", {
-                className: `w-5 h-5 text-purple-300 transition-transform ${isFirstPanelOpen ? "transform rotate-180" : ""}`,
-                fill: "none",
-                stroke: "currentColor",
-                viewBox: "0 0 24 24",
-                children: /* @__PURE__ */ jsx("path", {
-                  strokeLinecap: "round",
-                  strokeLinejoin: "round",
-                  strokeWidth: 2,
-                  d: "M19 9l-7 7-7-7"
-                })
-              })]
-            }), isFirstPanelOpen && /* @__PURE__ */ jsxs("div", {
-              className: "px-4 pt-4 pb-2 text-sm text-gray-100",
+            children: /* @__PURE__ */ jsxs(Fold, {
+              title: "同步",
+              isOpen: openPanel === 0,
+              onToggle: () => setOpenPanel(openPanel === 0 ? null : 0),
               children: [/* @__PURE__ */ jsx("div", {
                 className: "flex pt-2",
                 children: /* @__PURE__ */ jsx("div", {
@@ -4247,6 +4840,19 @@ var __publicField = (obj, key, value) => {
                   className: "text-sm text-gray-200 cursor-pointer select-none",
                   children: "同步背包库存（时间可能相对较长）"
                 })]
+              }), /* @__PURE__ */ jsxs("div", {
+                className: "flex items-center pt-3",
+                children: [/* @__PURE__ */ jsx("input", {
+                  type: "checkbox",
+                  id: "associateWeapon",
+                  checked: associateWeapon,
+                  onChange: (e) => setAssociateWeapon(e.target.checked),
+                  className: "mr-2 h-4 w-4 accent-blue-500"
+                }), /* @__PURE__ */ jsx("label", {
+                  htmlFor: "associateWeapon",
+                  className: "text-sm text-gray-200 cursor-pointer select-none",
+                  children: "同步角色武器关联（可能影响批量规划）"
+                })]
               }), /* @__PURE__ */ jsx("div", {
                 className: "flex pt-2",
                 children: /* @__PURE__ */ jsx("div", {
@@ -4273,50 +4879,35 @@ var __publicField = (obj, key, value) => {
                   children: progressText
                 })]
               })]
-            })]
-          }), /* @__PURE__ */ jsxs("div", {
+            })
+          }), /* @__PURE__ */ jsx("div", {
             ref: panelRefs[1],
-            className: "mt-2 border border-gray-700 rounded-lg bg-slate-700/50",
-            children: [/* @__PURE__ */ jsxs("button", {
-              className: "flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-purple-800/70 rounded-lg hover:bg-purple-700 focus:outline-none transition-colors",
-              onClick: () => setIsSecondPanelOpen(!isSecondPanelOpen),
-              children: [/* @__PURE__ */ jsx("span", {
-                children: "规划批量操作"
-              }), /* @__PURE__ */ jsx("svg", {
-                className: `w-5 h-5 text-purple-300 transition-transform ${isSecondPanelOpen ? "transform rotate-180" : ""}`,
-                fill: "none",
-                stroke: "currentColor",
-                viewBox: "0 0 24 24",
-                children: /* @__PURE__ */ jsx("path", {
-                  strokeLinecap: "round",
-                  strokeLinejoin: "round",
-                  strokeWidth: 2,
-                  d: "M19 9l-7 7-7-7"
-                })
-              })]
-            }), isSecondPanelOpen && /* @__PURE__ */ jsx("div", {
-              className: "px-4 pt-4 pb-2 text-sm text-gray-100",
-              children: /* @__PURE__ */ jsxs("div", {
-                className: "mt-4",
-                children: [/* @__PURE__ */ jsx("div", {
-                  className: "flex border-b border-gray-600",
-                  children: ["角色目标等级", "天赋目标等级", "武器目标等级"].map((title, idx) => /* @__PURE__ */ jsx("button", {
-                    className: classNames2("px-4 py-2 focus:outline-none transition-colors", activeTab === idx ? "border-b-2 border-blue-400 text-blue-300 font-medium" : "text-gray-300 hover:text-white"),
-                    onClick: () => setActiveTab(idx),
-                    children: title
-                  }, idx))
-                }), /* @__PURE__ */ jsxs("div", {
-                  className: "p-4",
-                  children: [activeTab === 0 && /* @__PURE__ */ jsx(CharacterGoalTab, {
-                    showText: "角色",
-                    batchUpdateCharacter: currentAdapter.batchUpdateCharacter
-                  }), activeTab === 1 && /* @__PURE__ */ jsx(TalentGoalTab, {}), activeTab === 2 && /* @__PURE__ */ jsx(CharacterGoalTab, {
-                    showText: "武器",
-                    batchUpdateCharacter: currentAdapter.batchUpdateWeapon
-                  })]
+            children: /* @__PURE__ */ jsx(Fold, {
+              title: "规划批量操作",
+              isOpen: openPanel === 1,
+              onToggle: () => setOpenPanel(openPanel === 1 ? null : 1),
+              children: /* @__PURE__ */ jsx(PlanBatchPanel, {})
+            })
+          }), /* @__PURE__ */ jsx("div", {
+            ref: panelRefs[2],
+            children: /* @__PURE__ */ jsxs(Fold, {
+              title: "目标等级设置",
+              isOpen: openPanel === 2,
+              onToggle: () => setOpenPanel(openPanel === 2 ? null : 2),
+              children: [/* @__PURE__ */ jsx(TabBar, {
+                activeTab,
+                setActiveTab
+              }), /* @__PURE__ */ jsxs("div", {
+                className: "p-4",
+                children: [activeTab === 0 && /* @__PURE__ */ jsx(CharacterGoalTab, {
+                  showText: "角色",
+                  batchUpdateCharacter: currentAdapter.batchUpdateCharacter
+                }), activeTab === 1 && /* @__PURE__ */ jsx(TalentGoalTab, {}), activeTab === 2 && /* @__PURE__ */ jsx(CharacterGoalTab, {
+                  showText: "武器",
+                  batchUpdateCharacter: currentAdapter.batchUpdateWeapon
                 })]
-              })
-            })]
+              })]
+            })
           })]
         })
       })]
