@@ -24,13 +24,13 @@ jobs:
       - name: Show commit message
         run: echo "$commitmsg"
 
-      # 仅 build: 开头才提取版本号并后续构建/发版；其余 push 直接跳过，省时
-      - name: Get dist tag
+      # 仅 build: 开头才发版；版本号取自 package.json 的 version 字段（不再从 commit message 解析）
+      - name: Get version from package.json
         if: startsWith( env.commitmsg , 'build:' )
         run: |
-          DIST_TAG=$(echo "$commitmsg" | grep -Po '(\d(\.\d)+)')
-          echo "disttag=v${DIST_TAG}" >> "$GITHUB_ENV"
-          echo "$disttag"
+          VERSION=$(jq -r .version package.json)
+          echo "disttag=v${VERSION}" >> "$GITHUB_ENV"
+          echo "disttag=v${VERSION}"
 
       # —— 以下仅发版提交执行 ——
       - name: Setup pnpm
