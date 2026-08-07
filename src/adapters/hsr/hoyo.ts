@@ -17,6 +17,7 @@ import {
     postCalcAndMerge,
     calcSig,
 } from "../inventory-common";
+import {progressBus} from "../progressBus";
 
 // axios.defaults（adapter/withCredentials）已由 ../common 统一设置，此处不再重复。
 
@@ -105,6 +106,7 @@ export const getDetailList = async (game_uid: string, region: string, cfg: GameA
             }
         }
         if (i + D_BATCH < avatars.length) await sleep(HSR_REQ_DELAY);
+        progressBus.emit("detail", detailList.length, avatars.length);
     }
     return detailList;
 }
@@ -164,6 +166,7 @@ export const batchUpdateInventoryHSR = async (uid: string, region: string, cfg: 
     let computed = 0;
     // 跨组合素材覆盖状态：fresh=是否已拿到新鲜库存；covered=本同步已抓取角色 consume 引用的素材 id 并集（用于跳过判据）
     const calcState: import("../inventory-common").CalcCacheState = {fresh: false, covered: new Set<string>()};
+    let idx = 0;
     for (const d of details) {
         const avatar = d.avatar || {};
         // 真实 detail 响应：技能分布在 data.skills / skills_other / skills_servant / skills_special，
@@ -209,6 +212,8 @@ export const batchUpdateInventoryHSR = async (uid: string, region: string, cfg: 
             if (computed % 10 === 0) console.log(`[HSR素材] 已计算 ${computed}/${details.length}`);
         }
         await sleep(HSR_REQ_DELAY);
+        idx++;
+        progressBus.emit("inventory", idx, details.length);
     }
     if (!Object.keys(merged).length) throw new Error("[HSR素材] 未计算出任何素材（请检查接口/items 库）");
 

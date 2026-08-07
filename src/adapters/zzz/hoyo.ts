@@ -16,6 +16,7 @@ import {
     postCalcAndMerge,
     calcSig,
 } from "../inventory-common";
+import {progressBus} from "../progressBus";
 
 
 // axios.defaults（adapter/withCredentials）已由 ../common 统一设置，此处不再重复。
@@ -141,6 +142,7 @@ export const getDetailList = async (game_uid: string, region: string, cfg: GameA
         } else {
             dropped += batchIds.length;
         }
+        progressBus.emit("detail", allResults.length + dropped, Math.max(ids.length, 1));
     }
     if (dropped) {
         console.warn(`[ZZZ] ${dropped} 个角色详情获取失败，已跳过（不影响其余角色同步）`);
@@ -219,6 +221,7 @@ export const batchUpdateInventoryZZZ = async (uid: string, region: string, cfg: 
     let computed = 0;
     // 跨组合素材覆盖状态：fresh=是否已拿到新鲜库存；covered=本同步已抓取角色 consume 引用的素材 id 并集（用于跳过判据）
     const calcState: import("../inventory-common").CalcCacheState = {fresh: false, covered: new Set<string>()};
+    let idx = 0;
     for (const d of list) {
         // 每次 avatar_calc 请求前先等待（含首次/末次），带抖动错开频限窗口
         await sleepWithJitter(ZZZ_REQ_DELAY, ZZZ_REQ_JITTER);
@@ -259,6 +262,8 @@ export const batchUpdateInventoryZZZ = async (uid: string, region: string, cfg: 
             computed++;
             if (computed % 10 === 0) console.log(`[ZZZ素材] 已计算 ${computed}/${list.length}`);
         }
+        idx++;
+        progressBus.emit("inventory", idx, list.length);
     }
     if (!Object.keys(merged).length) throw new Error("[ZZZ素材] 未计算出任何素材（请检查接口/items 库）");
 

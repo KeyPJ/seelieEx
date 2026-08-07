@@ -5,6 +5,7 @@ import { PlanBatchPanel } from "./PlanBatchPanel";
 import TalentGoalTab from "./tabs/TalentGoalTab";
 import {AdapterManager} from '../adapters/adapterManager';
 import {resetLoginFlag, resetSyncRequestCount, getSyncRequestCount} from '../adapters/common';
+import {progressBus} from '../adapters/progressBus';
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -156,36 +157,36 @@ function ExDialog({onClose}: { onClose?: () => void }) {
         setProgress(5);
         setProgressText("正在获取角色详情...");
 
-        let progressInterval: ReturnType<typeof setInterval> | null = null;
+        // 进度总线：同步全程订阅一次，由各 hoyo 层的请求循环直接 emit，无需层层钻参
+        const unsubscribe = progressBus.subscribe((phase, done, total) => {
+            if (phase === "detail") {
+                const p = 5 + Math.round((done / Math.max(total, 1)) * 23);
+                setProgress(p);
+                setProgressText(`正在获取角色详情... (${done}/${total})`);
+            } else if (phase === "inventory") {
+                const p = 40 + Math.round((done / Math.max(total, 1)) * 55);
+                setProgress(p);
+                setProgressText(`正在同步素材/库存... (${done}/${total})`);
+            }
+        });
+
         try {
             const res = await currentAdapter.getCharacterDetails(game_uid, region);
 
             setProgress(30);
             setProgressText("正在写入角色/天赋目标...");
 
-            // 模拟进度：素材同步是耗时大头，用 setInterval 让进度条从 30% 慢慢走到 85%
-            progressInterval = setInterval(() => {
-                setProgress(prev => {
-                    if (prev < 85) return prev + 2;
-                    return prev;
-                });
-            }, 3000);
-
             await currentAdapter.syncCharacters(res, associateWeapon);
             setProgress(40);
 
             let invRes: any = null;
             if (syncInventory) {
-                setProgressText("角色目标写入完成，正在同步素材/库存...");
+                setProgressText("正在同步素材/库存...");
                 invRes = await currentAdapter.batchUpdateInventory(game_uid, region, res);
             } else {
                 setProgressText("已跳过素材/库存同步");
             }
 
-            if (progressInterval) {
-                clearInterval(progressInterval);
-                progressInterval = null;
-            }
             setProgress(100);
             setProgressText("同步完成");
 
@@ -200,13 +201,11 @@ function ExDialog({onClose}: { onClose?: () => void }) {
                     : "同步完毕（角色信息 + 素材/库存）"));
             location.reload();
         } catch (err: any) {
-            if (progressInterval) {
-                clearInterval(progressInterval);
-            }
             console.error("同步失败:", err);
             console.log(`[请求计数] 同步中断前已发起 ${getSyncRequestCount()} 个 HTTP 请求`);
             alert("同步失败：" + (err?.message || err));
         } finally {
+            unsubscribe();
             setLoading(false);
             setProgress(0);
             setProgressText("");

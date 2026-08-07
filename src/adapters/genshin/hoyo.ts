@@ -7,6 +7,7 @@ import {to, checkLogin} from "../common";
 import {GameApiConfig} from "../game";
 import {getItemsFromPage} from "../items";
 import {MaterialMatch, loadSeelieItems, sleep, writeMergedToSeelieInventory, buildBaseHeaders, getFpDeviceId} from "../inventory-common";
+import {progressBus} from "../progressBus";
 // import giItems from "../../data/gi_items.json";
 
 // axios.defaults（adapter/withCredentials）已由 ../common 统一设置，此处不再重复。
@@ -69,7 +70,8 @@ export const getDetailList = async (game_uid: string, region: string, cfg: GameA
 
     const characters: Character[] = [];
     for await (let i of idxs) {
-        characters.push.apply(characters, await getCharacters(game_uid, region, i + 1, cfg))
+        characters.push.apply(characters, await getCharacters(game_uid, region, i + 1, cfg));
+        progressBus.emit("detail", characters.length, Math.max(getCharactersNum(), 1));
     }
 
     const details = characters.map(c => getCharacterDetail(c, game_uid, region));
@@ -77,6 +79,7 @@ export const getDetailList = async (game_uid: string, region: string, cfg: GameA
     for await (let d of details) {
         if (!!d) {
             detailList.push(d);
+            progressBus.emit("detail", detailList.length, Math.max(characters.length, 1));
         }
     }
     return detailList;
@@ -217,6 +220,7 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
     }
     items = items.filter(a => a.avatar_level_current != a.avatar_level_target || a.skill_list.length > 0)
     console.table(items)
+    progressBus.emit("inventory", 0, 3);
 
     // 2. 批量计算（优化：整批一次请求；失败则二分重试隔离坏项，再追加「剔除坏项」全量请求；仍失败则按原逻辑合并成功部分）
     const SPLIT_RETRY_DELAY = 1000;   // 二分重试短间隔(ms)：某批失败、准备拆小重试前等待，避免频限爆发
@@ -267,6 +271,7 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
 
     // 请求①：整批一次（不切 256），成功即融合入库（全程仅 1 次 HTTP）
     const part = await doBatch(items);
+    progressBus.emit("inventory", 1, 3);
     if (part !== null) {
         consumeRaw.push(...part);
         console.log(`[素材同步] 请求①整批(${items.length}条)成功，本次仅 1 次 HTTP`);
@@ -290,6 +295,7 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
             console.log(`[素材同步] 二分重试全部成功，共 ${consumeRaw.length} 条素材`);
         }
     }
+    progressBus.emit("inventory", 2, 3);
 
     if (consumeRaw.length === 0) {
         localStorage.removeItem("fp");
@@ -319,6 +325,7 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
         "[素材同步]",
         (id) => ({sort: 0, max: !merged[id].lackNum})
     );
+    progressBus.emit("inventory", 3, 3);
 
     localStorage.removeItem("fp");
     return {ok: true, count: results.length, source: pageItems ? "page" : "fallback"};

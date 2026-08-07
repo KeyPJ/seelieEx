@@ -54,7 +54,7 @@ export interface GameAdapter {
 
     batchUpdateTalent: Function;
 
-    batchUpdateInventory: Function;
+    batchUpdateInventory: (uid: string, region: string, prefetched?: any[]) => Promise<any>;
 
     getCharacterStatusList: Function
 

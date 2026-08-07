@@ -37,7 +37,7 @@ export abstract class BaseAdapter implements GameAdapter {
 
     abstract batchUpdateTalent: Function;
 
-    abstract batchUpdateInventory: Function;
+    abstract batchUpdateInventory: (uid: string, region: string, prefetched?: any[]) => Promise<any>;
 
     abstract getCharacterDetails(uid: string, region: string): Promise<any[]>;
 
