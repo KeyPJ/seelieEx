@@ -8,15 +8,42 @@ import {GameApiConfig} from "../game";
 import {getItemsFromPage} from "../items";
 import {
     MaterialMatch,
+    CalcConsumeStrategy,
     getFpDeviceId,
     loadSeelieItems,
     sleep,
     writeMergedToSeelieInventory,
     buildBaseHeaders,
     postCalcAndMerge,
+    calcSig,
 } from "../inventory-common";
 
 // axios.defaults（adapter/withCredentials）已由 ../common 统一设置，此处不再重复。
+
+// HSR calc 响应字段名：角色部分 avatar_consume/skill_consume、武器部分 equipment_consume，素材 id 键均为 item_id。
+// 本策略仅负责「从响应抽取素材 id」，缓存/跳过逻辑全在 inventory-common 的 postCalcAndMerge（策略模式）。
+const hsrCalcStrategy: CalcConsumeStrategy = {
+    game: "hsr",
+    gameName: "崩坏：星穹铁道",
+    charItemIds(data) {
+        const ids = new Set<string>();
+        for (const key of ["avatar_consume", "skill_consume"] as const) {
+            for (const it of (data?.[key]) || []) {
+                const id = it?.item_id;
+                if (id !== undefined && id !== null && id !== "") ids.add(String(id));
+            }
+        }
+        return [...ids];
+    },
+    wpItemIds(data) {
+        const ids = new Set<string>();
+        for (const it of (data?.equipment_consume) || []) {
+            const id = it?.item_id;
+            if (id !== undefined && id !== null && id !== "") ids.add(String(id));
+        }
+        return [...ids];
+    },
+};
 
 const getCharacters = async (uid: string, region: string, cfg: GameApiConfig): Promise<any[]> => {
 
@@ -135,6 +162,8 @@ export const batchUpdateInventoryHSR = async (uid: string, region: string, cfg: 
     const h = await buildHsrHeaders();
     const merged: Record<number, number> = {};
     let computed = 0;
+    // 跨组合素材覆盖状态：fresh=是否已拿到新鲜库存；covered=本同步已抓取角色 consume 引用的素材 id 并集（用于跳过判据）
+    const calcState: import("../inventory-common").CalcCacheState = {fresh: false, covered: new Set<string>()};
     for (const d of details) {
         const avatar = d.avatar || {};
         // 真实 detail 响应：技能分布在 data.skills / skills_other / skills_servant / skills_special，
@@ -160,16 +189,21 @@ export const batchUpdateInventoryHSR = async (uid: string, region: string, cfg: 
             uid,
             region,
         };
+        let wpKey: string | number | null = null;
         if (d.equipment && d.equipment.item_id) {
             body.equipment = {
                 item_id: String(d.equipment.item_id),
                 cur_level: 1,
                 target_level: d.equipment.max_level || 80,
             };
+            wpKey = d.equipment.item_id;
         }
+        // 角色部分签名：avatar + skill_list（决定 avatar/skill_consume）；武器部分签名：equipment（决定 equipment_consume）
+        const charSig = calcSig({avatar: body.avatar, skill_list: body.skill_list});
+        const wpSig = wpKey != null ? calcSig(body.equipment) : null;
 
         const url = `${cfg.computeUrl}?game=hkrpg&game_biz=hkrpg_cn&badge_region=${region}&badge_uid=${uid}&noSessionRetry=true`;
-        const ok = await postCalcAndMerge(url, body, h, "[HSR素材]", "崩坏：星穹铁道", cfg.calcPageUrl, merged, avatar.item_id);
+        const ok = await postCalcAndMerge(hsrCalcStrategy, url, body, h, "[HSR素材]", cfg.calcPageUrl, merged, calcState, avatar.item_id, charSig, wpKey, wpSig);
         if (ok) {
             computed++;
             if (computed % 10 === 0) console.log(`[HSR素材] 已计算 ${computed}/${details.length}`);

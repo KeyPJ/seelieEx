@@ -7,16 +7,45 @@ import {GameApiConfig} from "../game";
 import {getItemsFromPage} from "../items";
 import {
     MaterialMatch,
+    CalcConsumeStrategy,
     getFpDeviceId,
     loadSeelieItems,
     sleepWithJitter,
     writeMergedToSeelieInventory,
     buildBaseHeaders,
     postCalcAndMerge,
+    calcSig,
 } from "../inventory-common";
 
 
 // axios.defaults（adapter/withCredentials）已由 ../common 统一设置，此处不再重复。
+
+// ZZZ calc（avatar_calc）响应字段名与 HSR 不同：
+//  - 角色部分 avatar_consume/skill_consume、武器部分 weapon_consume（注意不是 equipment_consume）
+//  - 素材 id 键为 id（不是 item_id）
+// 本策略仅负责「从响应抽取素材 id」，缓存/跳过逻辑全在 inventory-common 的 postCalcAndMerge（策略模式）。
+const zzzCalcStrategy: CalcConsumeStrategy = {
+    game: "zzz",
+    gameName: "绝区零",
+    charItemIds(data) {
+        const ids = new Set<string>();
+        for (const key of ["avatar_consume", "skill_consume"] as const) {
+            for (const it of (data?.[key]) || []) {
+                const id = it?.id;
+                if (id !== undefined && id !== null && id !== "") ids.add(String(id));
+            }
+        }
+        return [...ids];
+    },
+    wpItemIds(data) {
+        const ids = new Set<string>();
+        for (const it of (data?.weapon_consume) || []) {
+            const id = it?.id;
+            if (id !== undefined && id !== null && id !== "") ids.add(String(id));
+        }
+        return [...ids];
+    },
+};
 
 const requestPageSize = 50;
 
@@ -188,6 +217,8 @@ export const batchUpdateInventoryZZZ = async (uid: string, region: string, cfg: 
     const h = await buildZzzHeaders();
     const merged: Record<number, number> = {};
     let computed = 0;
+    // 跨组合素材覆盖状态：fresh=是否已拿到新鲜库存；covered=本同步已抓取角色 consume 引用的素材 id 并集（用于跳过判据）
+    const calcState: import("../inventory-common").CalcCacheState = {fresh: false, covered: new Set<string>()};
     for (const d of list) {
         // 每次 avatar_calc 请求前先等待（含首次/末次），带抖动错开频限窗口
         await sleepWithJitter(ZZZ_REQ_DELAY, ZZZ_REQ_JITTER);
@@ -211,9 +242,19 @@ export const batchUpdateInventoryZZZ = async (uid: string, region: string, cfg: 
                 weapon_init_level: 0,
             } : undefined,
         };
+        // 角色部分签名：avatar_id + 等级/技能（决定 avatar/skill_consume）；武器部分签名：weapon_info（决定 equipment_consume）
+        const charSig = calcSig({
+            avatar_id: body.avatar_id,
+            avatar_level: body.avatar_level,
+            avatar_current_level: body.avatar_current_level,
+            avatar_current_promotes: body.avatar_current_promotes,
+            skills: body.skills,
+        });
+        const wpKey = weaponId != null ? weaponId : null;
+        const wpSig = wpKey != null ? calcSig(body.weapon_info) : null;
 
         const url = `${cfg.computeUrl}?uid=${uid}&region=${region}`;
-        const ok = await postCalcAndMerge(url, body, h, "[ZZZ素材]", "绝区零", cfg.calcPageUrl, merged, avatarId);
+        const ok = await postCalcAndMerge(zzzCalcStrategy, url, body, h, "[ZZZ素材]", cfg.calcPageUrl, merged, calcState, avatarId, charSig, wpKey, wpSig);
         if (ok) {
             computed++;
             if (computed % 10 === 0) console.log(`[ZZZ素材] 已计算 ${computed}/${list.length}`);

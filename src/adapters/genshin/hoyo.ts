@@ -218,12 +218,11 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
     items = items.filter(a => a.avatar_level_current != a.avatar_level_target || a.skill_list.length > 0)
     console.table(items)
 
-    // 2. 批量计算（首试 256 条/批；失败则递归二分重试 128-64-32-16→8→4→2→1；单条仍失败则摘除该条并打印；跨批按素材 id 去重、取 num+lack_num 最大值）
-    const BATCH_SIZE = 256;
+    // 2. 批量计算（优化：整批一次请求；失败则二分重试隔离坏项，再追加「剔除坏项」全量请求；仍失败则按原逻辑合并成功部分）
     const SPLIT_RETRY_DELAY = 1000;   // 二分重试短间隔(ms)：某批失败、准备拆小重试前等待，避免频限爆发
-    const consumeRaw: any[] = [];
+    let consumeRaw: any[] = [];
 
-    // 单次请求一个 chunk：成功返回素材列表，失败(异常/retcode!=0)返回 null
+    // 单次请求一个 chunk：成功返回 overall_consume，失败(异常/retcode!=0)返回 null
     const doBatch = async (chunk: any[]): Promise<any[] | null> => {
         const [err, res] = await to(axios.post(cfg.computeUrl!, JSON.stringify({
             items: chunk,
@@ -247,36 +246,49 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
         return resData.data?.overall_consume || [];
     };
 
-    // 递归二分重试：成功返回素材列表；size>1 失败则拆两半分别重试；size=1 仍失败则摘除该条并打印
-    const processChunk = async (chunk: any[]): Promise<any[]> => {
+    // 二分重试：返回 { ok: 成功半的素材合并, bad: 始终失败(size=1)的单条 item 对象 }
+    const splitRetry = async (chunk: any[]): Promise<{ ok: any[]; bad: any[] }> => {
         const part = await doBatch(chunk);
-        if (part !== null) {
-            console.log(`[素材同步] 批次(${chunk.length}条)完成，本批 ${part.length} 条素材`);
-            return part;
-        }
+        if (part !== null) return {ok: part, bad: []};
         if (chunk.length > 1) {
             const mid = Math.ceil(chunk.length / 2);
             const left = chunk.slice(0, mid);
             const right = chunk.slice(mid);
             console.warn(`[素材同步] 批次(${chunk.length}条)失败，二分重试 -> ${left.length}+${right.length}，间隔 ${SPLIT_RETRY_DELAY}ms`);
             await sleep(SPLIT_RETRY_DELAY);
-            const l = await processChunk(left);
-            const r = await processChunk(right);
-            return [...l, ...r];
+            const l = await splitRetry(left);
+            const r = await splitRetry(right);
+            return {ok: [...l.ok, ...r.ok], bad: [...l.bad, ...r.bad]};
         }
-        // 单条仍失败：摘除影响数据并打印，避免阻塞其余 items
+        // 单条仍失败：记录该 item 对象（用于请求②剔除），并摘除避免阻塞其余 items
         console.error(`[素材同步] 摘除影响数据(单条始终失败):`, JSON.stringify(chunk[0]));
-        return [];
+        return {ok: [], bad: chunk};
     };
 
-    const total = Math.ceil(items.length / BATCH_SIZE);
-    let idx = 0;
-    for (let i = 0; i < items.length; i += BATCH_SIZE) {
-        const chunk = items.slice(i, i + BATCH_SIZE);
-        idx++;
-        const part = await processChunk(chunk);
-        if (part.length) consumeRaw.push(...part);
-        console.log(`[素材同步] 批次 ${idx}/${total} 处理完毕，累计素材 ${consumeRaw.length} 条`);
+    // 请求①：整批一次（不切 256），成功即融合入库（全程仅 1 次 HTTP）
+    const part = await doBatch(items);
+    if (part !== null) {
+        consumeRaw.push(...part);
+        console.log(`[素材同步] 请求①整批(${items.length}条)成功，本次仅 1 次 HTTP`);
+    } else {
+        console.warn(`[素材同步] 请求①整批(${items.length}条)失败，进入二分重试`);
+        const retry = await splitRetry(items);
+        consumeRaw.push(...retry.ok);
+        const badItems = retry.bad;
+        if (badItems.length) {
+            console.warn(`[素材同步] 二分重试隔离 ${badItems.length} 条始终失败项，追加剔除失败的全量请求`);
+            // 请求②：剔除失败项的全量请求（合并成功部分前追加）
+            const retryItems = items.filter(it => !badItems.includes(it));
+            const part2 = await doBatch(retryItems);
+            if (part2 !== null) {
+                consumeRaw = part2;  // 干净整批结果覆盖（已是全部非坏项的超集）
+                console.log(`[素材同步] 请求②(剔除 ${badItems.length} 失败项)成功，融合入库`);
+            } else {
+                console.warn(`[素材同步] 请求②仍失败，按原逻辑合并 ${consumeRaw.length} 条成功部分`);
+            }
+        } else {
+            console.log(`[素材同步] 二分重试全部成功，共 ${consumeRaw.length} 条素材`);
+        }
     }
 
     if (consumeRaw.length === 0) {

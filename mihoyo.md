@@ -47,19 +47,18 @@
 }
 ```
 
-### 0.4 频率限制（节流）
-| 端 | 间隔策略 | 备注 |
-|---|---|---|
-| GI | 单批最多 256 条；失败递归二分重试（128→…→1），批间无强制 sleep，重试前 `sleep(1000)` | `batch_compute` 一次性批量 |
-| HSR | 每角色请求后 `sleep(400)` | 单 avatar `calc/compute` |
-| ZZZ | 每角色请求前 `sleepWithJitter(800, 400)`（含首次/末次） | 频限最严 |
-| 全部 | 库存同步整体 1 分钟节流（`withThrottle`，key=`${account}-inv_sync`） | 冷却内 `alert` 并跳过 |
+### 0.4 脚本侧行为（节流 / 缓存 / 入库口径）
+本文档仅描述米游社接口契约。以下脚本自身行为（与接口无关）已移至 `seelieEx.md`：
+- 频率与节流策略 → `seelieEx.md` §1
+- 计算缓存（char/wp 双命名空间） → `seelieEx.md` §2
+- 库存写入口径（三端差异） → `seelieEx.md` §3
+- GI 素材计算请求策略（整批一次请求① + 二分重试隔离坏项 + 剔除失败项的追加请求② + 兜底合并） → `seelieEx.md` §1
 
 ---
 
 ### 0.5 账户接口返回结构（三端通用）
 
-`getUserGameRolesByCookie` —— **三端统一端点，仅 `game_biz` 不同**：GI=`hk4e_cn` / HSR=`hkrpg_cn` / ZZZ=`nap_cn`（2026-08-06 已将 `GI_ROLE_URL`/`HSR_ROLE_URL`/`ZZZ_ROLE_URL` 合并为公共 `ROLE_URL`）。返回结构一致：
+`getUserGameRolesByCookie` —— **三端统一端点，仅 `game_biz` 不同**：GI=`hk4e_cn` / HSR=`hkrpg_cn` / ZZZ=`nap_cn`，通过公共 `ROLE_URL` 访问。返回结构一致：
 
 ```ts
 export interface RootObject {
@@ -125,11 +124,11 @@ export interface List {
 - **返回**：`{retcode:0, data:{device_fp:"<fp>"}}` → 存入 `localStorage.fp`。
 - **注意**：`ext_fields` 硬编码为 iOS 设备信息，与脚本实际桌面环境不符（疑似从抓包照抄，通常不影响拿 fp）。
 
-### 1.3 `ROLE_URL`（三端共用，2026-08-06 合并）
+### 1.3 `ROLE_URL`（三端共用）
 - **地址**：`https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie`
 - **方法**：`GET`
 - **Query**：`?game_biz=<端固定值>`（GI=`hk4e_cn` / HSR=`hkrpg_cn` / ZZZ=`nap_cn`）
-- **用途**：绑定角色列表（账户接口）。三端共用同一端点，原 `GI_ROLE_URL` / `HSR_ROLE_URL` / `ZZZ_ROLE_URL` 已合并为本常量；`getAccount(gameBiz, openUrl, gameType)` 内部拼接 `ROLE_URL?game_biz=${gameBiz}`。
+- **用途**：绑定角色列表（账户接口）。三端共用同一端点；`getAccount(gameBiz, openUrl, gameType)` 内部拼接 `ROLE_URL?game_biz=${gameBiz}`。
 - **专属头**：见 §0.1.1（`common.buildRoleHeaders` 注入 `x-rpc-device_id` / `x-rpc-lrsag` / `x-rpc-mi_referrer`）。
 - **返回**：`data.list[]`（见 §0.5 通用账户结构）。
 
@@ -272,11 +271,7 @@ export interface List {
   interface ComputeItem { avatar_consume: Consume[]; avatar_skill_consume: Consume[]; weapon_consume: Consume[]; reliquary_consume: any[]; skills_consume: SkillsConsume[]; calendar: Calendar; lineup_recommend: string; }
   interface SkillsConsume { consume_list: Consume[]; skill_info: { id: string; level_current: string; level_target: string }; }
   ```
-  | 入库口径 | 说明 |
-  |---|---|
-  | `overall_consume[]` | 每元素 `{id, num, lack_num}`；**跨批按素材 `id` 取 `num+lack_num` 最大值**写入库存（代理值口径，与 HSR/ZZZ 真实持有量不同，见 §5） |
-  | `overall_material_consume` | 按角色/天赋/武器拆分，便于分类展示，但入库只用 `overall_consume` 汇总 |
-  | `available_material` | 背包已有素材（可与 `num` 对照核验） |
+  > 库存写入口径（代理值 `num+lack_num`、跨请求去重）见 `seelieEx.md` §3。
 
 ### 2.6 GI 账户字段（`data.list[]`）
 三端账户返回结构统一，见 **§0.5**（含完整 `List` 字段表与 TS 接口）。GI 取 `game_uid` + `region` 供 §2.3 / §2.5 使用。
@@ -414,11 +409,7 @@ export interface List {
     item_bg_desc: string;
   }
   ```
-  | 入库口径 | 说明 |
-  |---|---|
-  | `user_owns_materials` | `{ "<素材id字符串>": <数量> }`；**真实持有量**，跨角色同素材取最大值写入库存（与 GI 代理值口径不同，见 §5） |
-  | `coin_id` | 信用点 id（"2"），对应 `items.ts` 特例 `2→credit` |
-  | `avatar/skill/equipment_consume` | 分类消耗，仅展示用；入库只用 `user_owns_materials` |
+  > 库存写入口径（真实持有量、跨角色去重、`items.ts` 特例）见 `seelieEx.md` §3。
 
 ---
 
@@ -432,7 +423,7 @@ export interface List {
 - **地址**：`https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=nap_cn`（三端共用的 `ROLE_URL`，见 §1.3）
 - **方法**：`GET`（见 §0.1.1 专用头）
 - **差异**：`game_biz=nap_cn`（GI/HSR 分别为 `hk4e_cn` / `hkrpg_cn`）。返回结构同 **§0.5** 通用账户结构（`data.list[]`）。
-- **⚠️ 端点修正**：**ZZZ 与 GI/HSR 同样走 `getUserGameRolesByCookie`**（仅 `game_biz=nap_cn`），**不是** `getUserGameRolesByCookieToken`。三端共用同一端点，2026-08-06 ROLE_URL 合并已据此统一；旧文档所述 `getUserGameRolesByCookieToken` 为错误描述。
+- **⚠️ 端点修正**：**ZZZ 与 GI/HSR 同样走 `getUserGameRolesByCookie`**（仅 `game_biz=nap_cn`），**不是** `getUserGameRolesByCookieToken`。旧文档所述 `getUserGameRolesByCookieToken` 为错误描述。
 
 ### 4.3 `ZZZ_CHARACTERS_URL`
 - **地址**：`https://api-takumi.mihoyo.com/event/nap_cultivate_tool/user/avatar_basic_list`
@@ -562,11 +553,7 @@ export interface List {
   interface WeaponConsume { id:number; cnt:number; name:string; icon:string; rarity:string; not_opened:boolean; }
   interface SkillConsume { id:number; cnt:number; name:string; icon:string; rarity:string; not_opened:boolean; }
   ```
-  | 入库口径 | 说明 |
-  |---|---|
-  | `user_owns_materials` | `{ <素材id数字>: <数量> }`；**真实持有量**，跨角色同素材取最大值写入库存（与 GI 代理值口径不同，见 §5） |
-  | `coin_id` | 丁尼 id（10），对应 `items.ts` 特例 `10→denny` |
-  | `skill_type` 上限 | 计算封顶写死：普通技 `{0,1,2,3,6}`=12、核心技 `5`=7；更高值来自影画追加，不参与 calc（不读 item_info） |
+  > 库存写入口径（真实持有量、`skill_type` 封顶、跨角色去重、`items.ts` 特例）见 `seelieEx.md` §3。
 
 ---
 
@@ -586,35 +573,9 @@ export interface List {
 
 ---
 
-## 6. 待补充 / 注意点（缺啥）
+## 6. 待补充 / 注意点（接口侧缺口）
 
-### 6.1 本版已补齐的内容
-- **账户返回结构 + 端点统一**：新增 **§0.5**（完整 `List` 字段表 + TS 接口），明确**三端统一端点 `getUserGameRolesByCookie`**（仅 `game_biz` 不同），修正旧文档"ZZZ 用 `getUserGameRolesByCookieToken`"的错误描述。
-- **账户接口专用请求头**：**§0.1.1** 列出 `x-rpc-device_id` / `x-rpc-lrsag` / `x-rpc-mi_referrer`（`common.buildRoleHeaders()` 注入）。
-- **统一 `ROLE_URL` 合并**：新增 **§1.3**，说明 `GI_ROLE_URL`/`HSR_ROLE_URL`/`ZZZ_ROLE_URL` 已合并为 `ROLE_URL`（2026-08-06）；§2.2/§3.2/§4.2 改为引用 `ROLE_URL` + `game_biz`。
-- **GI 三接口返回 Schema**：
-  - **§2.3** `sync/avatar/list`：`Character` / `Skill` / `Weapon` / `Reliquary` 接口 + 关键字段用途表（关联角色、命座、档位）。
-  - **§2.4** `avatar/list`（花名册）：`RosterCharacter` 接口，并标注与 §2.3 的差异（花名册无 `level_current`/`weapon` 等"已拥有"状态）。
-  - **§2.5** `batch_compute`：`ComputeData` / `Consume` / `ComputeItem` / `SkillsConsume` 接口，明确 `overall_consume[]` 入库口径（`num+lack_num` 最大值）。
-- **统一返回包装 + `region` 典型取值**：§0.3 / §0.5 已说明 `{retcode,message,data}`；`region` 典型取值 `cn_gf01` / `prod_gf_cn` 等（以账户接口实际返回为准）。
-- **GI 无 `charactersDetailUrl`**：已在 §2 标注，`GameApiConfig.charactersDetailUrl` 在 GI 为 `undefined`。
-- **HSR/ZZZ 字段级 Schema**：
-  - **§3.3 / §3.4 / §3.5**：HSR 列表 `Avatar`、详情 `HSRCharacterData`（`skills[].point_type` 筛选口径：`Number(point_type)===2` 战斗技能、`===4` 欢愉技）、计算 `CalcData`（含 `user_owns_materials` 对象与各 `Consume` 字段）。
-  - **§4.3 / §4.4 / §4.5**：ZZZ 列表 `List/Avatar`（含 `unlocked` 拥有判定）、详情 `ZZZCharacterData`（`avatar.promotes` 突破档、`signature_weapon_id` 专武、`item_info` 上限来源、`equip` 驱动盘）、计算 `CalcData`（`user_owns_materials` 数字 key、`skill_type` 封顶写死）。
-  - **关键口径差异（三端 type 不一致，已写入 §3/§4）**：
-    - `rank` 类型：HSR 为 `string`（命座）、ZZZ 为 `number`（影画数）、GI 为 `constellation_num:number`（命座）—— merge 时均只增不减，但解析前注意类型。
-    - HSR 详情 `skills[].point_type` 接口可能返回字符串（`"2"`），比较前须 `Number()` 化（代码 `hsr/seelie.ts` 已处理）。
-    - `user_owns_materials` 的 key 类型：HSR 为字符串（`{"2":..}`）、ZZZ 为数字（`{10:..}`）、GI 无此结构（用 `overall_consume[]` 数组）——入库统一按素材 id 去重取最大值。
-    - ZZZ 计算 `skill_type` 上限写死（普通技 `{0,1,2,3,6}`=12、核心技 `5`=7），不读 `item_info`（影画追加更高值不参与 calc）；HSR 计算依赖真实 `max_level`。
-
-### 6.2 仍待补充（真实缺口）
 1. **`DEVICE_FP_URL` 的 `ext_fields` 硬编码 iOS**：与桌面 UA 不一致，虽实测可拿 fp，建议备注"抓包遗留"并评估是否剔除。
-2. **各接口 `retcode` 语义未枚举**：`checkLogin` 仅处理 `-100`；其他未登录相关 retcode（如 `1001`/`10103`）含义未统一说明，建议补"常见 retcode 速查"。
-3. **错误兜底不一致**：ZZZ/GI 列表失败 `alert` 并抛错；HSR 仅 `console.error` 返回空数组——两端行为差异建议列明。
-4. **`withThrottle` 节流 key 名**：代码用 `${account}-inv_sync` 等（GI/HSR/ZZZ 各 `*-last-sync`），文档仅说"1 分钟节流"，建议补 key 名便于排查。
-5. **HSR/ZZZ 计算返回是对象、GI 是数组**：这是最大口径坑（§5、§3.5、§4.5 已标注 Schema），建议代码侧补注释 + 单测守护。
-6. **GI `batch_compute` 请求体 `skill_list[].id` 口径**：抓包显示用原始 `id`（如 `12031`），非 `group_id`；代码侧若用 `group_id` 需确认映射正确（已在 §2.5 标注原始 `id`）。
-
----
-
-> 文档生成日期：2026-08-06，最近更新：补齐 HSR/ZZZ 字段级 Schema（§3.3~§3.5、§4.3~§4.5）并标注三端 type 口径差异（rank 类型 / point_type 字符串化 / user_owns_materials key 类型 / skill_type 封顶写死），以及统一账户端点与 `ROLE_URL` 合并。如后续接口变更，请同步更新 `apiUrls.ts` 与本文档。
+2. **各接口 `retcode` 语义未枚举**：`checkLogin` 仅处理 `-100`；其他未登录相关 retcode（如 `1001`/`10103`）含义未统一说明，建议补"常见 retcode 速查"。账户层 -100 登录态处理三端统一（`common.getAccount` 在 `retcode!==0` 时调用 `checkLogin`）。
+3. **HSR/ZZZ 计算返回是对象、GI 是数组**：这是最大口径坑（§5、§3.5、§4.5 已标注 Schema），建议代码侧补注释 + 单测守护。
+4. **GI `batch_compute` 请求体 `skill_list[].id` 口径**：抓包显示用原始 `id`（如 `12031`），非 `group_id`；代码侧若用 `group_id` 需确认映射正确（已在 §2.5 标注原始 `id`）。
