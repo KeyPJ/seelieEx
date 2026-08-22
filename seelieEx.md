@@ -33,10 +33,10 @@ HSR/ZZZ 逐角色 `calc/compute` / `avatar_calc` 响应含 `avatar_consume` / `s
 
 ## 3. 库存写入口径（三端差异）
 
-- **GI**：`overall_consume[]` 每元素 `{id, num, lack_num}`；**跨请求来源按素材 `id` 取 `num+lack_num` 最大值**写入库存（代理值口径）。`overall_material_consume` 按角色/天赋/武器拆分仅展示，入库只用 `overall_consume` 汇总。`available_material` 为背包已有素材（可对照核验）。
+- **GI**：`overall_consume[]` 每元素 `{id, num, lack_num}`；**按素材 `id` 取 `num-lack_num` 最大值**写入库存（代理值口径：`num-lack_num` = 已持有量代理）。`overall_material_consume` 按角色/天赋/武器拆分仅展示，入库只用 `overall_consume` 汇总。`available_material` 为背包已有素材（可对照核验）。
 - **HSR/ZZZ**：`user_owns_materials` 为**真实持有量**（HSR key 是字符串如 `{"2":123}`，ZZZ key 是数字如 `{10:..}`）；跨角色同素材取最大值写入库存。
 - 写入目标：seelie 库存 `{type, item, tier, value}[]` → `localStorage[${account}-inventory]`。
-- 跨请求来源按素材 id 去重取最大值（GI 取 `num+lack_num`，HSR/ZZZ 取真实持有量）。GI 正常只发请求①或请求②（单一干净整批，无重复 id）；仅当二分成功部分与请求②都失败、走原逻辑合并时才可能出现跨来源重复，聚合逻辑仍保留兜底。
+- 按素材 id 去重取最大值（GI 取 `num-lack_num`，HSR/ZZZ 取真实持有量）。GI 计算只采用「整批请求①」或「剔除坏项后的整批请求②」之一的返回值为唯一结果来源（不再做二分部分结果归并），单一干净整批内 id 不重复，故仅做 id 级去重取最大兜底。
 - `items.ts` 特例：GI `104003→xp` / `202→mora` / `104013→wep_xp`；HSR `2→credit`；ZZZ `10→denny`。
 - 限流：各端 1 分钟（`*-last-sync`）。
 - ⚠️ 口径差异：GI 代理值 vs HSR/ZZZ 真实持有量，二者不同；回写真实进度需改 baseline 或补 seelie key→avatar_id 反查。

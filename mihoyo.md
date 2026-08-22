@@ -271,7 +271,7 @@ export interface List {
   interface ComputeItem { avatar_consume: Consume[]; avatar_skill_consume: Consume[]; weapon_consume: Consume[]; reliquary_consume: any[]; skills_consume: SkillsConsume[]; calendar: Calendar; lineup_recommend: string; }
   interface SkillsConsume { consume_list: Consume[]; skill_info: { id: string; level_current: string; level_target: string }; }
   ```
-  > 库存写入口径（代理值 `num+lack_num`、跨请求去重）见 `seelieEx.md` §3。
+  > 库存写入口径（代理值 `num-lack_num`、按 id 去重取最大）见 `seelieEx.md` §3。
 
 ### 2.6 GI 账户字段（`data.list[]`）
 三端账户返回结构统一，见 **§0.5**（含完整 `List` 字段表与 TS 接口）。GI 取 `game_uid` + `region` 供 §2.3 / §2.5 使用。
@@ -567,7 +567,7 @@ export interface List {
 | 角色详情 | 无独立接口（list 含 weapon，透传） | GET `calc/avatar/detail` | POST 批量 `batch_avatar_detail_v2` |
 | 计算接口 host | `api-takumi` | `api-takumi` | `act-api-takumi` ⚠️ |
 | 计算返回 | `overall_consume[]`（数组） | `user_owns_materials{}`（对象） | `user_owns_materials{}`（对象） |
-| 素材入库口径 | `num+lack_num` 最大值 | 真实持有量最大值 | 真实持有量最大值 |
+| 素材入库口径 | `num-lack_num` 最大值 | 真实持有量最大值 | 真实持有量最大值 |
 | region 来源 | 账户列表 `region` | 账户列表 `region` | 账户列表 `region` |
 | 命座字段 / 类型 | `constellation_num:number` | `rank:string` | `rank:number` |
 

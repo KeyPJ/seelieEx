@@ -195,7 +195,7 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
                 element_attr_id: c.element_attr_id,
                 from_user_sync: false,
                 skill_list: (c.skill_list || [])
-                    .filter((s: any) => s.level_current < s.max_level && s.max_level === 10)
+                    .filter((s: any) =>  s.max_level === 10)
                     .map((s: any) => ({
                         id: s.group_id,
                         level_current: 1,
@@ -222,7 +222,8 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
     console.table(items)
     progressBus.emit("inventory", 0, 3);
 
-    // 2. 批量计算（优化：整批一次请求；失败则二分重试隔离坏项，再追加「剔除坏项」全量请求；仍失败则按原逻辑合并成功部分）
+    // 2. 批量计算：整批一次请求①；失败则二分重试仅用于隔离「始终失败的坏项」，
+    //    再以「剔除坏项」的整批请求②作为唯一结果来源（不做任何部分结果归并）。
     const SPLIT_RETRY_DELAY = 1000;   // 二分重试短间隔(ms)：某批失败、准备拆小重试前等待，避免频限爆发
     let consumeRaw: any[] = [];
 
@@ -250,10 +251,10 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
         return resData.data?.overall_consume || [];
     };
 
-    // 二分重试：返回 { ok: 成功半的素材合并, bad: 始终失败(size=1)的单条 item 对象 }
-    const splitRetry = async (chunk: any[]): Promise<{ ok: any[]; bad: any[] }> => {
+    // 二分重试：仅用于定位「始终失败(size=1)的坏项」，返回其 item 对象数组（不做结果归并）
+    const splitRetry = async (chunk: any[]): Promise<{ bad: any[] }> => {
         const part = await doBatch(chunk);
-        if (part !== null) return {ok: part, bad: []};
+        if (part !== null) return {bad: []};
         if (chunk.length > 1) {
             const mid = Math.ceil(chunk.length / 2);
             const left = chunk.slice(0, mid);
@@ -262,37 +263,32 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
             await sleep(SPLIT_RETRY_DELAY);
             const l = await splitRetry(left);
             const r = await splitRetry(right);
-            return {ok: [...l.ok, ...r.ok], bad: [...l.bad, ...r.bad]};
+            return {bad: [...l.bad, ...r.bad]};
         }
         // 单条仍失败：记录该 item 对象（用于请求②剔除），并摘除避免阻塞其余 items
         console.error(`[素材同步] 摘除影响数据(单条始终失败):`, JSON.stringify(chunk[0]));
-        return {ok: [], bad: chunk};
+        return {bad: chunk};
     };
 
-    // 请求①：整批一次（不切 256），成功即融合入库（全程仅 1 次 HTTP）
+    // 请求①：整批一次（不切 256），成功即采用其返回值入库（全程仅 1 次 HTTP）
     const part = await doBatch(items);
     progressBus.emit("inventory", 1, 3);
     if (part !== null) {
         consumeRaw.push(...part);
         console.log(`[素材同步] 请求①整批(${items.length}条)成功，本次仅 1 次 HTTP`);
     } else {
-        console.warn(`[素材同步] 请求①整批(${items.length}条)失败，进入二分重试`);
-        const retry = await splitRetry(items);
-        consumeRaw.push(...retry.ok);
-        const badItems = retry.bad;
-        if (badItems.length) {
-            console.warn(`[素材同步] 二分重试隔离 ${badItems.length} 条始终失败项，追加剔除失败的全量请求`);
-            // 请求②：剔除失败项的全量请求（合并成功部分前追加）
-            const retryItems = items.filter(it => !badItems.includes(it));
-            const part2 = await doBatch(retryItems);
-            if (part2 !== null) {
-                consumeRaw = part2;  // 干净整批结果覆盖（已是全部非坏项的超集）
-                console.log(`[素材同步] 请求②(剔除 ${badItems.length} 失败项)成功，融合入库`);
-            } else {
-                console.warn(`[素材同步] 请求②仍失败，按原逻辑合并 ${consumeRaw.length} 条成功部分`);
-            }
+        console.warn(`[素材同步] 请求①整批(${items.length}条)失败，二分重试隔离坏项`);
+        // 二分仅定位坏项；随后以「剔除坏项」的整批请求②作为唯一结果来源，不与任何部分结果归并
+        const {bad: badItems} = await splitRetry(items);
+        const retryItems = items.filter(it => !badItems.includes(it));
+        console.warn(`[素材同步] 二分重试隔离 ${badItems.length} 条始终失败项，追加剔除失败项的全量请求`);
+        const part2 = await doBatch(retryItems);
+        if (part2 !== null) {
+            // 干净整批结果（剔除坏项后的全量），直接作为唯一来源
+            consumeRaw = part2;
+            console.log(`[素材同步] 请求②(${retryItems.length}条，剔除 ${badItems.length} 失败项)成功`);
         } else {
-            console.log(`[素材同步] 二分重试全部成功，共 ${consumeRaw.length} 条素材`);
+            console.warn(`[素材同步] 请求②仍失败，无有效整批结果`);
         }
     }
     progressBus.emit("inventory", 2, 3);
@@ -301,11 +297,12 @@ export const batchUpdateInventoryGI = async (uid: string, region: string, cfg: G
         localStorage.removeItem("fp");
         throw new Error("Failed to calculate inventory.");
     }
-    // 跨批聚合：同一素材 id 不累加，按 (num+lack_num) 取最大值（同批次内 id 不会重复，不同批次取最大）
+    // 跨批聚合：同一素材 id 不累加，按 (num-lack_num) 取最大值（同批次内 id 不会重复，不同批次取最大）
+    // 库存数量口径：value = num - lack_num（lack_num=仍需数量，故 num-lack_num = 已持有量代理）
     // lackNum 沿用该 id 首次出现时的 lack_num（与重构前 {...t, value} 的语义一致，仅 value 会被更大值覆盖）
     const merged: Record<number, { value: number; lackNum: number }> = {};
     for (const t of consumeRaw) {
-        const v = t.num + t.lack_num;
+        const v = t.num as number - t.lack_num as number;
         if (merged[t.id]) {
             if (v > merged[t.id].value) merged[t.id].value = v;
         } else {
