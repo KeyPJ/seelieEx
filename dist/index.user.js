@@ -2,7 +2,7 @@
 // @name             genshinSeelieEx
 // @name:zh          原神、崩坏：星穹铁道、绝区零规划助手扩展
 // @namespace        https://github.com/KeyPJ/seelieEx
-// @version          6.7.8_260808
+// @version          7.0.0_260822
 // @author           KeyPJ
 // @description:zh   个人想偷懒,不想手动在仙灵 - 规划助手 手动录入角色及其天赋,于是简单整理一个脚本,利用米游社养成计算器api获取角色信息,直接导入至seelie
 // @license          MIT
@@ -2592,7 +2592,7 @@ var __publicField = (obj, key, value) => {
         avatar_promote_level: 0,
         element_attr_id: c.element_attr_id,
         from_user_sync: false,
-        skill_list: (c.skill_list || []).filter((s) => s.level_current < s.max_level && s.max_level === 10).map((s) => ({
+        skill_list: (c.skill_list || []).filter((s) => s.max_level === 10).map((s) => ({
           id: s.group_id,
           level_current: 1,
           level_target: 10
@@ -2642,7 +2642,7 @@ var __publicField = (obj, key, value) => {
     const splitRetry = async (chunk) => {
       const part2 = await doBatch(chunk);
       if (part2 !== null)
-        return { ok: part2, bad: [] };
+        return { bad: [] };
       if (chunk.length > 1) {
         const mid = Math.ceil(chunk.length / 2);
         const left = chunk.slice(0, mid);
@@ -2651,10 +2651,10 @@ var __publicField = (obj, key, value) => {
         await sleep(SPLIT_RETRY_DELAY);
         const l = await splitRetry(left);
         const r = await splitRetry(right);
-        return { ok: [...l.ok, ...r.ok], bad: [...l.bad, ...r.bad] };
+        return { bad: [...l.bad, ...r.bad] };
       }
       console.error(`[素材同步] 摘除影响数据(单条始终失败):`, JSON.stringify(chunk[0]));
-      return { ok: [], bad: chunk };
+      return { bad: chunk };
     };
     const part = await doBatch(items);
     progressBus.emit("inventory", 1, 3);
@@ -2662,22 +2662,16 @@ var __publicField = (obj, key, value) => {
       consumeRaw.push(...part);
       console.log(`[素材同步] 请求①整批(${items.length}条)成功，本次仅 1 次 HTTP`);
     } else {
-      console.warn(`[素材同步] 请求①整批(${items.length}条)失败，进入二分重试`);
-      const retry = await splitRetry(items);
-      consumeRaw.push(...retry.ok);
-      const badItems = retry.bad;
-      if (badItems.length) {
-        console.warn(`[素材同步] 二分重试隔离 ${badItems.length} 条始终失败项，追加剔除失败的全量请求`);
-        const retryItems = items.filter((it) => !badItems.includes(it));
-        const part2 = await doBatch(retryItems);
-        if (part2 !== null) {
-          consumeRaw = part2;
-          console.log(`[素材同步] 请求②(剔除 ${badItems.length} 失败项)成功，融合入库`);
-        } else {
-          console.warn(`[素材同步] 请求②仍失败，按原逻辑合并 ${consumeRaw.length} 条成功部分`);
-        }
+      console.warn(`[素材同步] 请求①整批(${items.length}条)失败，二分重试隔离坏项`);
+      const { bad: badItems } = await splitRetry(items);
+      const retryItems = items.filter((it) => !badItems.includes(it));
+      console.warn(`[素材同步] 二分重试隔离 ${badItems.length} 条始终失败项，追加剔除失败项的全量请求`);
+      const part2 = await doBatch(retryItems);
+      if (part2 !== null) {
+        consumeRaw = part2;
+        console.log(`[素材同步] 请求②(${retryItems.length}条，剔除 ${badItems.length} 失败项)成功`);
       } else {
-        console.log(`[素材同步] 二分重试全部成功，共 ${consumeRaw.length} 条素材`);
+        console.warn(`[素材同步] 请求②仍失败，无有效整批结果`);
       }
     }
     progressBus.emit("inventory", 2, 3);
@@ -2687,7 +2681,7 @@ var __publicField = (obj, key, value) => {
     }
     const merged = {};
     for (const t of consumeRaw) {
-      const v = t.num + t.lack_num;
+      const v = t.num - t.lack_num;
       if (merged[t.id]) {
         if (v > merged[t.id].value)
           merged[t.id].value = v;
